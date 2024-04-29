@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/04/29 03:59:01 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/04/29 05:46:04 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ typedef struct s_minishell
 	char	**env;
 	char	**path;
 	char	*line;
-	char	**history;
+	char	*infile;
+	char	**outfile;
 	char	*current_path;
 	t_cmd	*cmd;
 }				t_minishell;
@@ -38,5 +39,10 @@ struct s_cmd
 	unsigned char	type;
 	t_cmd			*next;
 };
-
+int		parse(t_minishell *mshell);
+char	**ft_split_args(char const *str, char sep);
+char	*copy_str(const char *str, size_t start, size_t len);
+int		is_in_quote(char c, char *in_quote);
+void	free_str(char **split);
+char	**init_split(size_t count);
 #endif
