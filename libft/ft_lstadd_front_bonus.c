@@ -1,29 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_lstadd_front_bonus.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/04/29 04:31:28 by mwojtasi         ###   ########.fr       */
+/*   Created: 2023/11/14 01:54:01 by mwojtasi          #+#    #+#             */
+/*   Updated: 2024/04/29 04:30:26 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
 #include "../includes/libft.h"
-int main(void)
-{
-	char	*line;
 
-	while (1)
-	{
-		line = readline("minishell$ ");
-		if (!line)
-			break ;
-		if (*line)
-			add_history(line);
-		
-		free(line);
-	}
+void	ft_lstadd_front(t_list **lst, t_list *new)
+{
+	t_list	*next;
+
+	if (!lst || !new)
+		return ;
+	next = *lst;
+	*lst = new;
+	lst[0]->next = next;
 }

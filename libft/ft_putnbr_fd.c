@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/04/29 04:31:28 by mwojtasi         ###   ########.fr       */
+/*   Created: 2023/11/13 22:36:18 by mwojtasi          #+#    #+#             */
+/*   Updated: 2024/04/29 04:30:26 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
 #include "../includes/libft.h"
-int main(void)
-{
-	char	*line;
 
-	while (1)
+void	ft_putnbr_fd(int n, int fd)
+{
+	long int	nb;
+
+	nb = n;
+	if (nb < 0)
 	{
-		line = readline("minishell$ ");
-		if (!line)
-			break ;
-		if (*line)
-			add_history(line);
-		
-		free(line);
+		write(fd, "-", 1);
+		nb *= -1;
+	}
+	if (nb < 10)
+		write(fd, &(char){nb + '0'}, 1);
+	else
+	{
+		ft_putnbr_fd((int)(nb / 10), fd);
+		write(fd, &(char){(nb % 10) + '0'}, 1);
 	}
 }

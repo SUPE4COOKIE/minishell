@@ -1,29 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_strnstr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/04/29 04:31:28 by mwojtasi         ###   ########.fr       */
+/*   Created: 2023/11/07 17:20:32 by mwojtasi          #+#    #+#             */
+/*   Updated: 2024/04/29 04:30:26 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
 #include "../includes/libft.h"
-int main(void)
-{
-	char	*line;
 
-	while (1)
+char	*ft_strnstr(const char *big, const char *little, size_t len)
+{
+	size_t	i;
+	size_t	j;
+	size_t	lsize;
+
+	if (!*little)
+		return ((char *)big);
+	i = 0;
+	lsize = ft_strlen((char *)little) - 1;
+	while (big[i] && i < len)
 	{
-		line = readline("minishell$ ");
-		if (!line)
-			break ;
-		if (*line)
-			add_history(line);
-		
-		free(line);
+		j = 0;
+		while ((little[j] == big[i + j]) && (i + j) < len)
+		{
+			if (j == lsize)
+				return ((char *)&big[i]);
+			j++;
+		}
+		i++;
 	}
+	return (NULL);
 }
