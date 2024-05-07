@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/07 14:35:09 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/07 17:47:50 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "libft/libft.h"
+# include "libft.h"
 # include <sys/types.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -22,6 +22,7 @@
 # include <readline/history.h>
 
 typedef struct s_cmd	t_cmd;
+typedef struct s_lexer	t_lexer;
 
 /*
 * @breif: Structure to store the minishell data
@@ -64,17 +65,18 @@ struct s_cmd
 
 typedef enum e_token_type
 {
-	WORD,
-	PIPE,
-	REDIR_IN,
-	REDIR_OUT,
+	T_WORD,
+	T_PIPE,
+	T_REDIR_IN,
+	T_REDIR_OUT,
 }				t_token_type;
 
-typedef struct s_lexer
+struct s_lexer
 {
 	char			*line;
 	t_token_type	type;
-}				t_lexer;
+	t_lexer			*next;
+};
 
 int		parse(t_minishell *mshell);
 char	**ft_split_args(char const *str, char sep);
