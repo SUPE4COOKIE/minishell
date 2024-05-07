@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+         #
+#    By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 14:25:42 by scrumier          #+#    #+#              #
-#    Updated: 2024/03/25 17:04:52 by scrumier         ###   ########.fr        #
+#    Updated: 2024/05/07 19:51:42 by mwojtasi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ GNL_OBJ = $(addprefix $(GNL_OBJ_DIR), $(GNL_SRC:$(GNL_SRC_DIR)%.c=%.o))
 PRINTF_OBJ = $(addprefix $(PRINTF_OBJ_DIR), $(PRINTF_SRC:$(PRINTF_SRC_DIR)%.c=%.o))
 
 LIBFT_CC = gcc
-LIBFT_FLAGS = -Wall -Wextra -Werror
+LIBFT_FLAGS = -Wall -Wextra -Werror -g3
 
 LIBFT_NAME = libft.a
 

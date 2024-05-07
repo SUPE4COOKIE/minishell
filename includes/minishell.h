@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/07 17:47:50 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/07 19:48:07 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ typedef enum e_token_type
 
 struct s_lexer
 {
-	char			*line;
+	char			*value;
 	t_token_type	type;
 	t_lexer			*next;
 };
@@ -84,5 +84,6 @@ char	*copy_str(const char *str, size_t start, size_t len);
 int		is_in_quote(char c, char *in_quote);
 void	free_str(char **split);
 char	**init_split(size_t count);
-
+t_lexer	*lexer(char *line);
+void	print_lexer(t_lexer *lex);
 #endif
