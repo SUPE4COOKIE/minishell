@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/07 11:19:48 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/07 15:34:39 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int main(int argc, char **argv, char **envp)
 	(void)argv;
 	
 	mshell.env = envp;
-	while (1)
+	while (42)
 	{
 		mshell.line = readline("minishell$ ");
 		if (!mshell.line)
