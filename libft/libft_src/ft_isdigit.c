@@ -1,33 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_isdigit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/07 11:19:48 by scrumier         ###   ########.fr       */
+/*   Created: 2023/11/15 13:32:24 by scrumier          #+#    #+#             */
+/*   Updated: 2023/11/23 15:49:25 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
-int main(int argc, char **argv, char **envp)
+int	ft_isdigit(int c)
 {
-	t_minishell mshell;
-
-	(void)argc;
-	(void)argv;
-	
-	mshell.env = envp;
-	while (1)
-	{
-		mshell.line = readline("minishell$ ");
-		if (!mshell.line)
-			break ;
-		if (*mshell.line)
-			add_history(mshell.line);
-		parse(&mshell);
-		free(mshell.line);
-	}
+	if (c >= 48 && c <= 57)
+		return (1);
+	else
+		return (0);
 }

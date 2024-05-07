@@ -1,33 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/07 11:19:48 by scrumier         ###   ########.fr       */
+/*   Created: 2023/11/15 15:30:43 by scrumier          #+#    #+#             */
+/*   Updated: 2024/03/25 16:30:07 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../libft.h"
 
-int main(int argc, char **argv, char **envp)
+char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	t_minishell mshell;
+	char			*str;
+	size_t			i;
 
-	(void)argc;
-	(void)argv;
-	
-	mshell.env = envp;
-	while (1)
+	if (!s || !f)
+		return (NULL);
+	str = (char *)malloc(ft_strlen((char *)s) + 1);
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (s[i])
 	{
-		mshell.line = readline("minishell$ ");
-		if (!mshell.line)
-			break ;
-		if (*mshell.line)
-			add_history(mshell.line);
-		parse(&mshell);
-		free(mshell.line);
+		str[i] = f(i, (char)s[i]);
+		i++;
 	}
+	str[i] = '\0';
+	return (str);
 }

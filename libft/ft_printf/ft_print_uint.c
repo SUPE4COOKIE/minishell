@@ -1,33 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_print_uint.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/07 11:19:48 by scrumier         ###   ########.fr       */
+/*   Created: 2023/11/20 13:14:31 by sonamcrumie       #+#    #+#             */
+/*   Updated: 2024/03/25 16:28:27 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../ft_printf.h"
 
-int main(int argc, char **argv, char **envp)
+int	ft_print_uint(unsigned int num)
 {
-	t_minishell mshell;
+	int	count;
+	int	tmp;
 
-	(void)argc;
-	(void)argv;
-	
-	mshell.env = envp;
-	while (1)
+	count = 0;
+	if (num >= 10)
 	{
-		mshell.line = readline("minishell$ ");
-		if (!mshell.line)
-			break ;
-		if (*mshell.line)
-			add_history(mshell.line);
-		parse(&mshell);
-		free(mshell.line);
+		tmp = ft_print_uint(num / 10);
+		if (tmp == -1)
+			return (-1);
+		count += tmp;
 	}
+	if (ft_print_char(num % 10 + '0') < 0)
+		return (-1);
+	count++;
+	return (count);
 }

@@ -1,33 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/07 11:19:48 by scrumier         ###   ########.fr       */
+/*   Created: 2023/11/16 13:28:26 by scrumier          #+#    #+#             */
+/*   Updated: 2024/03/25 16:30:15 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../libft.h"
 
-int main(int argc, char **argv, char **envp)
+char	*ft_strrchr(const char *s, int c)
 {
-	t_minishell mshell;
+	long long int	i;
 
-	(void)argc;
-	(void)argv;
-	
-	mshell.env = envp;
-	while (1)
+	i = 0;
+	while (s[i])
+		i++;
+	while (i >= 0)
 	{
-		mshell.line = readline("minishell$ ");
-		if (!mshell.line)
-			break ;
-		if (*mshell.line)
-			add_history(mshell.line);
-		parse(&mshell);
-		free(mshell.line);
+		if (s[i] == (char)c)
+			return ((char *)(s + i));
+		i--;
 	}
+	return (NULL);
 }

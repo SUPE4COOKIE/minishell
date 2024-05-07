@@ -1,49 +1,63 @@
-CC = cc
-CFLAGS = -MMD -MP -Wall -Wextra -Werror -g3
-NAME = minishell
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/05/07 11:06:53 by scrumier          #+#    #+#              #
+#    Updated: 2024/05/07 13:41:02 by scrumier         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-LIBFT_PATH = libft
-LIBFT = $(LIBFT_PATH)/libft.a
-LIBFT_SRC_FILES = ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c ft_isascii.c \
-		ft_isdigit.c ft_isprint.c ft_memchr.c ft_memcmp.c ft_memcpy.c ft_memmove.c \
-		ft_memset.c ft_strchr.c ft_strdup.c ft_strlcat.c ft_strlcpy.c ft_strlen.c \
-		ft_strncmp.c ft_strnstr.c ft_strrchr.c ft_tolower.c ft_toupper.c ft_split.c \
-		ft_itoa.c ft_putchar_fd.c ft_putendl_fd.c ft_putstr_fd.c ft_striteri.c ft_strjoin.c \
-		ft_strjoin.c ft_strmapi.c ft_strtrim.c ft_substr.c ft_putnbr_fd.c
-LIBFT_SRC = $(addprefix $(LIBFT_PATH)/, $(LIBFT_SRC_FILES))
-SRC_PATH = src
-SRC_FILES = minishell.c
-HEADER_PATH = includes
-HEADER_FILES = minishell.h
-HEADERS = $(addprefix $(HEADER_PATH)/, $(HEADER_FILES))
-SRCS = $(addprefix $(SRC_PATH)/, $(SRC_FILES))
-OBJ_PATH = .obj
-OBJ = $(addprefix $(OBJ_PATH)/, $(SRC_FILES:.c=.o))
-OBJDEPS = $(addprefix $(OBJ_PATH)/, $(OBJ:.o=.d))
+NAME    = minishell
+SRC_PARSE	= $(wildcard src/parsing/*.c)
+SRC_EXEC	= $(wildcard src/exec/*.c)
+SRC_BUILDIN	= $(wildcard src/buildin/*.c)
+SRC			= $(wildcard src/*.c) $(SRC_PARSE) $(SRC_EXEC) $(SRC_BUILDIN)
+OBJ_DIR = .minishell_obj
+OBJ     = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+CC      = cc
+FLAGS   = -Wall -Wextra -Werror -Iincludes -MMD -MP
+RM      = rm -rf
+LIB		= -Llibft
 
-all: $(LIBFT) $(NAME)
+LIBFT_DIR = libft
+LIBFT_MAKEFILE = $(LIBFT_DIR)/Makefile
+LIBFT = $(LIBFT_DIR)/libft.a
+LIBFT_INC = -I$(LIBFT_DIR)/includes
+LIBFT_LINK = -L$(LIBFT_DIR) -lft
 
-$(NAME): $(OBJ) $(LIBFT) Makefile
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME) -lreadline -L$(LIBFT_PATH) -lft
+all: $(NAME)
 
-$(OBJ_PATH)/%.o: $(SRC_PATH)/%.c Makefile $(HEADERS) | $(OBJ_PATH)
-	$(CC) $(CFLAGS) -c $< -o $@
+exec: $(OBJ_EXEC)
+	$(CC) $(FLAGS) $(LIB) -o $(NAME) $(OBJ_EXEC)
 
-$(OBJ_PATH):
-	mkdir -p $(OBJ_PATH)
+buildin: $(OBJ_BUILDIN)
+	$(CC) $(FLAGS) $(LIB) -o $(NAME) $(OBJ_BUILDIN)
 
-$(LIBFT): $(LIBFT_SRC)
-	make -C $(LIBFT_PATH)
+parse: $(OBJ_PARSE)
+	$(CC) $(FLAGS) $(LIB) -o $(NAME) $(OBJ_PARSE)
 
--include $(OBJDEPS)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c Makefile | $(OBJ_DIR)
+	$(CC) $(FLAGS) $(LIB) -c $< -o $@
+
+$(OBJ_DIR):
+	mkdir -p $@
+
+libft:
+	$(MAKE) -C $(LIBFT_DIR)
+
+-include $(OBJ:.o=.d)
+
+$(NAME): $(OBJ)
+	$(CC) $(FLAGS) -o $@ $^
 
 clean:
-	rm -rf $(OBJ_PATH)
-	make -C $(LIBFT_PATH) clean
+	$(RM) $(OBJ_DIR)
 
 fclean: clean
-	rm -f $(NAME)
-	make -C $(LIBFT_PATH) fclean
+	$(RM) $(NAME)
 
 re: fclean all
 

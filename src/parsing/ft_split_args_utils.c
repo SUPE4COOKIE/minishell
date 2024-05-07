@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_args_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 17:50:34 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/04/29 05:04:32 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/07 13:23:48 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/libft.h"
-#include "../includes/minishell.h"
+#include "minishell.h"
 
 char	**init_split(size_t count)
 {

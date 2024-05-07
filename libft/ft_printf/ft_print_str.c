@@ -1,33 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_print_str.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/07 11:19:48 by scrumier         ###   ########.fr       */
+/*   Created: 2023/11/20 13:17:13 by sonamcrumie       #+#    #+#             */
+/*   Updated: 2024/03/25 16:28:25 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../ft_printf.h"
 
-int main(int argc, char **argv, char **envp)
+int	ft_print_str(char *str)
 {
-	t_minishell mshell;
+	int	count;
 
-	(void)argc;
-	(void)argv;
-	
-	mshell.env = envp;
-	while (1)
+	count = 0;
+	if (str == NULL)
 	{
-		mshell.line = readline("minishell$ ");
-		if (!mshell.line)
-			break ;
-		if (*mshell.line)
-			add_history(mshell.line);
-		parse(&mshell);
-		free(mshell.line);
+		if (write(1, "(null)", 6) < 0)
+			return (-1);
+		return (6);
 	}
+	while (*str)
+	{
+		if (ft_print_char(*str++) < 0)
+			return (-1);
+		count++;
+	}
+	return (count);
 }

@@ -1,33 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/07 11:19:48 by scrumier         ###   ########.fr       */
+/*   Created: 2023/11/15 13:33:08 by scrumier          #+#    #+#             */
+/*   Updated: 2024/03/25 16:29:30 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../libft.h"
 
-int main(int argc, char **argv, char **envp)
+void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	t_minishell mshell;
+	unsigned char	*from;
+	unsigned char	*to;
+	size_t			i;
 
-	(void)argc;
-	(void)argv;
-	
-	mshell.env = envp;
-	while (1)
+	from = (unsigned char *)src;
+	to = (unsigned char *)dest;
+	if (from == to || n == 0)
+		return (dest);
+	if (to > from)
 	{
-		mshell.line = readline("minishell$ ");
-		if (!mshell.line)
-			break ;
-		if (*mshell.line)
-			add_history(mshell.line);
-		parse(&mshell);
-		free(mshell.line);
+		i = n;
+		while (i-- > 0)
+			to[i] = from[i];
 	}
+	else
+	{
+		i = 0;
+		while (i < n)
+		{
+			to[i] = from[i];
+			i++;
+		}
+	}
+	return (dest);
 }
