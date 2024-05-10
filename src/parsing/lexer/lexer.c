@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/09 22:13:26 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/10 04:40:32 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,27 +17,45 @@ static inline int	is_special_char(char c)
 	return (c == '|' || c == '<' || c == '>');
 }
 
-void add_lexer_type(t_lexer **new, t_lexer **lex)
+void add_lexer_type(t_lexer **new)
 {
-	t_lexer *tmp;
-
 	if ((*new)->value[0] == '|')
 		(*new)->type = T_PIPE;
 	else if ((*new)->value[0] == '<')
-		(*new)->type = T_REDIR_IN;
+	{
+		if ((*new)->value[1] == '<')
+			(*new)->type = T_HERE_DOC;
+		else
+			(*new)->type = T_REDIR_IN;
+	}
 	else if ((*new)->value[0] == '>')
-		(*new)->type = T_REDIR_OUT;
+	{
+		if ((*new)->value[1] == '>')
+			(*new)->type = T_APPEND_OUT;
+		else
+			(*new)->type = T_REDIR_OUT;
+	}
 	else
 		(*new)->type = T_WORD;
 	(*new)->next = NULL;
+}
+
+void append_new_lexer(t_lexer **lex, t_lexer **new)
+{
+	t_lexer *tmp;
+
 	if (*lex == NULL)
+	{
 		*lex = *new;
+		(*lex)->prev = NULL;
+	}
 	else
 	{
 		tmp = *lex;
 		while (tmp->next)
 			tmp = tmp->next;
 		tmp->next = *new;
+		(*new)->prev = tmp;
 	}
 }
 
@@ -62,7 +80,7 @@ int	new_lexer(t_lexer **lex, char *line, size_t size)
 	t_lexer	*new;
 	char	*trim;
 	
-	if (line && line[0] == '\0')
+	if (!line || !line[0])
 		return (0);
 	if (is_n_only_spaces(line, size))
 		return (0);
@@ -76,7 +94,8 @@ int	new_lexer(t_lexer **lex, char *line, size_t size)
 	trim = new->value;
 	new->value = ft_strtrim(new->value, " "); // TODO: check return
 	free(trim);
-	add_lexer_type(&new, lex);
+	add_lexer_type(&new);
+	append_new_lexer(lex, &new);
 	return (0);
 }
 
@@ -114,8 +133,35 @@ void add_operator(t_lexer **lex, char *line, size_t *end)
 		if (line[0] == '|')
 			break ;
 	}
-	new_lexer(lex, line, len);
+	new_lexer(lex, line, len); // TODO: check return
 	(*end) += len;
+}
+
+int	lexer_director(t_lexer **lex, size_t *end, size_t *start, char *line)
+{
+	char	in_quote;
+	
+	in_quote = 0;
+	while (line[*end])
+	{
+		if (!is_in_quote(line[*end], &in_quote))
+		{
+			if (!in_quote && is_special_char(line[*end]))
+			{
+				if (*end > *start)
+					if (new_lexer(lex, line + *start, *end - *start))// TODO: check return
+						return (1);
+				*start = *end;
+				while (line[*end] && is_special_char(line[*end]))
+				{
+					add_operator(lex, line + *start, end); // TODO: check return
+					*start = *end;
+				}
+			}
+		}
+		(*end)++;
+	}
+	return (0);
 }
 
 t_lexer	*lexer(char *line)
@@ -127,22 +173,12 @@ t_lexer	*lexer(char *line)
 	end = 0;
 	start = 0;
 	lex = NULL;
-	while (line[end])
+	if (lexer_director(&lex, &end, &start, line))
 	{
-		if (is_special_char(line[end]))
-		{
-			if (end > start)
-				new_lexer(&lex, line + start, end - start);
-			start = end;
-			while (line[end] && is_special_char(line[end]))
-			{
-				add_operator(&lex, line + start, &end);
-				start = end;
-			}
-		}
-		end++;
+		free_lexer(lex);
+		return (NULL);
 	}
 	if (end > start)
-		new_lexer(&lex, line + start, end - start);
+		new_lexer(&lex, line + start, end - start); // TODO: check return
 	return (lex);
 }

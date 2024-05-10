@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/08 18:48:06 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/10 02:18:50 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ typedef enum e_token_type
 	T_PIPE,
 	T_REDIR_IN,
 	T_REDIR_OUT,
+	T_APPEND_OUT,
+	T_HERE_DOC,
 }				t_token_type;
 
 struct s_lexer
@@ -76,6 +78,7 @@ struct s_lexer
 	char			*value;
 	t_token_type	type;
 	t_lexer			*next;
+	t_lexer			*prev;
 };
 
 int		parse(t_minishell *mshell);
@@ -86,4 +89,5 @@ void	free_str(char **split);
 char	**init_split(size_t count);
 t_lexer	*lexer(char *line);
 void	print_lexer(t_lexer *lex);
+int		validate(t_lexer *lex);
 #endif

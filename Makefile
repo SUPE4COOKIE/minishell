@@ -1,5 +1,5 @@
 NAME = minishell
-SRCS = src/minishell.c $(wildcard src/parsing/*.c)
+SRCS = src/minishell.c $(wildcard src/parsing/*.c) $(wildcard src/parsing/lexer/*.c)
 OBJ_DIR = .obj
 OBJ = $(patsubst src/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 CC = gcc
@@ -20,6 +20,7 @@ $(OBJ_DIR)/%.o: src/%.c | $(OBJ_DIR)
 $(OBJ_DIR):
 	mkdir -p $@
 	mkdir -p $(OBJ_DIR)/parsing
+	mkdir -p $(OBJ_DIR)/parsing/lexer
 
 $(NAME): $(OBJ)
 	$(CC) $(FLAGS) $(OBJ) $(LIB) -o $@
