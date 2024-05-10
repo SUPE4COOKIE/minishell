@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sonamcrumiere <sonamcrumiere@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/07 14:35:09 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/09 14:38:14 by sonamcrumie      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "libft/libft.h"
+# include "../libft/libft.h"
 # include <sys/types.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -45,7 +45,7 @@ typedef struct s_minishell
 typedef enum e_cmd_type
 {
 	CMD,
-	PIPE,
+	PIP,
 	RED_IN,
 	RED_OUT,
 	APP_IN,
@@ -54,7 +54,8 @@ typedef enum e_cmd_type
 
 struct s_cmd
 {
-	char			*cmd;
+	char			**cmd;
+	int				pipe;
 	pid_t			pid;
 	unsigned char	type;
 	char			*infile;
@@ -76,11 +77,6 @@ typedef struct s_lexer
 	t_token_type	type;
 }				t_lexer;
 
-int		parse(t_minishell *mshell);
-char	**ft_split_args(char const *str, char sep);
-char	*copy_str(const char *str, size_t start, size_t len);
-int		is_in_quote(char c, char *in_quote);
-void	free_str(char **split);
-char	**init_split(size_t count);
+# include "exec.h"
 
 #endif

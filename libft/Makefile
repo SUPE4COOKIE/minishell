@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+         #
+#    By: sonamcrumiere <sonamcrumiere@student.42    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 14:25:42 by scrumier          #+#    #+#              #
-#    Updated: 2024/03/25 17:04:52 by scrumier         ###   ########.fr        #
+#    Updated: 2024/05/09 12:50:02 by sonamcrumie      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,13 +49,13 @@ LIBFT_RM = rm -rf
 
 all: $(LIBFT_NAME)
 
-$(LIBFT_OBJ_DIR)%.o: $(LIBFT_SRC_DIR)%.c | $(LIBFT_OBJ_DIR) Makefile
+$(LIBFT_OBJ_DIR)%.o: $(LIBFT_SRC_DIR)%.c | $(LIBFT_OBJ_DIR)
 	$(LIBFT_CC) $(LIBFT_FLAGS) -MMD -MP -c $< -o $@
 
-$(GNL_OBJ_DIR)%.o: $(GNL_SRC_DIR)%.c | $(GNL_OBJ_DIR) Makefile
+$(GNL_OBJ_DIR)%.o: $(GNL_SRC_DIR)%.c | $(GNL_OBJ_DIR)
 	$(LIBFT_CC) $(LIBFT_FLAGS) -MMD -MP -c $< -o $@
 
-$(PRINTF_OBJ_DIR)%.o: $(PRINTF_SRC_DIR)%.c | $(PRINTF_OBJ_DIR) Makefile
+$(PRINTF_OBJ_DIR)%.o: $(PRINTF_SRC_DIR)%.c | $(PRINTF_OBJ_DIR)
 	$(LIBFT_CC) $(LIBFT_FLAGS) -MMD -MP -c $< -o $@
 
 $(LIBFT_OBJ_DIR) $(GNL_OBJ_DIR) $(PRINTF_OBJ_DIR):
@@ -65,7 +65,7 @@ $(LIBFT_OBJ_DIR) $(GNL_OBJ_DIR) $(PRINTF_OBJ_DIR):
 -include $(GNL_OBJ:.o=.d)
 -include $(PRINTF_OBJ:.o=.d)
 
-$(LIBFT_NAME): $(LIBFT_OBJ) $(GNL_OBJ) $(PRINTF_OBJ) Makefile
+$(LIBFT_NAME): $(LIBFT_OBJ) $(GNL_OBJ) $(PRINTF_OBJ)
 	ar rc $@ $^
 	ranlib $@
 
