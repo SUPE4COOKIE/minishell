@@ -3,23 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/10 04:40:32 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/14 01:13:51 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static inline int	is_special_char(char c)
+static inline int	is_operator_char(char c)
 {
 	return (c == '|' || c == '<' || c == '>');
 }
 
-void add_lexer_type(t_lexer **new)
+void add_lexer_type(t_lexer **new, char *line)
 {
-	if ((*new)->value[0] == '|')
+	if (line[0] == '"' )
+		(*new)->type = T_D_QUOTED_WORD;
+	else if (line[0] == '\'')
+		(*new)->type = T_S_QUOTED_WORD;
+	else if ((*new)->value[0] == '|')
 		(*new)->type = T_PIPE;
 	else if ((*new)->value[0] == '<')
 	{
@@ -90,24 +94,24 @@ int	new_lexer(t_lexer **lex, char *line, size_t size)
 	new->value = malloc(size + 1);
 	if (new->value == NULL)
 		return (1); //TODO: free exit
-	ft_strlcpy(new->value, line, size + 1); //TODO: check return
-	trim = new->value;
-	new->value = ft_strtrim(new->value, " "); // TODO: check return
-	free(trim);
-	add_lexer_type(&new);
+	//printf("%.*s\n", (int)size, line);
+	if (line[0] == '"' || line[0] == '\'')
+		ft_strlcpy(new->value, line + 1, size);
+	else
+	{
+		ft_strlcpy(new->value, line, size + 1); //TODO: check return
+		trim = new->value;
+		new->value = ft_strtrim(new->value, " "); // TODO: check return
+		free(trim);
+	}
+	add_lexer_type(&new, line);
 	append_new_lexer(lex, &new);
+	// temp code
+	printf("value: %s\n", new->value);
+	printf("type: %d\n\n", new->type);
 	return (0);
 }
 
-void	print_lexer(t_lexer *lex)
-{
-	while (lex)
-	{
-		printf("value: %s\n", lex->value);
-		printf("type: %d\n\n", lex->type);
-		lex = lex->next;
-	}
-}
 
 void	free_lexer(t_lexer *lex)
 {
@@ -127,7 +131,7 @@ void add_operator(t_lexer **lex, char *line, size_t *end)
 	size_t len;
 
 	len = 0;
-	while (line[len] && is_special_char(line[len]) && line[0] == line[len] && len < 2)
+	while (line[len] && is_operator_char(line[len]) && line[0] == line[len] && len < 2)
 	{
 		len++;
 		if (line[0] == '|')
@@ -137,22 +141,55 @@ void add_operator(t_lexer **lex, char *line, size_t *end)
 	(*end) += len;
 }
 
+void	print_lexer(t_lexer *lex)
+{
+	while (lex)
+	{
+		printf("value: %s\n", lex->value);
+		printf("type: %d\n\n", lex->type);
+		lex = lex->next;
+	}
+}
+
+int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
+{
+	size_t	len;
+	char	quote;
+
+	quote = line[0];
+	len = 1;
+	while (line[len] && line[len] != quote)
+		len++;
+	if (len > 1)
+		new_lexer(lex, line, len); // TODO: check return
+	if (line[len] == quote)
+		len++;
+	(*end) += len;
+	return (0);
+}
+
 int	lexer_director(t_lexer **lex, size_t *end, size_t *start, char *line)
 {
-	char	in_quote;
-	
-	in_quote = 0;
 	while (line[*end])
 	{
-		if (!is_in_quote(line[*end], &in_quote))
+		if (line[*end] == '"' || line[*end] == '\'')
 		{
-			if (!in_quote && is_special_char(line[*end]))
+			if (*end > *start)
+				if (new_lexer(lex, line + *start, *end - *start)) // TODO: check return
+					return (1);
+			*start = *end;
+			add_quoted_word(lex, line + *start, end); // TODO: check return
+			*start = *end;
+		}
+		else
+		{
+			if (is_operator_char(line[*end]))
 			{
 				if (*end > *start)
 					if (new_lexer(lex, line + *start, *end - *start))// TODO: check return
 						return (1);
 				*start = *end;
-				while (line[*end] && is_special_char(line[*end]))
+				while (line[*end] && is_operator_char(line[*end]))
 				{
 					add_operator(lex, line + *start, end); // TODO: check return
 					*start = *end;

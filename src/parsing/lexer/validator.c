@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validator.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 02:06:43 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/10 02:17:36 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/13 17:35:28 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 	- pipe:
 		- no pipe at the end
 		- no pipe at the start
-		- should be between 2 words
+		- should be between 2 words // can have an operation after
 	
 	- redirections:
 		- followed by a word

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/10 02:18:50 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/13 22:35:52 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ typedef enum e_token_type
 	T_REDIR_OUT,
 	T_APPEND_OUT,
 	T_HERE_DOC,
+	T_D_QUOTED_WORD,
+	T_S_QUOTED_WORD,
 }				t_token_type;
 
 struct s_lexer

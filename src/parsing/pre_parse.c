@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_parser.c                                      :+:      :+:    :+:   */
+/*   pre_parse.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 05:31:43 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/13 22:48:22 by mwojtasi         ###   ########.fr       */
+/*   Created: 2024/05/13 22:55:03 by mwojtasi          #+#    #+#             */
+/*   Updated: 2024/05/13 22:56:10 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
-int	parse(t_minishell *mshell)
-{
-	lexer(mshell->line);
-	return (0);
-}
+/*
+	things to check :
+	numbers of pipes
+	numbers of redirections
+	numbers of here_docs
+*/
