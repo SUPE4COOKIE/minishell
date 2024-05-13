@@ -6,12 +6,12 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/14 01:13:51 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/14 01:39:49 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
+// test
 static inline int	is_operator_char(char c)
 {
 	return (c == '|' || c == '<' || c == '>');
