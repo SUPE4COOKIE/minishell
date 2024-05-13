@@ -3,62 +3,59 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+         #
+#    By: sonamcrumiere <sonamcrumiere@student.42    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/07 11:06:53 by scrumier          #+#    #+#              #
-#    Updated: 2024/05/07 13:41:02 by scrumier         ###   ########.fr        #
+#    Updated: 2024/05/09 12:51:09 by sonamcrumie      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME    = minishell
-SRC_PARSE	= $(wildcard src/parsing/*.c)
-SRC_EXEC	= $(wildcard src/exec/*.c)
-SRC_BUILDIN	= $(wildcard src/buildin/*.c)
-SRC			= $(wildcard src/*.c) $(SRC_PARSE) $(SRC_EXEC) $(SRC_BUILDIN)
-OBJ_DIR = .minishell_obj
-OBJ     = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-CC      = cc
-FLAGS   = -Wall -Wextra -Werror -Iincludes -MMD -MP
-RM      = rm -rf
-LIB		= -Llibft
+# Makefile for compiling the libft library and the files inside src/exec/
 
+# Compiler
+CC = cc
+# Compiler flags
+CFLAGS = -Wall -Wextra -Iincludes
+
+# Directories
 LIBFT_DIR = libft
-LIBFT_MAKEFILE = $(LIBFT_DIR)/Makefile
-LIBFT = $(LIBFT_DIR)/libft.a
-LIBFT_INC = -I$(LIBFT_DIR)/includes
-LIBFT_LINK = -L$(LIBFT_DIR) -lft
+EXEC_DIR = src/exec
 
-all: $(NAME)
+# Target executable name
+TARGET = minishell
 
-exec: $(OBJ_EXEC)
-	$(CC) $(FLAGS) $(LIB) -o $(NAME) $(OBJ_EXEC)
+# Source files
+SRCS = $(wildcard $(EXEC_DIR)/*.c) $(wildcard src/*.c)
 
-buildin: $(OBJ_BUILDIN)
-	$(CC) $(FLAGS) $(LIB) -o $(NAME) $(OBJ_BUILDIN)
+# Object files
+OBJS = $(SRCS:.c=.o)
 
-parse: $(OBJ_PARSE)
-	$(CC) $(FLAGS) $(LIB) -o $(NAME) $(OBJ_PARSE)
+# Include directories
+INC_DIRS = -I$(LIBFT_DIR) -I$(EXEC_DIR) -Iincludes
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c Makefile | $(OBJ_DIR)
-	$(CC) $(FLAGS) $(LIB) -c $< -o $@
+# Phony targets
+.PHONY: all clean fclean re
 
-$(OBJ_DIR):
-	mkdir -p $@
+all: $(TARGET)
 
-libft:
-	$(MAKE) -C $(LIBFT_DIR)
+# Rule to compile the libft library
+$(LIBFT_DIR)/libft.a:
+	@$(MAKE) -C $(LIBFT_DIR)
 
--include $(OBJ:.o=.d)
+# Rule to compile the executable
+$(TARGET): $(LIBFT_DIR)/libft.a $(OBJS)
+	$(CC) $(CFLAGS) $(INC_DIRS) -o $@ $(OBJS) -L$(LIBFT_DIR) -lft
 
-$(NAME): $(OBJ)
-	$(CC) $(FLAGS) -o $@ $^
+# Rule to compile .c files to .o files
+%.o: %.c
+	$(CC) $(CFLAGS) $(INC_DIRS) -c $< -o $@
 
 clean:
-	$(RM) $(OBJ_DIR)
+	@$(MAKE) -C $(LIBFT_DIR) clean
+	@rm -f $(OBJS)
 
 fclean: clean
-	$(RM) $(NAME)
+	@$(MAKE) -C $(LIBFT_DIR) fclean
+	@rm -f $(TARGET)
 
 re: fclean all
-
-.PHONY: all clean fclean re
