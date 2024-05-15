@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/15 03:51:10 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/15 19:21:38 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,45 +24,6 @@
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;
 
-/*
-* @breif: Structure to store the minishell data
-* @param env: The environment variables
-* @param path: The PATH variable
-* @param line: The command line
-* @param current_path: The current path
-* @param last_exit_status: The last exit status
-* @param cmd: The command structure
-*/
-typedef struct s_minishell
-{
-	char	**env;
-	char	**path;
-	char	*line;
-	char	*current_path;
-	int		last_exit_status;
-	t_cmd	*cmd;
-}				t_minishell;
-
-typedef enum e_cmd_type
-{
-	CMD,
-	PIPE,
-	RED_IN,
-	RED_OUT,
-	APP_IN,
-	APP_OUT,
-}				t_cmd_type;
-
-struct s_cmd
-{
-	char			*cmd;
-	pid_t			pid;
-	unsigned char	type;
-	char			*infile;
-	char			*outfile;
-	t_cmd			*next;
-};
-
 typedef enum e_token_type
 {
 	T_WORD,
@@ -75,6 +36,27 @@ typedef enum e_token_type
 	T_S_QUOTED_WORD,
 	T_PATH,
 }				t_token_type;
+
+typedef struct s_minishell
+{
+	char	**env;
+	char	**path;
+	char	*line;
+	char	*current_path;
+	int		last_exit_status;
+	t_cmd	*cmd;
+}				t_minishell;
+
+struct s_cmd
+{
+	char			*cmd;
+	char			**args;
+	pid_t			pid;
+	t_token_type	type;
+	char			*infile;
+	char			*outfile;
+	t_cmd			*next;
+};
 
 struct s_lexer
 {
@@ -94,4 +76,6 @@ t_lexer	*lexer(char *line);
 void	print_lexer(t_lexer *lex);
 int		validate(t_lexer *lex);
 int	new_lexer(t_lexer **lex, char *line, size_t size);
+unsigned char	is_whitespace(char c);
+int	save_path(t_minishell *mshell, char **env);
 #endif

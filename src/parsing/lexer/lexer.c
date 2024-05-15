@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/15 05:10:51 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/15 16:44:56 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,10 @@ void	print_lexer(t_lexer *lex)
 		lex = lex->next;
 	}
 }
-
+unsigned char	is_whitespace(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r');
+}
 int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 {
 	size_t	i;
@@ -117,8 +120,7 @@ int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 	i = 0;
 	while (i < size)
 	{
-		if (line[i] == ' ' || line[i] == '\t' || line[i] == '\n' 
-			|| line[i] == '\v' || line[i] == '\f' || line[i] == '\r')
+		if (is_whitespace(line[i]))
 		{
 			if (i > 0)
 				new_lexer(lex, line, i);
