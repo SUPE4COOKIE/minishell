@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sonamcrumiere <sonamcrumiere@student.42    +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/09 14:38:14 by sonamcrumie      ###   ########.fr       */
+/*   Updated: 2024/05/13 13:39:49 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,6 @@
 
 typedef struct s_cmd	t_cmd;
 
-/*
-* @breif: Structure to store the minishell data
-* @param env: The environment variables
-* @param path: The PATH variable
-* @param line: The command line
-* @param current_path: The current path
-* @param last_exit_status: The last exit status
-* @param cmd: The command structure
-*/
 typedef struct s_minishell
 {
 	char	**env;
@@ -60,6 +51,7 @@ struct s_cmd
 	unsigned char	type;
 	char			*infile;
 	char			*outfile;
+	t_cmd			*prev;
 	t_cmd			*next;
 };
 
@@ -77,6 +69,7 @@ typedef struct s_lexer
 	t_token_type	type;
 }				t_lexer;
 
+# include "utils.h"
 # include "exec.h"
 
 #endif
