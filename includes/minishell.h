@@ -6,14 +6,14 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/15 19:21:38 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/15 19:56:06 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "libft.h"
+# include "../libft/libft.h"
 # include <sys/types.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -47,14 +47,25 @@ typedef struct s_minishell
 	t_cmd	*cmd;
 }				t_minishell;
 
+typedef enum e_cmd_type
+{
+	CMD,
+	PIP,
+	RED_IN,
+	RED_OUT,
+	APP_IN,
+	APP_OUT,
+}				t_cmd_type;
+
 struct s_cmd
 {
-	char			*cmd;
-	char			**args;
+	char			**cmd;
+	int				pipe;
 	pid_t			pid;
 	t_token_type	type;
 	char			*infile;
 	char			*outfile;
+	t_cmd			*prev;
 	t_cmd			*next;
 };
 
@@ -78,4 +89,7 @@ int		validate(t_lexer *lex);
 int	new_lexer(t_lexer **lex, char *line, size_t size);
 unsigned char	is_whitespace(char c);
 int	save_path(t_minishell *mshell, char **env);
+# include "utils.h"
+# include "exec.h"
+
 #endif
