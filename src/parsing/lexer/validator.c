@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validator.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 02:06:43 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/13 17:35:28 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/15 02:26:23 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@
 */
 
 #include "minishell.h"
+
+//int	is_valid_path(char *path)
+//{
+//	//TODO: add support for ~
+//	//TODO: add support for CURRENT_DIR
+//	//TODO: add support for ..
+//}
 
 int	validate(t_lexer *lex)
 {

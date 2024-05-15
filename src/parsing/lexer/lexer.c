@@ -3,45 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/14 01:39:49 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/15 05:10:51 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-// test
+
 static inline int	is_operator_char(char c)
 {
 	return (c == '|' || c == '<' || c == '>');
 }
 
-void add_lexer_type(t_lexer **new, char *line)
+t_token_type	get_lexer_type(char *line)
 {
 	if (line[0] == '"' )
-		(*new)->type = T_D_QUOTED_WORD;
+		return (T_D_QUOTED_WORD);
 	else if (line[0] == '\'')
-		(*new)->type = T_S_QUOTED_WORD;
-	else if ((*new)->value[0] == '|')
-		(*new)->type = T_PIPE;
-	else if ((*new)->value[0] == '<')
+		return (T_S_QUOTED_WORD);
+	else if (line[0] == '|')
+		return (T_PIPE);
+	else if (line[0] == '<')
 	{
-		if ((*new)->value[1] == '<')
-			(*new)->type = T_HERE_DOC;
+		if (line[1] == '<')
+			return (T_HERE_DOC);
 		else
-			(*new)->type = T_REDIR_IN;
+			return (T_REDIR_IN);
 	}
-	else if ((*new)->value[0] == '>')
+	else if (line[0] == '>')
 	{
-		if ((*new)->value[1] == '>')
-			(*new)->type = T_APPEND_OUT;
+		if (line[1] == '>')
+			return (T_APPEND_OUT);
 		else
-			(*new)->type = T_REDIR_OUT;
+			return (T_REDIR_OUT);
 	}
 	else
-		(*new)->type = T_WORD;
-	(*new)->next = NULL;
+		return (T_WORD);
 }
 
 void append_new_lexer(t_lexer **lex, t_lexer **new)
@@ -79,6 +78,61 @@ int is_n_only_spaces(char *line, size_t size)
 	return (1);
 }
 
+char *get_token_type(t_token_type type)
+{
+	if (type == T_WORD)
+		return ("T_WORD");
+	else if (type == T_PIPE)
+		return ("T_PIPE");
+	else if (type == T_REDIR_IN)
+		return ("T_REDIR_IN");
+	else if (type == T_REDIR_OUT)
+		return ("T_REDIR_OUT");
+	else if (type == T_APPEND_OUT)
+		return ("T_APPEND_OUT");
+	else if (type == T_D_QUOTED_WORD)
+		return ("T_D_QUOTED_WORD");
+	else if (type == T_S_QUOTED_WORD)
+		return ("T_S_QUOTED_WORD");
+	else if (type == T_HERE_DOC)
+		return ("T_HERE_DOC");
+	else
+		return ("UNKNOWN");
+}
+
+void	print_lexer(t_lexer *lex)
+{
+	while (lex)
+	{
+		printf("value: %s\n", lex->value);
+		printf("type: %s\n\n", get_token_type(lex->type));
+		lex = lex->next;
+	}
+}
+
+int	split_word_lexer(t_lexer **lex, char *line, size_t size)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < size)
+	{
+		if (line[i] == ' ' || line[i] == '\t' || line[i] == '\n' 
+			|| line[i] == '\v' || line[i] == '\f' || line[i] == '\r')
+		{
+			if (i > 0)
+				new_lexer(lex, line, i);
+			line += i + 1;
+			size -= i + 1;
+			i = 0;
+		}
+		i++;
+	}
+	if (size > 0)
+		new_lexer(lex, line, size);
+	return (0);
+}
+
 int	new_lexer(t_lexer **lex, char *line, size_t size)
 {
 	t_lexer	*new;
@@ -104,11 +158,11 @@ int	new_lexer(t_lexer **lex, char *line, size_t size)
 		new->value = ft_strtrim(new->value, " "); // TODO: check return
 		free(trim);
 	}
-	add_lexer_type(&new, line);
+	new->type = get_lexer_type(line);
 	append_new_lexer(lex, &new);
 	// temp code
 	printf("value: %s\n", new->value);
-	printf("type: %d\n\n", new->type);
+	printf("type: %s\n\n", get_token_type(new->type));
 	return (0);
 }
 
@@ -141,16 +195,6 @@ void add_operator(t_lexer **lex, char *line, size_t *end)
 	(*end) += len;
 }
 
-void	print_lexer(t_lexer *lex)
-{
-	while (lex)
-	{
-		printf("value: %s\n", lex->value);
-		printf("type: %d\n\n", lex->type);
-		lex = lex->next;
-	}
-}
-
 int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
 {
 	size_t	len;
@@ -175,8 +219,16 @@ int	lexer_director(t_lexer **lex, size_t *end, size_t *start, char *line)
 		if (line[*end] == '"' || line[*end] == '\'')
 		{
 			if (*end > *start)
-				if (new_lexer(lex, line + *start, *end - *start)) // TODO: check return
-					return (1);
+			{
+				if (get_lexer_type(line + *start) == T_WORD)
+				{
+					if (split_word_lexer(lex, line + *start, *end - *start))// TODO: check return
+						return (1);
+				}
+				else
+					if (new_lexer(lex, line + *start, *end - *start)) // TODO: check return
+						return (1);
+			}
 			*start = *end;
 			add_quoted_word(lex, line + *start, end); // TODO: check return
 			*start = *end;
@@ -186,8 +238,16 @@ int	lexer_director(t_lexer **lex, size_t *end, size_t *start, char *line)
 			if (is_operator_char(line[*end]))
 			{
 				if (*end > *start)
-					if (new_lexer(lex, line + *start, *end - *start))// TODO: check return
-						return (1);
+				{
+					if (get_lexer_type(line + *start) == T_WORD)
+					{
+						if (split_word_lexer(lex, line + *start, *end - *start)) // TODO: check return
+							return (1);
+					}
+					else
+						if (new_lexer(lex, line + *start, *end - *start))// TODO: check return
+							return (1);
+				}
 				*start = *end;
 				while (line[*end] && is_operator_char(line[*end]))
 				{

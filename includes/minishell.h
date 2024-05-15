@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/13 22:35:52 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/15 03:51:10 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ typedef enum e_token_type
 	T_HERE_DOC,
 	T_D_QUOTED_WORD,
 	T_S_QUOTED_WORD,
+	T_PATH,
 }				t_token_type;
 
 struct s_lexer
@@ -92,4 +93,5 @@ char	**init_split(size_t count);
 t_lexer	*lexer(char *line);
 void	print_lexer(t_lexer *lex);
 int		validate(t_lexer *lex);
+int	new_lexer(t_lexer **lex, char *line, size_t size);
 #endif
