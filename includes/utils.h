@@ -6,14 +6,13 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:15:47 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/13 13:16:31 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/15 16:11:50 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILS_H
 # define UTILS_H
 
-int		lst_len(t_cmd *lst);
-void	error(char *msg);
+void	error_pipe(char *msg, int new[2], int old[2], t_cmd *cmd);
 
 #endif
