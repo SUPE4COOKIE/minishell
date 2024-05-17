@@ -6,12 +6,20 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:11:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/17 12:20:11 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/17 15:38:01 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/*
+** @brief: Print an error message and return the status
+** @param msg The message
+** @param new The new pipe
+** @param old The old pipe
+** @param cmd The command
+** @return 1
+*/
 int	error_pipe(char *msg, int new[2], int old[2], t_cmd *cmd)
 {
 	if (msg)
@@ -33,6 +41,13 @@ int	error_pipe(char *msg, int new[2], int old[2], t_cmd *cmd)
 	return (1);
 }
 
+/*
+** @brief: Print an error message and return the status
+** @param mshell The minishell
+** @param status The status
+** @param msg The message
+** @return The status
+*/
 int	error_cmd(t_minishell *mshell, int status, char *msg)
 {
 	mshell->last_exit_status = status;
