@@ -6,17 +6,20 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:11:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/15 15:58:02 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/17 12:20:11 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	error_pipe(char *msg, int new[2], int old[2], t_cmd *cmd)
+int	error_pipe(char *msg, int new[2], int old[2], t_cmd *cmd)
 {
-	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	ft_putstr_fd(msg, STDERR_FILENO);
-	ft_putstr_fd("\n", STDERR_FILENO);
+	if (msg)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(msg, STDERR_FILENO);
+		ft_putstr_fd("\n", STDERR_FILENO);
+	}
 	if (old[0])
 		close(old[0]);
 	if (old[1])
@@ -27,5 +30,17 @@ void	error_pipe(char *msg, int new[2], int old[2], t_cmd *cmd)
 		close(new[1]);
 	if (cmd)
 		free(cmd);
-	exit(1);
+	return (1);
+}
+
+int	error_cmd(t_minishell *mshell, int status, char *msg)
+{
+	mshell->last_exit_status = status;
+	if (msg)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(msg, STDERR_FILENO);
+		ft_putstr_fd("\n", STDERR_FILENO);
+	}
+	return (status);
 }
