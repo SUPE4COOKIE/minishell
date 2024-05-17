@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/17 13:34:47 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/17 14:53:51 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include "../libft/libft.h"
 # include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
