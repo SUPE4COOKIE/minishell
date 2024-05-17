@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/13 13:39:49 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/17 13:34:47 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <stdbool.h>
+# define PATH_MAX 4096
 
 typedef struct s_cmd	t_cmd;
 
@@ -30,6 +32,8 @@ typedef struct s_minishell
 	char	*line;
 	char	*current_path;
 	int		last_exit_status;
+	char 	*pwd;
+	char	*old_pwd;
 	t_cmd	*cmd;
 }				t_minishell;
 
@@ -69,7 +73,8 @@ typedef struct s_lexer
 	t_token_type	type;
 }				t_lexer;
 
-# include "utils.h"
 # include "exec.h"
+# include "builtins.h"
+# include "utils.h"
 
 #endif
