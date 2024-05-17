@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/17 13:35:53 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/17 13:57:13 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,13 @@ bool	set_env(t_minishell *mshell, char *value, char *key)
 			if (!mshell->env[i])
 				return (error_cmd(&mshell, 1, "malloc failed"));
 			free(tmp);
-			return (0);
+			return (EXIT_SUCCESS);
 		}
 		i++;
 	}
 	if (tmp)
 		free(tmp);
-	return (1);
+	return (EXIT_FAILURE);
 }
 
 /*
@@ -99,7 +99,7 @@ static bool	change_dir(t_minishell *mshell, char *path)
 		return (free(return_path), free(tmp), error_cmd(&mshell, 1, "PWD not set"));
 	free(return_path);
 	free(tmp);
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 /*
@@ -130,5 +130,5 @@ int	builtin_cd(t_minishell *mshell, char **args)
 	}
 	else
 		return(change_dir(&mshell, args[1]));
-	return (0);
+	return (EXIT_SUCCESS);
 }
