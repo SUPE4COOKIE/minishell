@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+         #
+#    By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 14:25:42 by scrumier          #+#    #+#              #
-#    Updated: 2024/05/15 19:54:42 by mwojtasi         ###   ########.fr        #
+#    Updated: 2024/05/19 19:36:17 by mwojtasi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ LIBFT_SRC		=	$(addprefix $(LIBFT_SRC_DIR), \
 					ft_putnbr_fd.c ft_strdup.c ft_strlen.c ft_strrchr.c \
 					ft_toupper.c ft_calloc.c ft_isdigit.c ft_memchr.c \
 					ft_memset.c ft_putstr_fd.c ft_strjoin.c ft_strmapi.c \
-					ft_strtrim.c ft_striteri.c ft_atoi.c)
+					ft_strtrim.c ft_striteri.c ft_atoi.c ft_iswhitespace.c)
 
 GNL_SRC			=	$(addprefix $(GNL_SRC_DIR), \
 					get_next_line.c get_next_line_utils.c)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/15 22:39:58 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/20 00:03:19 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <stdbool.h>
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;
@@ -73,6 +74,7 @@ struct s_cmd
 struct s_lexer
 {
 	char			*value;
+	bool			space_after;
 	t_token_type	type;
 	t_lexer			*next;
 	t_lexer			*prev;
@@ -88,9 +90,9 @@ t_lexer	*lexer(char *line);
 void	print_lexer(t_lexer *lex);
 int		validate(t_lexer *lex);
 int	new_lexer(t_lexer **lex, char *line, size_t size);
-unsigned char	is_whitespace(char c);
 int	save_path(t_minishell *mshell, char **env);
 t_cmd	*lexer_to_cmd(t_lexer *lex);
+t_lexer	*get_last_lexer(t_lexer *lex);
 # include "utils.h"
 # include "exec.h"
 
