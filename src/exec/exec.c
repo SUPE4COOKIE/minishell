@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 13:05:02 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/15 16:12:48 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/21 15:21:44 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,14 @@ void	ft_close(int old[2], int new[2])
 		close(new[1]);
 }
 
+static void	init_old_new(int old[2], int new[2])
+{
+	old[0] = -1;
+	old[1] = -1;
+	new[0] = -1;
+	new[1] = -1;
+}
+
 void	exec(t_minishell *mshell)
 {
 	t_cmd	*cmd;
@@ -31,6 +39,7 @@ void	exec(t_minishell *mshell)
 	int		old[2];
 	int		new[2];
 
+	init_old_new(old, new);
 	cmd = mshell->cmd;
 	while (cmd)
 	{
@@ -47,6 +56,7 @@ void	exec(t_minishell *mshell)
 				error_pipe("dup2 failed", new, old, cmd);
 			ft_close(old, new);
 			execve(cmd->cmd[0], cmd->cmd, mshell->env);
+			free_shell(mshell, 1);
 			perror("execve"); // libere la memoire
 
 		}
@@ -57,5 +67,6 @@ void	exec(t_minishell *mshell)
 		old[0] = new[0];
 		old[1] = new[1];
 	}
-	waitpid(id, &mshell->last_exit_status, 0);
+	while (waitpid(id, &mshell->last_exit_status, 0) > 0)
+		;
 }
