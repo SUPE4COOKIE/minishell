@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sonamcrumiere <sonamcrumiere@student.42    +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 14:23:07 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/19 14:56:34 by sonamcrumie      ###   ########.fr       */
+/*   Updated: 2024/05/21 13:10:42 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,14 @@ int	builtin_env(t_minishell *mshell, char **args)
 	if (args && args[1])
 	{
 		ft_putstr_fd("minishell: env: too many arguments\n", STDERR_FILENO);
-		return (127);
+		return (125);
 	}
 	i = 0;
 	if (!mshell->env)
 		return (EXIT_SUCCESS);
 	while (mshell->env[i])
 	{
-		ft_putstr_fd(mshell->env[i], STDOUT_FILENO);
-		ft_putstr_fd("\n", STDOUT_FILENO);
+		ft_putendl_fd(mshell->env[i], STDOUT_FILENO);
 		i++;
 	}
 	return (EXIT_SUCCESS);
