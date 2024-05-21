@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/20 01:18:41 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/21 17:45:32 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,6 +294,7 @@ int	lexer_director(t_lexer **lex, size_t *end, size_t *start, char *line)
 				add_operator(lex, line + *start, end); // TODO: check return
 				*start = *end;
 			}
+			continue;
 		}
 		(*end)++;
 	}
@@ -316,9 +317,14 @@ t_lexer	*lexer(char *line)
 	}
 	if (end > start)
 	{
-		new_lexer(&lex, line + start, end - start); // TODO: check return
-		get_last_lexer(lex)->space_after = false;
-		printf("space_after: %d\n\n", get_last_lexer(lex)->space_after);
+		if (get_lexer_type(line + start) == T_WORD)
+			split_word_lexer(&lex, line + start, end - start); // TODO: check return
+		else
+		{
+			new_lexer(&lex, line + start, end - start); // TODO: check return
+			get_last_lexer(lex)->space_after = false;
+			printf("space_after: %d\n\n", get_last_lexer(lex)->space_after);
+		}
 	}
 	return (lex);
 }
