@@ -6,17 +6,17 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:12:57 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/21 13:02:04 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/21 16:11:47 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /*
-** @brief Print the current working directory
+** @brief: Print the current working directory
 ** @param mshell The minishell structure
 ** @param args The arguments of the command
-** @return The exit status of the command (1 if too many arguments)
+** @return The exit status of the command
 */
 int	builtin_pwd(t_minishell *mshell, char **args)
 {
@@ -35,7 +35,5 @@ int	builtin_pwd(t_minishell *mshell, char **args)
 		return (error_cmd(mshell, 1, "pwd: error retrieving current directory: getcwd failed"));
 	else
 		ft_putendl_fd(pwd, STDOUT_FILENO);
-	mshell->pwd = ft_strdup(pwd);
-	free(pwd);
 	return (EXIT_SUCCESS);
 }

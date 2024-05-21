@@ -6,11 +6,13 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 14:23:07 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/21 13:10:42 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/21 17:05:12 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	ft_cont
 
 /*
 ** @brief Print the environment variables
@@ -22,10 +24,16 @@ int	builtin_env(t_minishell *mshell, char **args)
 {
 	int	i;
 
+	i = 0;
 	if (args && args[1])
 	{
-		ft_putstr_fd("minishell: env: too many arguments\n", STDERR_FILENO);
-		return (125);
+		while (args[i])
+		{
+			if (ft_contain(args[i], "/", 1) == 0)
+				return (error_cmd(mshell, 127, "env: invalid option"));
+			else
+				i++;
+		}
 	}
 	i = 0;
 	if (!mshell->env)
