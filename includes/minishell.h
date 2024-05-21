@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/17 15:15:58 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/21 11:33:04 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "../libft/libft.h"
 # include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -37,6 +38,7 @@ typedef struct s_minishell
 	int		last_exit_status;
 	char 	*pwd;
 	char	*old_pwd;
+	int		shell_level;
 	t_cmd	*cmd;
 }				t_minishell;
 
