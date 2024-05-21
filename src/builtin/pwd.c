@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sonamcrumiere <sonamcrumiere@student.42    +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:12:57 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/19 14:56:52 by sonamcrumie      ###   ########.fr       */
+/*   Updated: 2024/05/21 13:02:04 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,7 @@ int	builtin_pwd(t_minishell *mshell, char **args)
 		return (error_cmd(mshell, 1, "pwd: error retrieving current directory: getcwd failed"));
 	else
 		ft_putendl_fd(pwd, STDOUT_FILENO);
+	mshell->pwd = ft_strdup(pwd);
+	free(pwd);
 	return (EXIT_SUCCESS);
 }
