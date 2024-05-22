@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/21 17:45:32 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/22 18:08:11 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 			{
 				new_lexer(lex, line, i); // TODO: check return
 				get_last_lexer(*lex)->space_after = true;
-				printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
+				//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
 			}
 			line += i + 1;
 			size -= i + 1;
@@ -138,7 +138,7 @@ int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 			get_last_lexer(*lex)->space_after = true;
 		else
 			get_last_lexer(*lex)->space_after = false;
-		printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
+		//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
 	}
 	return (0);
 }
@@ -172,8 +172,8 @@ int	new_lexer(t_lexer **lex, char *line, size_t size)
 	new->type = get_lexer_type(line);
 	append_new_lexer(lex, &new);
 	// temp code
-	printf("value: %s\n", new->value);
-	printf("type: %s\n", get_token_type(new->type));
+	//printf("value: %s\n", new->value);
+	//printf("type: %s\n", get_token_type(new->type));
 	return (0);
 }
 
@@ -208,7 +208,7 @@ void add_operator(t_lexer **lex, char *line, size_t *end)
 		get_last_lexer(*lex)->space_after = true;
 	else
 		get_last_lexer(*lex)->space_after = false;
-	printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
+	//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
 }
 
 t_lexer	*get_last_lexer(t_lexer *lex)
@@ -236,7 +236,7 @@ int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
 		get_last_lexer(*lex)->space_after = true;
 	else
 		get_last_lexer(*lex)->space_after = false;
-	printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
+	//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
 	return (0);
 }
 
@@ -261,7 +261,7 @@ int	lexer_director(t_lexer **lex, size_t *end, size_t *start, char *line)
 						get_last_lexer(*lex)->space_after = true;
 					else
 						get_last_lexer(*lex)->space_after = false;
-					printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
+					//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
 				}
 			}
 			*start = *end;
@@ -285,7 +285,7 @@ int	lexer_director(t_lexer **lex, size_t *end, size_t *start, char *line)
 						get_last_lexer(*lex)->space_after = true;
 					else
 						get_last_lexer(*lex)->space_after = false;
-					printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
+					//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
 				}
 			}
 			*start = *end;
@@ -323,7 +323,7 @@ t_lexer	*lexer(char *line)
 		{
 			new_lexer(&lex, line + start, end - start); // TODO: check return
 			get_last_lexer(lex)->space_after = false;
-			printf("space_after: %d\n\n", get_last_lexer(lex)->space_after);
+			//printf("space_after: %d\n\n", get_last_lexer(lex)->space_after);
 		}
 	}
 	return (lex);

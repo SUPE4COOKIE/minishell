@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/21 23:13:56 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/22 23:00:11 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,13 @@ typedef struct s_minishell
 	char	*line;
 	char	*current_path;
 	int		last_exit_status;
-	t_cmd	*cmd;
+	t_cmd	*cmds;
 }				t_minishell;
 
 typedef enum e_cmd_type
 {
 	CMD,
+	FIL,
 	PIP,
 	RED_IN,
 	RED_OUT,
@@ -61,6 +62,7 @@ typedef enum e_cmd_type
 struct s_cmd
 {
 	char			*cmd;
+	bool			is_valid_cmd;
 	char			**args;
 	int				pipe;
 	pid_t			pid;
@@ -91,9 +93,10 @@ void	print_lexer(t_lexer *lex);
 int		validate(t_lexer *lex);
 int	new_lexer(t_lexer **lex, char *line, size_t size);
 int	save_path(t_minishell *mshell, char **env);
-t_cmd	*lexer_to_cmd(t_lexer *lex);
+t_cmd	*lexer_to_cmd(t_lexer *lex, char **path);
 t_lexer	*get_last_lexer(t_lexer *lex);
 int		append_words(t_cmd **cmd, t_lexer **lex);
+int		get_cmd_path(t_cmd *cmd, char **path);
 # include "utils.h"
 # include "exec.h"
 
