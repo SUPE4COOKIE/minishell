@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sonamcrumiere <sonamcrumiere@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:11:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/17 15:38:01 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/23 18:00:56 by sonamcrumie      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,29 @@ int	error_cmd(t_minishell *mshell, int status, char *msg)
 		ft_putstr_fd("\n", STDERR_FILENO);
 	}
 	return (status);
+}
+
+/*
+** @brief: Print an error message and return the status
+** @param msg The message to print (nullable)
+** @param ptr The pointer to free (nullable)
+** @param ptr2 The pointer to free (nullable)
+** @param ptr3 The pointer to free (nullable)
+** @return 1
+*/
+int	error_msg_free(char *msg, void *ptr, void *ptr2, void *ptr3)
+{
+	if (msg)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(msg, STDERR_FILENO);
+		ft_putstr_fd("\n", STDERR_FILENO);
+	}
+	if (ptr)
+		free(ptr);
+	if (ptr2)
+		free(ptr2);
+	if (ptr3)
+		free(ptr3);
+	return (EXIT_FAILURE);
 }
