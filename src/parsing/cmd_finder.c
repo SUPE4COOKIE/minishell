@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_finder.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 20:55:03 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/22 22:56:58 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/24 06:17:56 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static int	is_full_path(t_cmd *cmd)
 			write(2, tmp, ft_strlen(tmp));
 			free(tmp);
 			free(cmd->cmd);
-			cmd->cmd = NULL;
+			cmd->is_valid_cmd = false;
 			return (2);
 		}
 	}
@@ -50,7 +50,7 @@ static	void	cmd_no_path(t_cmd *cmd, char **path)
 			write(2, tmp, ft_strlen(tmp));
 			free(tmp);
 			free(cmd->cmd);
-			cmd->cmd = NULL;
+			cmd->is_valid_cmd = false;
 		}
 	}
 }
@@ -68,7 +68,7 @@ static	void	cmd_not_found(t_cmd *cmd)
 		write(2, tmp, ft_strlen(tmp));
 		free(tmp);
 		free(cmd->cmd);
-		cmd->cmd = NULL;
+		cmd->is_valid_cmd = false;
 	}
 }
 

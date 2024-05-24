@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_to_cmd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/22 23:08:03 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/24 09:55:09 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,31 +210,21 @@ bool	is_valid_cmd(t_cmd *cmd)
 	return (true);
 }
 
-void	delete_cmd(t_cmd **cmd)
-{
-	t_cmd	*tmp;
-	t_cmd	*next;
-
-	tmp = *cmd;
-	while (tmp)
-	{
-		next = tmp->next;
-		//TODO: free function
-		free(tmp->cmd);
-		free(tmp->args);
-		free(tmp);
-		tmp = next;
-	}
-	*cmd = NULL;
-}
+void	delete_cmd(t_cmd **cmd,
 
 int	append_redir(t_cmd **cmd, t_lexer **lex)
 {
-	if ((*lex)->type == T_REDIR_IN)
+	if ((*lex)->type == T_REDIR_OUT)
 	{
-		get_last_cmd(*cmd)->op_type = RED_IN;
+		get_last_cmd(*cmd)->op_type = RED_OUT;
 		printf("type change: %s -> %s\n", get_last_cmd(*cmd)->cmd, cmd_type_to_str(get_last_cmd(*cmd)->op_type));
-		
+		(*lex) = (*lex)->next;
+		if ((*lex)->type == T_WORD || (*lex)->type == T_S_QUOTED_WORD
+			|| (*lex)->type == T_D_QUOTED_WORD)
+			append_words(cmd, lex);
+		get_last_cmd(*cmd)->prev->infile = ft_strdup((*lex)->value);
+		delete_cmd(get_last_cmd(*cmd));
+		printf("infile for %s: %s\n", get_last_cmd(*cmd)->cmd ,get_last_cmd(*cmd)->infile);
 	}
 	return (0);
 }
