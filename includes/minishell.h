@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/24 06:14:06 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/27 10:31:23 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,7 @@ struct s_cmd
 	char			*cmd;
 	bool			is_valid_cmd;
 	char			**args;
-	int				pipe;
-	pid_t			pid;
-	t_cmd_type		op_type;
+	t_cmd_type		op_type[2];
 	char			*infile;
 	char			*outfile;
 	t_cmd			*prev;
