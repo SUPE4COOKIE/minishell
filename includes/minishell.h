@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/27 10:31:23 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/27 15:43:38 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ typedef enum e_cmd_type
 	RED_OUT,
 	HDOC,
 	APP_OUT,
+	UNDEFINED,
 }				t_cmd_type;
 
 struct s_cmd
@@ -65,8 +66,8 @@ struct s_cmd
 	bool			is_valid_cmd;
 	char			**args;
 	t_cmd_type		op_type[2];
-	char			*infile;
-	char			*outfile;
+	char			**infile;
+	char			**outfile;
 	t_cmd			*prev;
 	t_cmd			*next;
 };

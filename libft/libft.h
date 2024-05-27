@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:33:33 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/19 19:35:56 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/27 16:43:46 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,5 @@ void	ft_putnbr_fd(int n, int fd);
 char	*ft_strdup(const char *s1);
 void	*ft_calloc(size_t number, size_t size);
 int		ft_iswhitespace(char c);
+int		ft_append_str(char ***str, char *add);
 #endif
