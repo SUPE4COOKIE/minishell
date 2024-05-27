@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/15 22:39:58 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/27 10:52:36 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,7 @@ struct s_cmd
 {
 	char			*cmd;
 	char			**args;
-	int				pipe;
-	pid_t			pid;
-	t_cmd_type		type;
+	t_cmd_type		op_type[2];
 	char			*infile;
 	char			*outfile;
 	t_cmd			*prev;
