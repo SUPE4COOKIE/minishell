@@ -6,13 +6,25 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 14:23:07 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/21 17:05:12 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/27 14:50:13 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_cont
+int	ft_contain(char *str, char c, int n)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == c)
+			n--;
+		i++;
+	}
+	return (n);
+}
 
 /*
 ** @brief Print the environment variables

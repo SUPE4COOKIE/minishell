@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:04:04 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/21 12:55:28 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/27 10:54:46 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static bool	get_is_between_cmd(t_minishell *mshell)
 */
 int	builtin_exit(t_minishell *mshell, char **args)
 {
-	long	status;
+	uint8_t status;
 	bool	is_between;
 
 	status = mshell->last_exit_status;
@@ -77,10 +77,8 @@ int	builtin_exit(t_minishell *mshell, char **args)
 	if (args[1])
 	{
 		status = ft_atol(args[1]);
-		if (status > INT_MAX)
+		if (status > INT_MAX) // Check long max
 			return (error_cmd(mshell, 1, "exit: numeric argument required"));
-		if (status < 0)
-			return (error_cmd(mshell, 1, "exit: exit status out of range"));
 	}
 	return (free_shell(mshell, status));
 }

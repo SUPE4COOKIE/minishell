@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/17 15:09:59 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/27 14:41:37 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ static bool	change_dir(t_minishell *mshell, char *path)
 		return (error_cmd(&mshell, 1, "cd: no such file or directory"));
 	return_path = getcwd(cwd, PATH_MAX);
 	if (!return_path)
-		return (free(return_path), error_cmd(&mshell, 1, "cd: getcwd failed")); // TODO : implement free_ptr
+		return (free(return_path), error_cmd(&mshell, 1, "cd: getcwd failed"));
 	tmp = get_path(&mshell->env, "PWD");
 	if (tmp < 0)
 		return (free(return_path), error_cmd(&mshell, 1, "PWD not set"));
@@ -102,6 +102,80 @@ static bool	change_dir(t_minishell *mshell, char *path)
 	return (EXIT_SUCCESS);
 }
 
+void ft_create_list(char **args, t_arg **new_args)
+{
+	int i;
+	t_arg *tmp;
+
+	i = 0;
+	while (args[i])
+	{
+		tmp = malloc(sizeof(t_arg));
+		if (!tmp)
+			return ;
+		tmp->arg = ft_strdup(args[i]);
+		if (!tmp->arg)
+			return (free(tmp));
+		tmp->next = NULL;
+		tmp->prev = NULL;
+		if (!*new_args)
+			*new_args = tmp;
+		else
+		{
+			tmp->next = *new_args;
+			(*new_args)->prev = tmp;
+			*new_args = tmp;
+		}
+		i++;
+	}
+}
+
+bool is_valid_path(char *path)
+{
+	int i;
+
+	i = 0;
+	while (path[i])
+	{
+		if (path[i] == '.' && path[i + 1] == '.')
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+void remove_double_point(char **args)
+{
+	t_arg	*new_args;
+	t_arg	*head;
+	t_arg	*prev_prev;
+	t_arg	*next;
+	int		i;
+	char path[PATH_MAX];
+
+	i = 0;
+	ft_create_list(args, &new_args);
+	head = new_args;
+	while (new_args)
+	{
+		if (new_args->prev && ft_strncmp(new_args->arg, "..", 2) != 0)
+		{
+			prev_prev = new_args->prev->prev;
+			next = new_args->next;
+			free(new_args->prev->arg);
+			free(new_args->prev);
+			free(new_args->arg);
+			free(new_args);
+			prev_prev->next = next;
+			next->prev = prev_prev;
+			new_args = next;
+		}
+		else
+			new_args = new_args->next;
+	}
+
+}
+
 /*
 ** @brief Change the current directory
 ** @param mshell The minishell structure
@@ -112,9 +186,10 @@ int	builtin_cd(t_minishell *mshell, char **args)
 {
 	char   *path;
 
+	remove_double_point(args);
 	if (!args || !args[1] || !args[1][0])
 	{
-		path = get_path(mshell->env, "HOME"); // TODO : implement get_path
+		path = get_path(mshell->env, "HOME");
 		if (path < 0)
 			return (error_cmd(&mshell, 1, "HOME not set"));
 		return (change_dir(&mshell, path));

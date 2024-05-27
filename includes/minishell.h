@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/21 11:33:04 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/27 15:22:43 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <readline/history.h>
 # include <stdbool.h>
 # include <errno.h>
+# include <stdint.h>
 # define PATH_MAX 4096
 
 typedef struct s_cmd	t_cmd;

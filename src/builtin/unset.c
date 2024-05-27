@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 15:08:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/21 15:55:33 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/27 10:12:19 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,17 +82,9 @@ int	builtin_unset(t_minishell *mshell, char **args)
 	i = 1;
 	while (args[i])
 	{
-		if (is_valid_env_var(args[i]) == false || ft_strchr(args[i], '='))
-		{
-			ret = error_cmd(mshell, 1, "unset: not a valid identifier");
-			i++;
-		}
-		else
-		{
-			index = get_index_env(mshell->env, args[i]);
-			if (index != -1)
-				mshell->env = remove_env_var(mshell->env, index);
-		}
+		index = get_index_env(mshell->env, args[i]);
+		if (index != -1)
+			mshell->env = remove_env_var(mshell->env, index);
 		i++;
 	}
 	return (EXIT_SUCCESS);

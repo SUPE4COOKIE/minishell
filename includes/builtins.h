@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sonamcrumiere <sonamcrumiere@student.42    +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:30:33 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/25 10:51:20 by sonamcrumie      ###   ########.fr       */
+/*   Updated: 2024/05/27 15:16:21 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,15 @@
 
 typedef struct s_setenv
 {
-	size_t		name_len;
-	size_t		value_len;
-	size_t		total;
-	size_t		env;
-	const char	*name;
-	const char	*value;
-	int			overwrite;
+	size_t 	len;
 }		t_setenv;
+
+typedef struct s_arg
+{
+	char	*arg;
+	struct s_arg	*next;
+	struct s_arg	*prev;
+}		t_arg;
 
 int	builtin_cd(t_minishell *mshell, char **args);
 int	builtin_echo(t_minishell *mshell, char **args);
