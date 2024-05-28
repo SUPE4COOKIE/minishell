@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 16:30:53 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/27 16:48:42 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/28 11:58:56 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,15 @@ int	ft_append_str(char ***str, char *add)
 	if (!new)
 		return (1);
 	i = 0;
-	while ((*str)[i])
+	while ((*str) && (*str)[i])
 	{
 		new[i] = (*str)[i];
 		i++;
 	}
 	new[i] = add;
 	new[i + 1] = NULL;
-	free(*str);
+	if (*str)
+		free(*str);
 	*str = new;
 	return (0);
 }

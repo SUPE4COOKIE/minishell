@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/27 17:22:23 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/28 12:28:05 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,13 +90,6 @@ int	append_cmd(t_cmd **cmd, t_cmd *new)
 		tmp->next = new;
 		new->prev = tmp;
 	}
-	printf("cmd: %s\n", new->cmd);
-	printf("args: ");
-	for (int i = 0; new->args[i]; i++)
-		printf("%s ", new->args[i]);
-	printf("\ninfile op type: %s\n", cmd_type_to_str(new->op_type[0]));
-	printf("outfile op type: %s\n", cmd_type_to_str(new->op_type[1]));
-	printf("\n");
 	return (0);
 }
 
@@ -153,7 +146,7 @@ t_cmd_type get_op_type(t_lexer *lex)
 		return (token_to_cmd(lex->type));
 }
 
-void	print_cmd(t_cmd *cmd)
+void	print_cmds(t_cmd *cmd)
 {
 	t_cmd	*tmp;
 
@@ -171,30 +164,53 @@ void	print_cmd(t_cmd *cmd)
 	}
 }
 
+void	print_cmd(t_cmd *cmd)
+{
+	printf("cmd: %s\n", cmd->cmd);
+	printf("args: ");
+	for (int i = 0; cmd->args[i]; i++)
+		printf("%s, ", cmd->args[i]);
+	printf("\ninfile op type: %s\n", cmd_type_to_str(cmd->op_type[0]));
+	printf("outfile op type: %s\n", cmd_type_to_str(cmd->op_type[1]));
+	if (cmd->op_type[0] != UNDEFINED)
+	{
+		printf("infile: ");
+		for (int i = 0; cmd->infile[i]; i++)
+			printf("%s , ", cmd->infile[i]);
+		printf("\n");
+	}
+	if (cmd->op_type[1] != UNDEFINED)
+	{
+		printf("outfile: ");
+		for (int i = 0; cmd->outfile[i]; i++)
+			printf("%s , ", cmd->outfile[i]);
+		printf("\n");
+	
+	}
+	printf("\n");
+}
+
 int	append_redir(t_cmd *cmd, t_lexer **lex)
 {
 	if ((*lex)->type == T_REDIR_IN)
 	{
 		(*lex) = (*lex)->next;
 		cmd->op_type[0] = RED_IN;
-		cmd->infile = ft_append_str(&(cmd->infile), (*lex)->value);
-		(*lex) = (*lex)->next;
+		ft_append_str(&(cmd->infile), (*lex)->value);
 	}
 	else if ((*lex)->type == T_REDIR_OUT)
 	{
 		(*lex) = (*lex)->next;
 		cmd->op_type[1] = RED_OUT;
-		cmd->outfile = ft_append_str(&(cmd->outfile), (*lex)->value);
-		(*lex) = (*lex)->next;
+		ft_append_str(&(cmd->outfile), (*lex)->value);
 	}
 	else if ((*lex)->type == T_APPEND_OUT)
 	{
 		(*lex) = (*lex)->next;
 		cmd->op_type[1] = APP_OUT;
-		cmd->outfile = ft_append_str(&(cmd->outfile), (*lex)->value);
-		(*lex) = (*lex)->next;
+		ft_append_str(&(cmd->outfile), (*lex)->value);
 	}
-		
+	return (0);	
 }
 
 int	append_cmds(t_cmd **cmd, t_lexer **lex)
@@ -228,6 +244,7 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 	}
 	last_cmd->args = args_start;
 	last_cmd->cmd = args_start[0];
+	print_cmd(last_cmd);
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/22 18:08:11 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/28 12:39:36 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ void	print_lexer(t_lexer *lex)
 int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 {
 	size_t	i;
+	int		error_code;
 
 	i = 0;
 	while (i < size)
@@ -121,7 +122,11 @@ int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 		{
 			if (i > 0)
 			{
-				new_lexer(lex, line, i); // TODO: check return
+				error_code = new_lexer(lex, line, i); // TODO: check return
+				if (error_code)
+					return (error_code);
+				if (!(*lex))
+					return (0);
 				get_last_lexer(*lex)->space_after = true;
 				//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
 			}
