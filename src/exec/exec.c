@@ -6,13 +6,13 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 13:05:02 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/15 15:58:23 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/27 15:26:03 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void ft_close(int old[2], int new[2])
+void	ft_close(int old[2], int new[2])
 {
 	if (old[0])
 		close(old[0]);
@@ -24,13 +24,27 @@ void ft_close(int old[2], int new[2])
 		close(new[1]);
 }
 
-void exec(t_minishell *mshell)
+static void	init_old_new(int old[2], int new[2])
+{
+	old[0] = -1;
+	old[1] = -1;
+	new[0] = -1;
+	new[1] = -1;
+}
+
+void	exec_cmd(t_minishell *mshell)
+{
+	
+}
+
+void	exec(t_minishell *mshell)
 {
 	t_cmd	*cmd;
 	int		id;
 	int		old[2];
 	int		new[2];
 
+	init_old_new(old, new);
 	cmd = mshell->cmd;
 	while (cmd)
 	{
@@ -38,7 +52,7 @@ void exec(t_minishell *mshell)
 			error_pipe("pipe failed", new, old, cmd);
 		id = fork();
 		if (id == -1)
-			error_pipe("fork failed");
+			error_pipe("fork failed", new, old, cmd);
 		if (id == 0)
 		{
 			if (dup2(old[0], STDIN_FILENO))
@@ -46,9 +60,9 @@ void exec(t_minishell *mshell)
 			if (dup2(new[1], STDOUT_FILENO))
 				error_pipe("dup2 failed", new, old, cmd);
 			ft_close(old, new);
-			execve(cmd->cmd[0], cmd->cmd, mshell->env);
-			perror("execve"); // libere la memoire
-
+			exec_cmd(mshell);
+			free_shell(mshell, 1);
+			perror("execve");
 		}
 		if (old[0])
 			close(old[0]);
@@ -57,5 +71,6 @@ void exec(t_minishell *mshell)
 		old[0] = new[0];
 		old[1] = new[1];
 	}
-	waitpid(id, &mshell->last_exit_status, 0);
+	while (waitpid(id, &mshell->last_exit_status, 0) > 0)
+		;
 }

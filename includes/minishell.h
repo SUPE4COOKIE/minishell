@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/28 14:35:47 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/28 14:53:12 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,18 @@
 
 # include "../libft/libft.h"
 # include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <fcntl.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <stdbool.h>
+# include <errno.h>
+# include <stdint.h>
+# define PATH_MAX 4096
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;
@@ -96,7 +102,10 @@ t_cmd	*lexer_to_cmd(t_lexer *lex, char **path);
 t_lexer	*get_last_lexer(t_lexer *lex);
 int		append_words(t_cmd **cmd, t_lexer **lex);
 int		get_cmd_path(t_cmd *cmd, char **path);
+
 # include "utils.h"
 # include "exec.h"
+# include "builtins.h"
+# include "utils.h"
 
 #endif
