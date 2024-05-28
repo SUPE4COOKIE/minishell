@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/28 12:28:05 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/28 16:33:31 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,6 +271,20 @@ void	delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 	}
 }
 
+int	resolve_cmd_path(t_cmd **cmd, char **path)
+{
+	t_cmd	*tmp;
+
+	tmp = *cmd;
+	while (tmp)
+	{
+		get_cmd_path(&tmp, path);
+		printf("cmd: %s\n", tmp->cmd);
+		tmp = tmp->next;
+	}
+	return (0);
+}
+
 t_cmd	*lexer_to_cmd(t_lexer *lex, char **path)
 {
 	t_cmd	*cmd;
@@ -285,5 +299,6 @@ t_cmd	*lexer_to_cmd(t_lexer *lex, char **path)
 		if (current_lex)
 			current_lex = current_lex->next;
 	}
+	resolve_cmd_path(&cmd, path);
 	return (cmd);
 }

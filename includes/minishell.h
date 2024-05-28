@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/27 15:43:38 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/28 16:30:45 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int	save_path(t_minishell *mshell, char **env);
 t_cmd	*lexer_to_cmd(t_lexer *lex, char **path);
 t_lexer	*get_last_lexer(t_lexer *lex);
 int		append_words(t_cmd **cmd, t_lexer **lex);
-int		get_cmd_path(t_cmd *cmd, char **path);
+int		get_cmd_path(t_cmd **cmd, char **path);
 # include "utils.h"
 # include "exec.h"
 
