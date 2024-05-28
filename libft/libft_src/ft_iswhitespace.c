@@ -1,19 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pre_parse.c                                        :+:      :+:    :+:   */
+/*   ft_iswhitespace.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/13 22:55:03 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/22 20:07:58 by mwojtasi         ###   ########.fr       */
+/*   Created: 2024/05/19 19:34:45 by mwojtasi          #+#    #+#             */
+/*   Updated: 2024/05/19 19:35:35 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-	things to check :
-	numbers of pipes
-	numbers of redirections
-	numbers of here_docs
-	open files and create necessary files
-*/
+int	ft_iswhitespace(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\v'
+		|| c == '\f' || c == '\r');
+}

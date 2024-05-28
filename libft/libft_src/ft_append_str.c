@@ -1,42 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlcat.c                                       :+:      :+:    :+:   */
+/*   ft_append_str.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/15 15:30:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/21 18:57:13 by mwojtasi         ###   ########.fr       */
+/*   Created: 2024/05/27 16:30:53 by mwojtasi          #+#    #+#             */
+/*   Updated: 2024/05/28 11:58:56 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-size_t	ft_strlcat(char *dst, const char *src, size_t size)
+size_t	tab_size(char **tab)
 {
-	char		*d;
-	const char	*s;
-	size_t		n;
-	size_t		dlen;
+	size_t	i;
 
-	d = dst;
-	s = src;
-	n = size;
-	while ((n-- != 0) && (*d != '\0'))
-		d++;
-	dlen = d - dst;
-	n = size - dlen;
-	if (n == 0)
-		return (dlen + ft_strlen((char *)s));
-	while (*s != '\0')
+	i = 0;
+	if (!tab)
+		return (0);
+	while (tab[i])
+		i++;
+	return (i);
+}
+
+int	ft_append_str(char ***str, char *add)
+{
+	char	**new;
+	size_t	i;
+
+	new = malloc(sizeof(char *) * (tab_size(*str) + 2));
+	if (!new)
+		return (1);
+	i = 0;
+	while ((*str) && (*str)[i])
 	{
-		if (n != 1)
-		{
-			*d++ = *s;
-			n--;
-		}
-		s++;
+		new[i] = (*str)[i];
+		i++;
 	}
-	*d = '\0';
-	return (dlen + (s - src));
+	new[i] = add;
+	new[i + 1] = NULL;
+	if (*str)
+		free(*str);
+	*str = new;
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/15 23:18:05 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/28 12:28:05 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,45 @@ t_cmd_type	token_to_cmd(t_token_type type)
 	return (CMD);
 }
 
-t_cmd	*new_cmd(t_token_type type, char *value)
+char	*cmd_type_to_str(t_cmd_type type)
+{
+	if (type == CMD)
+		return ("CMD");
+	else if (type == PIP)
+		return ("PIP");
+	else if (type == RED_IN)
+		return ("RED_IN");
+	else if (type == RED_OUT)
+		return ("RED_OUT");
+	else if (type == APP_OUT)
+		return ("APP_OUT");
+	else if (type == HDOC)
+		return ("HDOC");
+	return ("UNDEFINED");
+}
+
+t_cmd	*new_cmd(char **args)
 {
 	t_cmd	*new;
 
 	new = malloc(sizeof(t_cmd));
 	if (!new)
 		return (NULL);
-	new->type = token_to_cmd(type);
-	new->cmd = value;
+	if (args)
+	{
+		new->args = args;
+		new->cmd = args[0];
+	}
+	else
+	{
+		new->args = NULL;
+		new->cmd = NULL;
+		new->is_valid_cmd = false;
+	}
+	new->infile = NULL;
+	new->op_type[0] = UNDEFINED;
+	new->outfile = NULL;
+	new->op_type[1] = UNDEFINED;
 	new->next = NULL;
 	new->prev = NULL;
 	return (new);
@@ -63,6 +93,18 @@ int	append_cmd(t_cmd **cmd, t_cmd *new)
 	return (0);
 }
 
+t_cmd	*get_last_cmd(t_cmd *cmd)
+{
+	t_cmd	*tmp;
+
+	tmp = cmd;
+	if (!tmp)
+		return (NULL);
+	while (tmp->next)
+		tmp = tmp->next;
+	return (tmp);
+}
+
 size_t	get_cmd_size(t_lexer *lex)
 {
 	size_t	size;
@@ -78,45 +120,168 @@ size_t	get_cmd_size(t_lexer *lex)
 	return (size);
 }
 
-int	append_words(t_cmd **cmd, t_lexer **lex)
+size_t	get_word_num(t_lexer *lex)
 {
-	//t_cmd	*new;
-	(void)cmd;
-	char	*cmd_str;
+	size_t	num;
 
-	cmd_str = malloc(sizeof(char) * (get_cmd_size(*lex) + 1));
-	if (!cmd_str)
+	num = 0;
+	while (lex && lex->type != T_PIPE)
+	{
+		if (lex->value && (lex->type == T_WORD || lex->type == T_S_QUOTED_WORD
+			|| lex->type == T_D_QUOTED_WORD))
+			num++;
+		if (lex->value && (lex->type == T_REDIR_IN || lex->type == T_REDIR_OUT
+			|| lex->type == T_APPEND_OUT))
+			num--;
+		lex = lex->next;
+	}
+	return (num);
+}
+
+t_cmd_type get_op_type(t_lexer *lex)
+{
+	if (!lex)
+		return (CMD);
+	else
+		return (token_to_cmd(lex->type));
+}
+
+void	print_cmds(t_cmd *cmd)
+{
+	t_cmd	*tmp;
+
+	tmp = cmd;
+	while (tmp)
+	{
+		printf("cmd: %s\n", tmp->cmd);
+		printf("args: ");
+		for (int i = 0; tmp->args[i]; i++)
+			printf("%s ", tmp->args[i]);
+		printf("\ninfile op type: %s\n", cmd_type_to_str(tmp->op_type[0]));
+		printf("outfile op type: %s\n", cmd_type_to_str(tmp->op_type[1]));
+		printf("\n");
+		tmp = tmp->next;
+	}
+}
+
+void	print_cmd(t_cmd *cmd)
+{
+	printf("cmd: %s\n", cmd->cmd);
+	printf("args: ");
+	for (int i = 0; cmd->args[i]; i++)
+		printf("%s, ", cmd->args[i]);
+	printf("\ninfile op type: %s\n", cmd_type_to_str(cmd->op_type[0]));
+	printf("outfile op type: %s\n", cmd_type_to_str(cmd->op_type[1]));
+	if (cmd->op_type[0] != UNDEFINED)
+	{
+		printf("infile: ");
+		for (int i = 0; cmd->infile[i]; i++)
+			printf("%s , ", cmd->infile[i]);
+		printf("\n");
+	}
+	if (cmd->op_type[1] != UNDEFINED)
+	{
+		printf("outfile: ");
+		for (int i = 0; cmd->outfile[i]; i++)
+			printf("%s , ", cmd->outfile[i]);
+		printf("\n");
+	
+	}
+	printf("\n");
+}
+
+int	append_redir(t_cmd *cmd, t_lexer **lex)
+{
+	if ((*lex)->type == T_REDIR_IN)
+	{
+		(*lex) = (*lex)->next;
+		cmd->op_type[0] = RED_IN;
+		ft_append_str(&(cmd->infile), (*lex)->value);
+	}
+	else if ((*lex)->type == T_REDIR_OUT)
+	{
+		(*lex) = (*lex)->next;
+		cmd->op_type[1] = RED_OUT;
+		ft_append_str(&(cmd->outfile), (*lex)->value);
+	}
+	else if ((*lex)->type == T_APPEND_OUT)
+	{
+		(*lex) = (*lex)->next;
+		cmd->op_type[1] = APP_OUT;
+		ft_append_str(&(cmd->outfile), (*lex)->value);
+	}
+	return (0);	
+}
+
+int	append_cmds(t_cmd **cmd, t_lexer **lex)
+{
+	// need to add system to not add paths for redirections
+	char	**args;
+	char	**args_start;
+	t_cmd	*last_cmd;
+
+	args = ft_calloc(get_word_num(*lex) + 1, sizeof(char *));
+	args_start = args;
+	if (!args)
 		return (1);
-	cmd_str[0] = 0;
+	last_cmd = new_cmd(NULL);
+	append_cmd(cmd, last_cmd);
 	while (*lex)
 	{
-		if ((*lex)->value && ((*lex)->type == T_WORD || (*lex)->type == T_S_QUOTED_WORD
+		if ((*lex)->type == T_REDIR_IN || (*lex)->type == T_REDIR_OUT
+			|| (*lex)->type == T_APPEND_OUT)
+			append_redir(last_cmd, lex);
+		else if ((*lex)->value && ((*lex)->type == T_WORD || (*lex)->type == T_S_QUOTED_WORD
 			|| (*lex)->type == T_D_QUOTED_WORD))
 		{
-			if (cmd_str[0])
-				ft_strlcat(cmd_str, " ", get_cmd_size(*lex) + 1);
-			ft_strlcat(cmd_str, (*lex)->value, get_cmd_size(*lex) + 1);
+			*args = ft_strdup((*lex)->value);
+			args++;
 		}
 		else
 			break ;
-		*lex = (*lex)->next;
+		if (*lex)
+			*lex = (*lex)->next;
 	}
-	printf("cmd: %s\n", cmd_str);
+	last_cmd->args = args_start;
+	last_cmd->cmd = args_start[0];
+	print_cmd(last_cmd);
 	return (0);
 }
 
-t_cmd	*lexer_to_cmd(t_lexer *lex)
+void	delete_cmd(t_cmd **cmd, t_cmd *to_delete)
+{
+	t_cmd	*tmp;
+
+	tmp = *cmd;
+	if (tmp == to_delete)
+	{
+		*cmd = tmp->next;
+		free(tmp->cmd);
+		free(tmp->args);
+		free(tmp);
+	}
+	else
+	{
+		while (tmp->next != to_delete)
+			tmp = tmp->next;
+		tmp->next = to_delete->next;
+		free(to_delete->cmd);
+		free(to_delete->args);
+		free(to_delete);
+	}
+}
+
+t_cmd	*lexer_to_cmd(t_lexer *lex, char **path)
 {
 	t_cmd	*cmd;
 	t_lexer	*current_lex;
 
+	(void)path;
 	cmd = NULL;
 	current_lex = lex;
 	while (current_lex)
 	{
-		if (current_lex->type == T_WORD || current_lex->type == T_S_QUOTED_WORD
-			|| current_lex->type == T_D_QUOTED_WORD)
-			append_words(&cmd, &current_lex);
+		append_cmds(&cmd, &current_lex);
 		if (current_lex)
 			current_lex = current_lex->next;
 	}
