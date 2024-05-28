@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/27 14:41:37 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/28 14:48:10 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,6 @@ bool is_valid_path(char *path)
 void remove_double_point(char **args)
 {
 	t_arg	*new_args;
-	t_arg	*head;
 	t_arg	*prev_prev;
 	t_arg	*next;
 	int		i;
@@ -155,7 +154,6 @@ void remove_double_point(char **args)
 
 	i = 0;
 	ft_create_list(args, &new_args);
-	head = new_args;
 	while (new_args)
 	{
 		if (new_args->prev && ft_strncmp(new_args->arg, "..", 2) != 0)
@@ -173,7 +171,7 @@ void remove_double_point(char **args)
 		else
 			new_args = new_args->next;
 	}
-
+	
 }
 
 /*
