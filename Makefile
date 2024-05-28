@@ -31,7 +31,9 @@ SRCS = $(addprefix src/, \
 	$(addprefix utils/, \
 		error.c \
 		ft_atoi.c \
-	))
+	) \
+	minishell.c \
+	)
 
 # Object files directory and object files
 OBJ_DIR = .obj

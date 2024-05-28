@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/15 20:32:55 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/28 18:55:05 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int main(int argc, char **argv, char **envp)
 	// maybe cpy in heap
 	mshell.env = envp;
 	parse(&mshell);
+	exec(&mshell);
 	free(mshell.line);
 	//while (42)
 	//{
