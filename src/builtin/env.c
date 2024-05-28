@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 14:23:07 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/27 14:50:13 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/28 18:38:05 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	builtin_env(t_minishell *mshell, char **args)
 	{
 		while (args[i])
 		{
-			if (ft_contain(args[i], "/", 1) == 0)
+			if (ft_contain(args[i], '/', 1) == 0)
 				return (error_cmd(mshell, 127, "env: invalid option"));
 			else
 				i++;

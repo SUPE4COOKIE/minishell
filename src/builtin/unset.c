@@ -6,11 +6,21 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 15:08:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/27 10:12:19 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/28 18:42:56 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+size_t	ft_tablen(char **tab)
+{
+	size_t	i;
+
+	i = 0;
+	while (tab[i])
+		i++;
+	return (i);
+}
 
 char **remove_env_var(char **env, int index)
 {

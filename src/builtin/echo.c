@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:36:02 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/21 15:48:27 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/28 18:37:52 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ int	builtin_echo(t_minishell *mshell, char **args)
 	int		i;
 	bool	n;
 
+	(void)mshell;
 	i = 1;
 	n = false;
 	if (args[i] && is_n(args[i]))

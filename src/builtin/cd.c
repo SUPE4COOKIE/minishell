@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/28 14:48:10 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/28 18:37:29 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,24 +25,23 @@ bool	set_env(t_minishell *mshell, char *value, char *key)
 	char	*tmp;
 
 	i = 0;
+	tmp = NULL;
 	while (mshell->env[i])
 	{
 		if (ft_strncmp(mshell->env[i], key, ft_strlen(key)) == 0)
 		{
 			tmp = ft_strjoin(key, "=");
 			if (!tmp)
-				return (error_cmd(&mshell, 1, "malloc failed"));
+				return (error_cmd(mshell, 1, "malloc failed"));
 			free(mshell->env[i]);
 			mshell->env[i] = ft_strjoin(tmp, value);
 			if (!mshell->env[i])
-				return (error_cmd(&mshell, 1, "malloc failed"));
+				return (error_cmd(mshell, 1, "malloc failed"));
 			free(tmp);
 			return (EXIT_SUCCESS);
 		}
 		i++;
 	}
-	if (tmp)
-		free(tmp);
 	return (EXIT_FAILURE);
 }
 
@@ -58,6 +57,7 @@ char	*get_path(char **env, char *key)
 	char	*path;
 
 	i = 0;
+	path = NULL;
 	while (env[i])
 	{
 		if (ft_strncmp(env[i], key, ft_strlen(key)) == 0)
@@ -67,8 +67,6 @@ char	*get_path(char **env, char *key)
 		}
 		i++;
 	}
-	if (path)
-		free(path);
 	return (NULL);
 }
 
@@ -86,17 +84,17 @@ static bool	change_dir(t_minishell *mshell, char *path)
 
 	return_path = NULL;
 	if (chdir(path) < 0)
-		return (error_cmd(&mshell, 1, "cd: no such file or directory"));
+		return (error_cmd(mshell, 1, "cd: no such file or directory"));
 	return_path = getcwd(cwd, PATH_MAX);
 	if (!return_path)
-		return (free(return_path), error_cmd(&mshell, 1, "cd: getcwd failed"));
-	tmp = get_path(&mshell->env, "PWD");
+		return (free(return_path), error_cmd(mshell, 1, "cd: getcwd failed"));
+	tmp = get_path(mshell->env, "PWD");
 	if (tmp < 0)
-		return (free(return_path), error_cmd(&mshell, 1, "PWD not set"));
-	if (set_env(&mshell, "OLDPWD", get_path(mshell->env, "PWD")) < 0)
-		return (free(return_path), free(tmp), error_cmd(&mshell, 1, "OLDPWD not set"));
-	if (set_env(&mshell, "PWD", return_path) < 0)
-		return (free(return_path), free(tmp), error_cmd(&mshell, 1, "PWD not set"));
+		return (free(return_path), error_cmd(mshell, 1, "PWD not set"));
+	if (set_env(mshell, "OLDPWD", get_path(mshell->env, "PWD")) == EXIT_FAILURE)
+		return (free(return_path), free(tmp), error_cmd(mshell, 1, "OLDPWD not set"));
+	if (set_env(mshell, "PWD", return_path) == EXIT_FAILURE)
+		return (free(return_path), free(tmp), error_cmd(mshell, 1, "PWD not set"));
 	free(return_path);
 	free(tmp);
 	return (EXIT_SUCCESS);
@@ -171,7 +169,7 @@ void remove_double_point(char **args)
 		else
 			new_args = new_args->next;
 	}
-	
+	(void)path;
 }
 
 /*
@@ -189,19 +187,19 @@ int	builtin_cd(t_minishell *mshell, char **args)
 	{
 		path = get_path(mshell->env, "HOME");
 		if (path < 0)
-			return (error_cmd(&mshell, 1, "HOME not set"));
-		return (change_dir(&mshell, path));
+			return (error_cmd(mshell, 1, "HOME not set"));
+		return (change_dir(mshell, path));
 	}
 	else if (args[2])
-		return (error_cmd(&mshell, 1, "cd: too many arguments"));
+		return (error_cmd(mshell, 1, "cd: too many arguments"));
 	else if (ft_strncmp(args[1], "-", 2) == 0)
 	{
 		path = get_path(mshell->env, "OLDPWD");
 		if (path < 0)
-			return (error_cmd(&mshell, 1, "OLDPWD not set"));
-		return (change_dir(&mshell, path));
+			return (error_cmd(mshell, 1, "OLDPWD not set"));
+		return (change_dir(mshell, path));
 	}
 	else
-		return(change_dir(&mshell, args[1]));
+		return(change_dir(mshell, args[1]));
 	return (EXIT_SUCCESS);
 }

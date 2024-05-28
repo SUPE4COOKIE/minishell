@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sonamcrumiere <sonamcrumiere@student.42    +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:11:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/23 18:00:56 by sonamcrumie      ###   ########.fr       */
+/*   Updated: 2024/05/28 18:48:41 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 */
 int	error_pipe(char *msg, int new[2], int old[2], t_cmd *cmd)
 {
+	(void)cmd;
 	if (msg)
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -36,9 +37,13 @@ int	error_pipe(char *msg, int new[2], int old[2], t_cmd *cmd)
 		close(new[0]);
 	if (new[1])
 		close(new[1]);
-	if (cmd)
-		free(cmd);
-	return (1);
+	// TODO: correctly free cmd
+	//if (cmd)
+	//{
+	//	free_cmd(cmd);
+	//	cmd = NULL;
+	//}
+	exit(1);
 }
 
 /*

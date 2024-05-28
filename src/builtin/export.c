@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 10:23:57 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/27 15:17:04 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/28 18:41:59 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,10 @@ int	builtin_export(t_minishell *mshell, const char *name, \
 {
 	t_setenv	setenv;
 
-	
+	(void)value;
+	(void)overwrite;
+	(void)mshell;
+	(void)name;
+	(void)setenv;
+	return (EXIT_SUCCESS);
 }

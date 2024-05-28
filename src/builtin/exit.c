@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:04:04 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/27 10:54:46 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/28 18:40:42 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,6 @@ int	free_shell(t_minishell *mshell, int status)
 		free(mshell->line);
 	if (mshell->current_path)
 		free(mshell->current_path);
-	if (mshell->pwd)
-		free(mshell->pwd);
-	if (mshell->old_pwd)
-		free(mshell->old_pwd);
 	if (mshell->path)
 		free(mshell->path);
 	if (mshell->env)
@@ -50,7 +46,7 @@ static bool	get_is_between_cmd(t_minishell *mshell)
 {
 	t_cmd	*cmd;
 
-	cmd = mshell->cmd;
+	cmd = mshell->cmds;
 	if (cmd)
 		if (cmd->next && cmd->prev)
 			return (true);
@@ -69,16 +65,14 @@ int	builtin_exit(t_minishell *mshell, char **args)
 	bool	is_between;
 
 	status = mshell->last_exit_status;
-	is_between = get_is_between_cmd(args[1]);
+	is_between = get_is_between_cmd(mshell);
 	if (is_between)
 		ft_putstr_fd("exit\n", 2);
 	if (args[2])
 		return (error_cmd(mshell, 1, "exit: too many arguments"));
 	if (args[1])
 	{
-		status = ft_atol(args[1]);
-		if (status > INT_MAX) // Check long max
-			return (error_cmd(mshell, 1, "exit: numeric argument required"));
+		status = ft_atoi(args[1]);
 	}
 	return (free_shell(mshell, status));
 }
