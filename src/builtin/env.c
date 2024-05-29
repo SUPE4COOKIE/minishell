@@ -17,6 +17,8 @@ int	ft_contain(char *str, char c, int n)
 	int	i;
 
 	i = 0;
+	if (n == 0 || !str || !c || !str[0])
+		return (1);
 	while (str[i])
 	{
 		if (str[i] == c)
@@ -36,12 +38,12 @@ int	builtin_env(t_minishell *mshell, char **args)
 {
 	int	i;
 
-	i = 0;
+	i = 1;
 	if (args && args[1])
 	{
 		while (args[i])
 		{
-			if (ft_contain(args[i], "/", 1) == 0)
+			if (ft_contain(args[i], '/', 1) == 0)
 				return (error_cmd(mshell, 127, "env: invalid option"));
 			else
 				i++;

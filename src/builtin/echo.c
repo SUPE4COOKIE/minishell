@@ -69,6 +69,7 @@ int	builtin_echo(t_minishell *mshell, char **args)
 	int		i;
 	bool	n;
 
+	(void)mshell;
 	i = 1;
 	n = false;
 	if (args[i] && is_n(args[i]))

@@ -18,22 +18,13 @@
 ** @param args The arguments of the command
 ** @return The exit status of the command
 */
-int	builtin_pwd(t_minishell *mshell, char **args)
+int	builtin_pwd(t_minishell *mshell)
 {
-	char	*pwd;
 	char	buffer[PATH_MAX];
 
-	if (args && args[1])
-		return (error_cmd(mshell, 1, "pwd: too many arguments"));
-	if (mshell->pwd)
-	{
-		ft_putendl_fd(mshell->pwd, STDOUT_FILENO);
-		return (EXIT_SUCCESS);
-	}
-	pwd = getcwd(buffer, PATH_MAX);
-	if (!pwd)
-		return (error_cmd(mshell, 1, "pwd: error retrieving current directory: getcwd failed"));
-	else
-		ft_putendl_fd(pwd, STDOUT_FILENO);
+	(void)mshell;
+	if (!getcwd(buffer, PATH_MAX))
+		return (perror("getcwd"), EXIT_FAILURE);
+	ft_putendl_fd(buffer, STDOUT_FILENO);
 	return (EXIT_SUCCESS);
 }

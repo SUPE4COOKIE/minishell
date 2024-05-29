@@ -27,7 +27,10 @@ int	count_env(char **env)
 int	builtin_export(t_minishell *mshell, const char *name, \
 		const char *value, int overwrite)
 {
-	t_setenv	setenv;
 
-	
+	(void)value;
+	(void)overwrite;
+	(void)mshell;
+	(void)name;
+	return (0);
 }

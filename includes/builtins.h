@@ -30,6 +30,6 @@ int	builtin_echo(t_minishell *mshell, char **args);
 int	builtin_env(t_minishell *mshell, char **args);
 int	builtin_export(t_minishell *mshell, const char *name, \
 		const char *value, int overwrite);
-int	builtin_pwd(t_minishell *mshell, char **args);
+int	builtin_pwd(t_minishell *mshell);
 
 #endif

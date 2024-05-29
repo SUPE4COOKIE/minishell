@@ -26,7 +26,6 @@
 # include <stdbool.h>
 # include <errno.h>
 # include <stdint.h>
-# define PATH_MAX 4096
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;
