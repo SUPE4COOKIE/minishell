@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/28 16:33:31 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/29 18:39:41 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,6 +210,12 @@ int	append_redir(t_cmd *cmd, t_lexer **lex)
 		cmd->op_type[1] = APP_OUT;
 		ft_append_str(&(cmd->outfile), (*lex)->value);
 	}
+	else if ((*lex)->type == T_HERE_DOC)
+	{
+		(*lex) = (*lex)->next;
+		cmd->op_type[0] = HDOC;
+		ft_append_str(&(cmd->infile), (*lex)->value);
+	}
 	return (0);	
 }
 
@@ -229,7 +235,7 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 	while (*lex)
 	{
 		if ((*lex)->type == T_REDIR_IN || (*lex)->type == T_REDIR_OUT
-			|| (*lex)->type == T_APPEND_OUT)
+			|| (*lex)->type == T_APPEND_OUT || (*lex)->type == T_HERE_DOC)
 			append_redir(last_cmd, lex);
 		else if ((*lex)->value && ((*lex)->type == T_WORD || (*lex)->type == T_S_QUOTED_WORD
 			|| (*lex)->type == T_D_QUOTED_WORD))

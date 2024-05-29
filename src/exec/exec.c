@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 13:05:02 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/29 14:29:41 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:30:58 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void	exec(t_minishell *mshell)
 {
 	t_cmd	*cmd;
 	int		id;
-	int i = 0;
 	int		old[2];
 	int		new[2];
 	int		fd[2];
