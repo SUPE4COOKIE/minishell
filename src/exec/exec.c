@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 13:05:02 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/28 16:49:55 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:22:57 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ static void	init_old_new(int old[2], int new[2])
 }
 
 
-
 void	exec(t_minishell *mshell)
 {
 	t_cmd	*cmd;
@@ -47,7 +46,7 @@ void	exec(t_minishell *mshell)
 	while (cmd)
 	{
 		if (cmd->next)
-			if (pipe(new) == -1) // sauf si derniere commande
+			if (pipe(new) == -1)
 				error_pipe("pipe failed", new, old, cmd);
 		id = fork();
 		if (id == -1)
@@ -68,7 +67,6 @@ void	exec(t_minishell *mshell)
 				error_pipe("dup2 failed", new, old, cmd);
 			ft_close(old, new);
 			execve(cmd->cmd, cmd->args, mshell->env);
-			//free_shell(mshell, 1);
 			perror("execve");
 		}
 		old[0] = new[0];

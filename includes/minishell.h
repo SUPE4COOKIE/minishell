@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/29 13:33:06 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:24:59 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 # include "../libft/libft.h"
 # include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/wait.h>
-#include <fcntl.h>
+# include <sys/wait.h>
+# include <fcntl.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
@@ -26,6 +26,9 @@
 # include <stdbool.h>
 # include <errno.h>
 # include <stdint.h>
+# ifndef PATH_MAX
+#  define PATH_MAX 4096
+# endif
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;

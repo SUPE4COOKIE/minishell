@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 17:01:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/28 18:47:34 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/29 13:34:47 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ int	new_lexer(t_lexer **lex, char *line, size_t size);
 int	save_path(t_minishell *mshell, char **env);
 t_cmd	*lexer_to_cmd(t_lexer *lex, char **path);
 t_lexer	*get_last_lexer(t_lexer *lex);
-int		append_words(t_cmd **cmd, t_lexer **lex);
-int		get_cmd_path(t_cmd *cmd, char **path);
+int		get_cmd_path(t_cmd **cmd, char **path);
 
 #endif
