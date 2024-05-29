@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/28 18:54:34 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:28:30 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ char	*get_path(char **env, char *key)
 	char	*path;
 
 	i = 0;
-	path = NULL;
 	while (env[i])
 	{
 		if (ft_strncmp(env[i], key, ft_strlen(key)) == 0)
@@ -128,29 +127,13 @@ void ft_create_list(char **args, t_arg **new_args)
 	}
 }
 
-bool is_valid_path(char *path)
-{
-	int i;
-
-	i = 0;
-	while (path[i])
-	{
-		if (path[i] == '.' && path[i + 1] == '.')
-			return (false);
-		i++;
-	}
-	return (true);
-}
-
 void remove_double_point(char **args)
 {
 	t_arg	*new_args;
 	t_arg	*prev_prev;
 	t_arg	*next;
-	int		i;
-	char path[PATH_MAX];
+	//char path[PATH_MAX]; // TODO: List_to_char *
 
-	i = 0;
 	ft_create_list(args, &new_args);
 	while (new_args)
 	{
@@ -169,7 +152,7 @@ void remove_double_point(char **args)
 		else
 			new_args = new_args->next;
 	}
-	(void)path;
+	
 }
 
 /*
@@ -199,7 +182,5 @@ int	builtin_cd(t_minishell *mshell, char **args)
 			return (error_cmd(mshell, 1, "OLDPWD not set"));
 		return (change_dir(mshell, path));
 	}
-	else
-		return(change_dir(mshell, args[1]));
-	return (EXIT_SUCCESS);
+	return(change_dir(mshell, args[1]));
 }

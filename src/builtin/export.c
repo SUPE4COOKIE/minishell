@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 10:23:57 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/28 18:54:43 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:29:03 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,10 @@ int	count_env(char **env)
 int	builtin_export(t_minishell *mshell, const char *name, \
 		const char *value, int overwrite)
 {
-	t_setenv	setenv;
 
 	(void)value;
 	(void)overwrite;
 	(void)mshell;
 	(void)name;
-	(void)setenv;
-	return (EXIT_SUCCESS);
+	return (0);
 }

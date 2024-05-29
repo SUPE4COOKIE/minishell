@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:04:04 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/28 18:54:41 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:28:56 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,6 @@ int	builtin_exit(t_minishell *mshell, char **args)
 	if (args[2])
 		return (error_cmd(mshell, 1, "exit: too many arguments"));
 	if (args[1])
-	{
 		status = ft_atoi(args[1]);
-	}
 	return (free_shell(mshell, status));
 }

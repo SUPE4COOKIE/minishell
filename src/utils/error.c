@@ -6,13 +6,21 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:11:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/28 18:55:31 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:30:01 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	error_pipe(char *msg, int new[2], int old[2], t_cmd *cmd)
+/*
+** @brief: Print an error message and return the status
+** @param msg The message
+** @param new The new pipe
+** @param old The old pipe
+** @param cmd The command
+** @return 1
+*/
+int	error_pipe(char *msg, int new[2], int old[2], t_cmd *cmd)
 {
 	(void)cmd;
 	if (msg)

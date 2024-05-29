@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 14:23:07 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/28 18:54:39 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:28:51 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	ft_contain(char *str, char c, int n)
 	int	i;
 
 	i = 0;
+	if (n == 0 || !str || !c || !str[0])
+		return (1);
 	while (str[i])
 	{
 		if (str[i] == c)
@@ -36,7 +38,7 @@ int	builtin_env(t_minishell *mshell, char **args)
 {
 	int	i;
 
-	i = 0;
+	i = 1;
 	if (args && args[1])
 	{
 		while (args[i])

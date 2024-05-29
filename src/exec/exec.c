@@ -6,13 +6,13 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 13:05:02 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/28 18:55:21 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:29:41 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void ft_close(int old[2], int new[2])
+void	ft_close(int old[2], int new[2])
 {
 	if (old[0])
 		close(old[0]);
@@ -33,7 +33,6 @@ static void	init_old_new(int old[2], int new[2])
 }
 
 
-
 void	exec(t_minishell *mshell)
 {
 	t_cmd	*cmd;
@@ -41,20 +40,20 @@ void	exec(t_minishell *mshell)
 	int i = 0;
 	int		old[2];
 	int		new[2];
+	int		fd[2];
 
 	init_old_new(old, new);
 	cmd = mshell->cmds;
 	while (cmd)
 	{
 		if (cmd->next)
-			if (pipe(new) == -1) // sauf si derniere commande
+			if (pipe(new) == -1)
 				error_pipe("pipe failed", new, old, cmd);
 		id = fork();
 		if (id == -1)
-			error_pipe("fork failed");
+			error_pipe("fork failed", new, old, cmd);
 		if (id == 0)
 		{
-			int fd[2];
 			if (old[0] != -1 && old[1] != -1)
 				fd[0] = old[0];
 			else
@@ -69,13 +68,11 @@ void	exec(t_minishell *mshell)
 				error_pipe("dup2 failed", new, old, cmd);
 			ft_close(old, new);
 			execve(cmd->cmd, cmd->args, mshell->env);
-			//free_shell(mshell, 1);
 			perror("execve");
 		}
 		old[0] = new[0];
 		old[1] = new[1];
 		cmd = cmd->next;
-		i++;
 	}
 	waitpid(id, &mshell->last_exit_status, 0);
 }
