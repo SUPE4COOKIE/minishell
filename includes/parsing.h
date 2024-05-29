@@ -6,12 +6,21 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 17:01:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/28 17:02:49 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/28 18:47:34 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSING_H
 # define PARSING_H
+
+struct s_lexer
+{
+	char			*value;
+	bool			space_after;
+	t_token_type	type;
+	t_lexer			*next;
+	t_lexer			*prev;
+};
 
 int		parse(t_minishell *mshell);
 char	**ft_split_args(char const *str, char sep);
