@@ -6,12 +6,17 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 15:08:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/27 10:12:19 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:39:07 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/*
+** @brief Get the length of a table
+** @param tab The table
+** @return The length of the table
+*/
 int ft_tablen(char **tab)
 {
 	int	i;
@@ -24,6 +29,12 @@ int ft_tablen(char **tab)
 	return (i);
 }
 
+/*
+** @brief Remove an environment variable
+** @param env The environment
+** @param index The index of the variable to remove
+** @return The new environment without the variable
+*/
 char **remove_env_var(char **env, int index)
 {
 	char	**new_env;
@@ -63,6 +74,11 @@ char **remove_env_var(char **env, int index)
 	return (new_env);
 }
 
+/*
+** @brief Check if the variable is a valid environment variable
+** @param var The variable
+** @return true if the variable is valid, false otherwise
+*/
 bool is_valid_env_var(char *var)
 {
 	int	i;
@@ -79,6 +95,12 @@ bool is_valid_env_var(char *var)
 	return (true);
 }
 
+/*
+** @brief Get the index of an environment variable
+** @param env The environment
+** @param var The variable
+** @return The index of the variable in the environment
+*/
 int	get_index_env(char **env, char *var)
 {
 	char	*tmp;
@@ -105,6 +127,11 @@ int	get_index_env(char **env, char *var)
 	return (-1);
 }
 
+/*
+** @brief Unset the environment variables
+** @param mshell The minishell structure
+** @param args The arguments of the command
+*/
 void	builtin_unset(t_minishell *mshell, char **args)
 {
 	int	i;

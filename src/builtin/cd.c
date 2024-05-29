@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/28 14:48:10 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:37:49 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,11 @@ static bool	change_dir(t_minishell *mshell, char *path)
 	return (EXIT_SUCCESS);
 }
 
+/*
+** @brief Create a list of arguments
+** @param args The arguments
+** @param new_args The new list
+*/
 void ft_create_list(char **args, t_arg **new_args)
 {
 	int i;
@@ -127,6 +132,10 @@ void ft_create_list(char **args, t_arg **new_args)
 	}
 }
 
+/*
+** @brief Remove the double point in the path
+** @param args The arguments
+*/
 void remove_double_point(char **args)
 {
 	t_arg	*new_args;

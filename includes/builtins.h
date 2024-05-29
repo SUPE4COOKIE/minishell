@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:30:33 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/28 15:57:44 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/29 15:11:13 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,10 @@ typedef struct s_arg
 int	builtin_cd(t_minishell *mshell, char **args);
 int	builtin_echo(t_minishell *mshell, char **args);
 int	builtin_env(t_minishell *mshell, char **args);
+int	builtin_exit(t_minishell *mshell, char **args);
 int	builtin_export(t_minishell *mshell, const char *name, \
 		const char *value, int overwrite);
 int	builtin_pwd(t_minishell *mshell);
+void	builtin_unset(t_minishell *mshell, char **args);
 
 #endif
