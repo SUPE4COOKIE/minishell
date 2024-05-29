@@ -40,6 +40,7 @@ void	exec(t_minishell *mshell)
 	int		id;
 	int		old[2];
 	int		new[2];
+	int		fd[2];
 
 	init_old_new(old, new);
 	cmd = mshell->cmds;
@@ -53,7 +54,6 @@ void	exec(t_minishell *mshell)
 			error_pipe("fork failed", new, old, cmd);
 		if (id == 0)
 		{
-			int fd[2];
 			if (old[0] != -1 && old[1] != -1)
 				fd[0] = old[0];
 			else
