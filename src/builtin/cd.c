@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/30 15:25:13 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/30 17:16:51 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@ int	builtin_cd(t_minishell *mshell, char **args)
 {
 	char   *path;
 
-	remove_double_point(args);
+	path = remove_double_point(args);
 	if (!args || !args[1] || !args[1][0])
 	{
 		path = get_path(mshell->env, "HOME");
