@@ -5,6 +5,18 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/30 10:24:12 by scrumier          #+#    #+#             */
+/*   Updated: 2024/05/30 11:20:14 by scrumier         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 13:05:02 by sonamcrumie       #+#    #+#             */
 /*   Updated: 2024/05/29 19:06:12 by scrumier         ###   ########.fr       */
 /*                                                                            */
@@ -81,9 +93,6 @@ bool is_builtin(char *cmd)
 
 void exec_cmd(t_minishell *mshell, t_cmd *cmd)
 {
-	int i;
-
-	i = 0;
 	if (is_builtin(cmd->cmd) == true)
 	{
 		exec_builtin(mshell, cmd);
@@ -98,6 +107,9 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 {
 	int fd;
 	int i;
+	char *line;
+	pid_t pid;
+	int pipe_fd[2];
 
 	i = 0;
 	if (cmd->outfile[i])
@@ -125,7 +137,14 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 	}
 	else if (cmd->op_type[1] == APP_OUT)
 	{
-		// TODO : implement app_out
+		fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (fd == -1)
+			error_pipe("open failed", new, old, cmd);
+		if (dup2(fd, STDOUT_FILENO) == -1)
+			error_pipe("dup2 failed", new, old, cmd);
+		ft_close(old, new);
+		exec_cmd(mshell, cmd);
+		close(fd);
 	}
 	else if (cmd->op_type[0] == RED_IN)
 	{
@@ -144,7 +163,30 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 	}
 	else if (cmd->op_type[0] == HDOC)
 	{
-		// TODO : implement here doc
+		if (pipe(pipe_fd) == -1)
+			error_pipe("pipe failed", new, old, cmd);
+		pid = fork();
+		if (pid == -1)
+			error_pipe("fork failed", new, old, cmd);
+		if (pid == 0)
+		{
+			close(pipe_fd[0]);
+			while (1) {
+				ft_putstr_fd("> ", STDOUT_FILENO);
+				line = get_next_line(STDIN_FILENO);
+				if (!line)
+					error_pipe("get_next_line failed", new, old, cmd);
+				if (ft_strncmp(line, cmd->infile[0], ft_strlen(cmd->infile[0])) == 0)
+				{
+					free(line);
+					break;
+				}
+				ft_putendl_fd(line, pipe_fd[1]);
+				free(line);
+			}
+			close(pipe_fd[1]);
+			exit(0);
+		}
 	}
 }
 
