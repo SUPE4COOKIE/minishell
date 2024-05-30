@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 13:05:02 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/30 14:50:25 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/30 14:53:31 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void exec_cmd(t_minishell *mshell, t_cmd *cmd)
 	{
 		exec_builtin(mshell, cmd);
 	}
-	else
+	else// if (cmd->is_valid_cmd == true)
 	{
 		execve(cmd->cmd, cmd->args, mshell->env);
 	}
@@ -95,14 +95,17 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 {
 	int fd;
 	int i;
+	ssize_t n;
 	char *line;
 	pid_t pid;
+	char buf[4096];
 	int pipe_fd[2];
 
 	i = 0;
-	if (cmd->outfile[i])
+	printf("cmd->op_type[1] = %d\n", cmd->op_type[1]);
+	if (cmd->outfile && cmd->outfile[i])
 	{
-		while (cmd->outfile[i])
+		while (cmd->outfile[i + 1])
 		{
 			fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
@@ -110,7 +113,6 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 			close(fd);
 			i++;
 		}
-		i--;
 	}
 	if (cmd->op_type[1] == RED_OUT)
 	{
@@ -136,18 +138,47 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 	}
 	else if (cmd->op_type[0] == RED_IN)
 	{
-		i = 0;
-		while (cmd->infile[i])
+		if (pipe(pipe_fd) == -1)
+			error_pipe("pipe failed", new, old, cmd);
+
+		pid = fork();
+		if (pid == -1)
+			error_pipe("fork failed", new, old, cmd);
+
+		if (pid == 0)
 		{
-			fd = open(cmd->infile[i], O_RDONLY);
-			if (fd == -1)
-				error_pipe("open failed", new, old, cmd);
-			if (dup2(fd, STDIN_FILENO) == -1)
+			close(pipe_fd[1]);  // Close write end of pipe in child
+
+			if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
 				error_pipe("dup2 failed", new, old, cmd);
-			close(fd);
-			i++;
+			close(pipe_fd[0]);  // Close read end of pipe in child
+
+			exec_cmd(mshell, cmd);
 		}
-		exec_cmd(mshell, cmd);
+		else
+		{
+			close(pipe_fd[0]);  // Close read end of pipe in parent
+			i = 0;
+			while (cmd->infile[i])
+			{
+				fd = open(cmd->infile[i], O_RDONLY);
+				if (fd == -1)
+					error_pipe("open failed", new, old, cmd);
+				n = 0;
+				while ((n = read(fd, buf, sizeof(buf))) > 0)
+				{
+					if (write(pipe_fd[1], buf, n) != n)
+						error_pipe("write failed", new, old, cmd);
+				}
+				if (n == -1)
+					error_pipe("read failed", new, old, cmd);
+				close(fd);
+				i++;
+			}
+
+			close(pipe_fd[1]);  // Close write end of pipe in parent
+			wait(NULL);  // Wait for child to finish
+		}
 	}
 	else if (cmd->op_type[0] == HDOC)
 	{
@@ -173,8 +204,14 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 				free(line);
 			}
 			close(pipe_fd[1]);
-			exit(0);
+			ft_close(old, new);
+			exec_cmd(mshell, cmd);
 		}
+	}
+	else
+	{
+		ft_close(old, new);
+		exec_cmd(mshell, cmd);
 	}
 }
 
@@ -212,7 +249,6 @@ void	exec(t_minishell *mshell)
 {
 	t_cmd	*cmd;
 	int		id;
-	int i = 0;
 	int		old[2];
 	int		new[2];
 
@@ -223,6 +259,8 @@ void	exec(t_minishell *mshell)
 		if (cmd->next)
 			if (pipe(new) == -1)
 				error_pipe("pipe failed", new, old, cmd);
+		// if (cmd->is_valid_cmd == true)
+		// {
 		id = fork();
 		if (id == -1)
 			error_pipe("fork failed", new, old, cmd);
@@ -232,6 +270,7 @@ void	exec(t_minishell *mshell)
 		}
 		old[0] = new[0];
 		old[1] = new[1];
+		// }
 		cmd = cmd->next;
 	}
 	waitpid(id, &mshell->last_exit_status, 0);
