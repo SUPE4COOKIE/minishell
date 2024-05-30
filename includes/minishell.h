@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/29 14:28:00 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/30 15:08:39 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,10 @@ typedef enum e_cmd_type
 	CMD,
 	FIL,
 	PIP,
-	RED_IN,
-	RED_OUT,
-	HDOC,
-	APP_OUT,
+	RED_IN, // <
+	RED_OUT, // >
+	HDOC, // <<
+	APP_OUT, // >>
 	UNDEFINED,
 }				t_cmd_type;
 

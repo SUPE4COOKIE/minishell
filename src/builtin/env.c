@@ -3,15 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 14:23:07 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/29 14:28:51 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/30 15:08:15 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/*
+** @brief Check if the character is in the string
+** @param str The string
+** @param c The character
+** @param n The number of occurence
+** @return 1 if the character is in the string n times, 0 otherwise
+*/
 int	ft_contain(char *str, char c, int n)
 {
 	int	i;
