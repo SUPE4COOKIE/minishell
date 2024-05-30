@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/30 14:35:46 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/30 16:04:34 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,7 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 	args_start = args;
 	if (!args)
 		return (1);
-	last_cmd = new_cmd(NULL);
+	last_cmd = new_cmd(NULL); // TODO: check return
 	append_cmd(cmd, last_cmd);
 	while (*lex)
 	{
@@ -259,21 +259,19 @@ void	delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 	t_cmd	*tmp;
 
 	tmp = *cmd;
-	if (tmp == to_delete)
+	while (tmp && tmp != to_delete)
+		tmp = tmp->next;
+	if (tmp && tmp == to_delete)
 	{
-		*cmd = tmp->next;
+		if (tmp->prev)
+			tmp->prev->next = tmp->next;
+		if (tmp->next)
+			tmp->next->prev = tmp->prev;
 		free(tmp->cmd);
 		free(tmp->args);
+		free(tmp->infile);
+		free(tmp->outfile);
 		free(tmp);
-	}
-	else
-	{
-		while (tmp->next != to_delete)
-			tmp = tmp->next;
-		tmp->next = to_delete->next;
-		free(to_delete->cmd);
-		free(to_delete->args);
-		free(to_delete);
 	}
 }
 
@@ -285,7 +283,8 @@ int	resolve_cmd_path(t_cmd **cmd, char **path)
 	while (tmp)
 	{
 		get_cmd_path(&tmp, path);
-		printf("cmd: %s\n", tmp->cmd);
+		if (tmp->is_valid_cmd)
+			printf("cmd: %s\n", tmp->cmd);
 		printf("is_valid_cmd: %d\n", tmp->is_valid_cmd);
 		tmp = tmp->next;
 	}

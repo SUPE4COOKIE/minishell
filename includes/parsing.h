@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 17:01:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/29 14:28:10 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/30 15:54:47 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,6 @@ int	save_path(t_minishell *mshell, char **env);
 t_cmd	*lexer_to_cmd(t_lexer *lex, char **path);
 t_lexer	*get_last_lexer(t_lexer *lex);
 int		get_cmd_path(t_cmd **cmd, char **path);
-
+int		expand(t_lexer **lex, char **envp);
+void	delete_cmd(t_cmd **cmd, t_cmd *to_delete);
 #endif

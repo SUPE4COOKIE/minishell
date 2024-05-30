@@ -19,6 +19,9 @@ SRCS = $(addprefix src/, \
 			lexer.c \
 			validator.c \
 		) \
+		$(addprefix expand/, \
+			expand.c \
+		) \
 		cmd_finder.c \
 		env_parse.c \
 		files_validator.c \
@@ -64,6 +67,7 @@ $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 	mkdir -p $(OBJ_DIR)/parsing
 	mkdir -p $(OBJ_DIR)/parsing/lexer
+	mkdir -p $(OBJ_DIR)/parsing/expand
 	mkdir -p $(OBJ_DIR)/builtin
 	mkdir -p $(OBJ_DIR)/exec
 	mkdir -p $(OBJ_DIR)/utils
