@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 13:05:02 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/30 17:11:23 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/30 17:20:13 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,17 @@ static void	init_old_new(int old[2], int new[2])
 
 void	exec_builtin(t_minishell *mshell, t_cmd *cmd)
 {
-	if (ft_strncmp(cmd->cmd, "/usr/bin/echo", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "echo", ft_strlen(cmd->cmd)) == 0)
 		builtin_echo(mshell, cmd->args);
 	if (ft_strncmp(cmd->cmd, "cd", ft_strlen(cmd->cmd)) == 0)
 		builtin_cd(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "/usr/bin/pwd", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "pwd", ft_strlen(cmd->cmd)) == 0)
 		builtin_pwd(mshell);
 	if (ft_strncmp(cmd->cmd, "export", ft_strlen(cmd->cmd)) == 0)
 		//builtin_export // TODO : implement export
 	if (ft_strncmp(cmd->cmd, "unset", ft_strlen(cmd->cmd)) == 0)
 		builtin_unset(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "/usr/bin/env", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "env", ft_strlen(cmd->cmd)) == 0)
 		builtin_env(mshell, cmd->args);
 	if (ft_strncmp(cmd->cmd, "exit", ft_strlen(cmd->cmd)) == 0)
 		builtin_exit(mshell, cmd->args);
@@ -62,17 +62,17 @@ void	exec_builtin(t_minishell *mshell, t_cmd *cmd)
 
 bool is_builtin(char *cmd)
 {
-	if (ft_strncmp(cmd, "/usr/bin/echo", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "echo", ft_strlen(cmd)) == 0)
 		return (true);
 	if (ft_strncmp(cmd, "cd", ft_strlen(cmd)) == 0)
 		return (true);
-	if (ft_strncmp(cmd, "/usr/bin/pwd", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "pwd", ft_strlen(cmd)) == 0)
 		return (true);
 	if (ft_strncmp(cmd, "export", ft_strlen(cmd)) == 0)
 		return (true);
 	if (ft_strncmp(cmd, "unset", ft_strlen(cmd)) == 0)
 		return (true);
-	if (ft_strncmp(cmd, "/usr/bin/env", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "env", ft_strlen(cmd)) == 0)
 		return (true);
 	if (ft_strncmp(cmd, "exit", ft_strlen(cmd)) == 0)
 		return (true);
@@ -236,7 +236,6 @@ void dup_and_exec(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2])
 			error_pipe("dup2 failed", new, old, cmd);
 		ft_close(old, new);
 		exec_cmd(mshell, cmd);
-		perror("execve");
 	}
 }
 
