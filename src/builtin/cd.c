@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/30 15:08:07 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/30 15:24:13 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,16 +132,35 @@ void ft_create_list(char **args, t_arg **new_args)
 	}
 }
 
+char *ft_lst_to_char(t_arg *new_args, char *path)
+{
+	int i;
+
+	i = 0;
+	while (new_args)
+	{
+		ft_strlcpy(path + i, new_args->arg, ft_strlen(new_args->arg) + 1);
+		i += ft_strlen(new_args->arg);
+		if (new_args->next)
+		{
+			ft_strlcpy(path + i, "/", 2);
+			i++;
+		}
+		new_args = new_args->next;
+	}
+	return (path);
+}
+
 /*
 ** @brief Remove the double point in the path
 ** @param args The arguments
 */
-void remove_double_point(char **args)
+char *remove_double_point(char **args)
 {
 	t_arg	*new_args;
 	t_arg	*prev_prev;
 	t_arg	*next;
-	//char path[PATH_MAX]; // TODO: List_to_char *
+	char path[PATH_MAX]; // TODO: List_to_char *
 
 	ft_create_list(args, &new_args);
 	while (new_args)
@@ -161,7 +180,7 @@ void remove_double_point(char **args)
 		else
 			new_args = new_args->next;
 	}
-	
+	return (ft_lst_to_char(new_args, path));
 }
 
 /*
@@ -174,7 +193,7 @@ int	builtin_cd(t_minishell *mshell, char **args)
 {
 	char   *path;
 
-	remove_double_point(args);
+	path = remove_double_point(args);
 	if (!args || !args[1] || !args[1][0])
 	{
 		path = get_path(mshell->env, "HOME");
