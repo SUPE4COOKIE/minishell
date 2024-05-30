@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/28 12:39:36 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/30 14:00:47 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,7 @@ int	new_lexer(t_lexer **lex, char *line, size_t size)
 	}
 	new->type = get_lexer_type(line);
 	append_new_lexer(lex, &new);
+	new->next = NULL;
 	// temp code
 	//printf("value: %s\n", new->value);
 	//printf("type: %s\n", get_token_type(new->type));
