@@ -6,13 +6,15 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:33:33 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/27 16:43:46 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/30 14:34:23 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
+# include "ft_printf.h"
+# include "get_next_line.h"
 # include <unistd.h>
 # include <stdlib.h>
 # include <limits.h>
