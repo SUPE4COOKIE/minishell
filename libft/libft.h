@@ -13,6 +13,8 @@
 #ifndef LIBFT_H
 # define LIBFT_H
 
+# include "ft_printf.h"
+# include "get_next_line.h"
 # include <unistd.h>
 # include <stdlib.h>
 # include <limits.h>
