@@ -6,16 +6,22 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 20:55:03 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/30 16:36:26 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/30 17:10:21 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "exec.h"
 
 static int is_full_path(t_cmd **cmd)
 {
 	char *tmp;
 
+	if (is_builtin((*cmd)->cmd))
+	{
+		(*cmd)->is_valid_cmd = true;
+		return (1);
+	}
 	if (ft_strnstr((*cmd)->cmd, "/", ft_strlen((*cmd)->cmd)))
 	{
 		if (access((*cmd)->cmd, F_OK) == 0 && access((*cmd)->cmd, X_OK) == 0)
@@ -60,6 +66,8 @@ static	void	cmd_not_found(t_cmd **cmd)
 {
 	char	*tmp;
 
+	if (is_builtin((*cmd)->cmd))
+		return ;
 	if ((*cmd)->cmd && (access((*cmd)->cmd , F_OK) != 0 \
 		|| access((*cmd)->cmd , X_OK) != 0) && (*cmd)->cmd)
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sonamcrumiere <sonamcrumiere@student.42    +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 12:38:16 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/09 13:05:50 by sonamcrumie      ###   ########.fr       */
+/*   Updated: 2024/05/30 17:06:22 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,5 @@
 # define EXEC_H
 
 void exec(t_minishell *mshell);
-
+bool is_builtin(char *cmd);
 #endif

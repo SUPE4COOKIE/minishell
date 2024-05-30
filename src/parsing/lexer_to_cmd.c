@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/30 16:44:07 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/30 17:03:59 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,7 @@ t_cmd_type get_op_type(t_lexer *lex)
 		return (token_to_cmd(lex->type));
 }
 
+void	print_cmd(t_cmd *cmd);
 void	print_cmds(t_cmd *cmd)
 {
 	t_cmd	*tmp;
@@ -153,13 +154,7 @@ void	print_cmds(t_cmd *cmd)
 	tmp = cmd;
 	while (tmp)
 	{
-		printf("cmd: %s\n", tmp->cmd);
-		printf("args: ");
-		for (int i = 0; tmp->args[i]; i++)
-			printf("%s ", tmp->args[i]);
-		printf("\ninfile op type: %s\n", cmd_type_to_str(tmp->op_type[0]));
-		printf("outfile op type: %s\n", cmd_type_to_str(tmp->op_type[1]));
-		printf("\n");
+		print_cmd(tmp);
 		tmp = tmp->next;
 	}
 }
@@ -259,6 +254,16 @@ void	delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 	t_cmd	*tmp;
 
 	tmp = *cmd;
+	if (tmp == to_delete)
+	{
+		*cmd = tmp->next;
+		free(tmp->cmd);
+		free(tmp->args);
+		free(tmp->infile);
+		free(tmp->outfile);
+		free(tmp);
+		return ;
+	}
 	while (tmp && tmp != to_delete)
 		tmp = tmp->next;
 	if (tmp && tmp == to_delete)
@@ -285,7 +290,8 @@ int	resolve_cmd_path(t_cmd **cmd, char **path)
 		get_cmd_path(&tmp, path);
 		if (tmp->is_valid_cmd)
 			printf("cmd: %s\n", tmp->cmd);
-		printf("is_valid_cmd: %d\n", tmp->is_valid_cmd);
+		if (!tmp->is_valid_cmd)
+			delete_cmd(cmd, tmp);
 		tmp = tmp->next;
 	}
 	return (0);
@@ -308,3 +314,4 @@ t_cmd	*lexer_to_cmd(t_lexer *lex, char **path)
 	resolve_cmd_path(&cmd, path);
 	return (cmd);
 }
+//cat | ls | coucou | ls | oui | ls
