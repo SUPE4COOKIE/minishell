@@ -3,87 +3,113 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/15 13:33:28 by scrumier          #+#    #+#             */
-/*   Updated: 2024/03/25 16:29:47 by scrumier         ###   ########.fr       */
+/*   Created: 2023/07/14 11:57:11 by mwojtasi          #+#    #+#             */
+/*   Updated: 2024/05/30 14:11:47 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-static char	**ft_free_array(char **array, size_t nb_wrd)
+static char	*copy_str(const char *str, size_t start, size_t len)
 {
-	char	**current;
-
-	current = array;
-	while (nb_wrd--)
-	{
-		free(*current);
-		*current = NULL;
-		current++;
-	}
-	free(array);
-	return (NULL);
-}
-
-static size_t	ft_count_wrds(char const *s, char c)
-{
-	size_t	nb_wrd;
-	size_t	sep_wrd;
-
-	sep_wrd = 0;
-	nb_wrd = 0;
-	while (*s)
-	{
-		if (*s != c && !sep_wrd)
-		{
-			sep_wrd = 1;
-			nb_wrd++;
-		}
-		else if (*s == c && sep_wrd)
-			sep_wrd = 0;
-		s++;
-	}
-	return (nb_wrd);
-}
-
-static size_t	ft_next_word_len(const char *s, char c)
-{
-	size_t	len;
-
-	len = 0;
-	while (*s && *s == c)
-		s++;
-	while (s[len] && s[len] != c)
-		len++;
-	return (len);
-}
-
-char	**ft_split(char const *s, char c)
-{
-	size_t	len;
-	char	**list;
+	char	*str_copy;
 	size_t	i;
 
-	if (!s)
-		return (NULL);
-	list = ft_calloc(ft_count_wrds(s, c), sizeof(char *));
-	if (!list)
+	str_copy = malloc(len + 1);
+	if (str_copy == NULL)
 		return (NULL);
 	i = 0;
-	while (*s)
+	while (i < len)
 	{
-		while (*s == c && *s)
-			s++;
-		if (*s)
-		{
-			len = ft_next_word_len(s, c);
-			list[i++] = ft_substr(s, 0, len);
-			if (list[i - 1] == NULL)
-				return (ft_free_array(list, i - 1));
-			s += len;
-		}
+		str_copy[i] = str[start + i];
+		i++;
 	}
-	return (list);
+	str_copy[i] = 0;
+	return (str_copy);
+}
+
+static void	free_str(char **split)
+{
+	size_t	i;
+
+	i = 0;
+	while (split[i])
+	{
+		free(split[i]);
+		i++;
+	}
+	free(split);
+}
+
+static int	fill_remain(size_t i, size_t start, char **s, const char *str)
+{
+	size_t	j;
+
+	j = 0;
+	if (i > start)
+	{
+		s[j] = copy_str(str, start, i - start);
+		if (!s[j])
+			return (-1);
+		j++;
+	}
+	return (0);
+}
+
+static char	**fill(char **split, char const *str, char sep)
+{
+	size_t	i;
+	size_t	j;
+	size_t	start;
+
+	i = 0;
+	j = 0;
+	start = 0;
+	while (str[i])
+	{
+		if (str[i] == (const char)sep)
+		{
+			if (i > start)
+			{
+				split[j] = copy_str(str, start, i - start);
+				if (!split[j++])
+					return (NULL);
+			}
+			start = i + 1;
+		}
+		i++;
+	}
+	if (fill_remain(i, start, &split[j], (char *)str) == -1)
+		return (NULL);
+	return (split);
+}
+
+char	**ft_split(char const *str, char sep)
+{
+	char	**split;
+	size_t	count;
+	size_t	i;
+
+	count = 0;
+	i = 0;
+	if (str[i] && str[i] != sep)
+		count++;
+	while (str[i])
+	{
+		if (str[i] == sep && (str[i + 1] && str[i + 1] != sep))
+			count++;
+		i++;
+	}
+	split = malloc(sizeof(char *) * (count + 1));
+	if (split == NULL)
+		return (NULL);
+	split[count] = NULL;
+	if (!fill(split, str, sep))
+	{
+		free_str(split);
+		return (NULL);
+	}
+	return (split);
 }

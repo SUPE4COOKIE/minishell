@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/30 13:38:53 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/30 15:09:52 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,6 +286,7 @@ int	resolve_cmd_path(t_cmd **cmd, char **path)
 	{
 		get_cmd_path(&tmp, path);
 		printf("cmd: %s\n", tmp->cmd);
+		printf("is_valid_cmd: %d\n", tmp->is_valid_cmd);
 		tmp = tmp->next;
 	}
 	return (0);

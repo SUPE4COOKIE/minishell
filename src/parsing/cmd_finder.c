@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 20:55:03 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/28 18:32:32 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/30 14:38:44 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,10 @@ static int is_full_path(t_cmd **cmd)
 	if (ft_strnstr((*cmd)->cmd, "/", ft_strlen((*cmd)->cmd)))
 	{
 		if (access((*cmd)->cmd, F_OK) == 0 && access((*cmd)->cmd, X_OK) == 0)
+		{
+			(*cmd)->is_valid_cmd = true;
 			return (1);
+		}
 		else
 		{
 			tmp = ft_strjoin((*cmd)->cmd, ": command not found\n");
@@ -90,6 +93,7 @@ static	int	cmd_for_path(t_cmd **cmd, char *path)
 	{
 		free((*cmd)->cmd);
 		(*cmd)->cmd = ex_path;
+		(*cmd)->is_valid_cmd = true;
 		return (1);
 	}
 	free(ex_path);

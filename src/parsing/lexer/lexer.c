@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/29 15:59:18 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/30 15:10:13 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,7 @@ int	new_lexer(t_lexer **lex, char *line, size_t size)
 	}
 	new->type = get_lexer_type(line);
 	append_new_lexer(lex, &new);
+	new->next = NULL;
 	// temp code
 	//printf("value: %s\n", new->value);
 	//printf("type: %s\n", get_token_type(new->type));
