@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 13:05:02 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/30 15:14:12 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/30 17:11:23 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,17 @@ static void	init_old_new(int old[2], int new[2])
 
 void	exec_builtin(t_minishell *mshell, t_cmd *cmd)
 {
-	if (ft_strncmp(cmd->cmd, "echo", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "/usr/bin/echo", ft_strlen(cmd->cmd)) == 0)
 		builtin_echo(mshell, cmd->args);
 	if (ft_strncmp(cmd->cmd, "cd", ft_strlen(cmd->cmd)) == 0)
 		builtin_cd(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "pwd", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "/usr/bin/pwd", ft_strlen(cmd->cmd)) == 0)
 		builtin_pwd(mshell);
 	if (ft_strncmp(cmd->cmd, "export", ft_strlen(cmd->cmd)) == 0)
 		//builtin_export // TODO : implement export
 	if (ft_strncmp(cmd->cmd, "unset", ft_strlen(cmd->cmd)) == 0)
 		builtin_unset(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "env", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "/usr/bin/env", ft_strlen(cmd->cmd)) == 0)
 		builtin_env(mshell, cmd->args);
 	if (ft_strncmp(cmd->cmd, "exit", ft_strlen(cmd->cmd)) == 0)
 		builtin_exit(mshell, cmd->args);
@@ -62,17 +62,17 @@ void	exec_builtin(t_minishell *mshell, t_cmd *cmd)
 
 bool is_builtin(char *cmd)
 {
-	if (ft_strncmp(cmd, "echo", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "/usr/bin/echo", ft_strlen(cmd)) == 0)
 		return (true);
 	if (ft_strncmp(cmd, "cd", ft_strlen(cmd)) == 0)
 		return (true);
-	if (ft_strncmp(cmd, "pwd", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "/usr/bin/pwd", ft_strlen(cmd)) == 0)
 		return (true);
 	if (ft_strncmp(cmd, "export", ft_strlen(cmd)) == 0)
 		return (true);
 	if (ft_strncmp(cmd, "unset", ft_strlen(cmd)) == 0)
 		return (true);
-	if (ft_strncmp(cmd, "env", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "/usr/bin/env", ft_strlen(cmd)) == 0)
 		return (true);
 	if (ft_strncmp(cmd, "exit", ft_strlen(cmd)) == 0)
 		return (true);
@@ -85,7 +85,7 @@ void exec_cmd(t_minishell *mshell, t_cmd *cmd)
 	{
 		exec_builtin(mshell, cmd);
 	}
-	else// if (cmd->is_valid_cmd == true)
+	else
 	{
 		execve(cmd->cmd, cmd->args, mshell->env);
 	}
@@ -147,17 +147,17 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 
 		if (pid == 0)
 		{
-			close(pipe_fd[1]);  // Close write end of pipe in child
+			close(pipe_fd[1]);
 
 			if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
 				error_pipe("dup2 failed", new, old, cmd);
-			close(pipe_fd[0]);  // Close read end of pipe in child
+			close(pipe_fd[0]);
 
 			exec_cmd(mshell, cmd);
 		}
 		else
 		{
-			close(pipe_fd[0]);  // Close read end of pipe in parent
+			close(pipe_fd[0]);
 			i = 0;
 			while (cmd->infile[i])
 			{
@@ -175,9 +175,8 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 				close(fd);
 				i++;
 			}
-
-			close(pipe_fd[1]);  // Close write end of pipe in parent
-			wait(NULL);  // Wait for child to finish
+			close(pipe_fd[1]);
+			wait(NULL);
 		}
 	}
 	else if (cmd->op_type[0] == HDOC)
@@ -251,16 +250,31 @@ void	exec(t_minishell *mshell)
 	int		id;
 	int		old[2];
 	int		new[2];
+	int		child_count;
+	pid_t	*child_pids;
+	int i;
 
+	child_count = 1;
 	init_old_new(old, new);
 	cmd = mshell->cmds;
+	while (cmd)
+	{
+		child_count++;
+		cmd = cmd->next;
+	}
+	child_pids = malloc(sizeof(int) * child_count);
+	if (child_pids == NULL)
+	{
+		perror("malloc");
+		exit(EXIT_FAILURE);
+	}
+	cmd = mshell->cmds;
+	i = 0;
 	while (cmd)
 	{
 		if (cmd->next)
 			if (pipe(new) == -1)
 				error_pipe("pipe failed", new, old, cmd);
-		// if (cmd->is_valid_cmd == true)
-		// {
 		id = fork();
 		if (id == -1)
 			error_pipe("fork failed", new, old, cmd);
@@ -268,10 +282,21 @@ void	exec(t_minishell *mshell)
 		{
 			dup_and_exec(mshell, cmd, old, new);
 		}
+		else
+		{
+			child_pids[i] = id;
+			i++;
+		}
 		old[0] = new[0];
 		old[1] = new[1];
-		// }
 		cmd = cmd->next;
 	}
-	waitpid(id, &mshell->last_exit_status, 0);
+	ft_close(old, new);
+	i = 0;
+	while (i < child_count)
+	{
+		waitpid(child_pids[i], NULL, 0);
+		i++;
+	}
+	free(child_pids);
 }
