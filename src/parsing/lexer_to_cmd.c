@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/31 16:01:15 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/31 18:07:28 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,7 +245,7 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 	}
 	last_cmd->args = args_start;
 	last_cmd->cmd = ft_strdup(args_start[0]);
-	//print_cmd(last_cmd);
+	print_cmd(last_cmd);
 	return (0);
 }
 
@@ -313,6 +313,5 @@ t_cmd	*lexer_to_cmd(t_lexer *lex, char **path)
 			current_lex = current_lex->next;
 	}
 	resolve_cmd_path(&cmd, path);
-	print_cmds(cmd);
 	return (cmd);
 }

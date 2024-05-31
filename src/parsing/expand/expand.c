@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/30 15:44:03 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/31 18:41:06 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,26 +35,50 @@ char *var_finder(char *var, char **envp)
 	return (NULL);
 }
 
-int expand(t_lexer **lex, char **envp)
+char	*get_name(char *str)
 {
-	t_lexer *tmp;
-	size_t i;
-	char *var;
+	char	*name;
+	size_t	i;
 
 	i = 0;
+	while (str[i] && (ft_isalpha(str[i]) || str[i] == '_'))
+		i++;
+	name = ft_substr(str, 0, i);
+	if (!name)
+		exit(1); // TODO: add a proper exit struct
+	return (name);
+}
+
+int expand(t_lexer **lex, char **envp)
+{
+	t_lexer	*tmp;
+	size_t	i;
+	char	*var;
+	char	*var_name;
+
 	tmp = *lex;
 	var = NULL;
+	var_name = NULL;
 	while (tmp)
 	{
-		if (tmp->type == T_WORD)
+		i = 0;
+		if (tmp->type == T_WORD || tmp->type == T_D_QUOTED_WORD)
 		{
 			while (tmp->value[i])
 			{
-				var = var_finder(tmp->value + i, envp);
-				if  (var)
+				if (tmp->value[i] == '$' && tmp->value[i + 1] && (ft_isalpha(tmp->value[i + 1]) || tmp->value[i + 1] == '_'))
 				{
-					printf("var: %s\n", var);
-					break;
+					i++;
+					var_name = get_name(tmp->value + i);
+					if (!var_name)
+						exit(1); // TODO: add a proper exit struct
+					var = var_finder(var_name, envp);
+					if (var)
+					{
+						printf("var: %s\n", var);
+						// replace var_name with var
+					}
+					free(var_name);
 				}
 				i++;
 			}

@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/30 16:46:14 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/31 18:08:48 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ int main(int argc, char **argv, char **envp)
 	mshell.env = envp;
 	mshell.line = ft_strdup(argv[1]);
 	// maybe cpy in heap
-	mshell.env = envp;
 	parse(&mshell);
 	//exec(&mshell);
 	free(mshell.line);
