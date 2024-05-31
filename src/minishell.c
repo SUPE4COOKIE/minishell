@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/30 17:17:01 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/31 16:24:48 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int main(int argc, char **argv, char **envp)
 	// free(mshell.line);
 	while (42)
 	{
-		mshell.line = readline("Tkt ca marche regarde -> ");
+		mshell.line = readline("Minishffffffffffffffddddddddddddll $> ");
 		if (!mshell.line)
 			break ;
 		if (*mshell.line)

@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/30 15:10:13 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/31 13:46:24 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,6 @@ int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 				if (!(*lex))
 					return (0);
 				get_last_lexer(*lex)->space_after = true;
-				//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
 			}
 			line += i + 1;
 			size -= i + 1;
@@ -143,7 +142,6 @@ int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 			get_last_lexer(*lex)->space_after = true;
 		else
 			get_last_lexer(*lex)->space_after = false;
-		//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
 	}
 	return (0);
 }

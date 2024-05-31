@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_to_cmd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/30 17:03:59 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/05/31 13:56:31 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,7 @@ t_cmd_type get_op_type(t_lexer *lex)
 }
 
 void	print_cmd(t_cmd *cmd);
+
 void	print_cmds(t_cmd *cmd)
 {
 	t_cmd	*tmp;
@@ -183,6 +184,7 @@ void	print_cmd(t_cmd *cmd)
 	
 	}
 	printf("\n");
+	(void)cmd;
 }
 
 int	append_redir(t_cmd *cmd, t_lexer **lex)
@@ -245,7 +247,8 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 	}
 	last_cmd->args = args_start;
 	last_cmd->cmd = args_start[0];
-	print_cmd(last_cmd);
+	if (DEBUG)
+		print_cmd(last_cmd);
 	return (0);
 }
 
@@ -289,7 +292,7 @@ int	resolve_cmd_path(t_cmd **cmd, char **path)
 	{
 		get_cmd_path(&tmp, path);
 		if (tmp->is_valid_cmd)
-			printf("cmd: %s\n", tmp->cmd);
+			//printf("cmd: %s\n", tmp->cmd);
 		if (!tmp->is_valid_cmd)
 			delete_cmd(cmd, tmp);
 		tmp = tmp->next;

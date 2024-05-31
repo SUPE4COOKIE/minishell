@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/30 15:08:39 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/31 13:54:20 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
 # endif
+# define DEBUG true
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;
