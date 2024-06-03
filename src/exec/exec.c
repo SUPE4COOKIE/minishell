@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/03 21:33:36 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/03 22:15:03 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,25 +234,11 @@ void	exec(t_minishell *mshell)
 	int		id;
 	int		old[2];
 	int		new[2];
-	int		child_count;
-	pid_t	*child_pids;
 	int i;
 
-	child_count = 1;
 	init_old_new(old, new);
 	cmd = mshell->cmds;
 	replace_hdoc(cmd);
-	while (cmd)
-	{
-		child_count++;
-		cmd = cmd->next;
-	}
-	child_pids = malloc(sizeof(int) * child_count);
-	if (child_pids == NULL)
-	{
-		perror("malloc");
-		exit(EXIT_FAILURE);
-	}
 	cmd = mshell->cmds;
 	i = 0;
 	while (cmd)
@@ -266,12 +252,12 @@ void	exec(t_minishell *mshell)
 		if (id == 0)
 		{
 			dup_cmd(i, cmd, old, new);
+			handle_file_redirection(mshell, cmd, old, new);
 			exec_cmd(mshell, cmd);
 			exit(EXIT_FAILURE);
 		}
 		else
 		{
-			child_pids[i] = id;
 			if (i != 0)
 			{
 				if (old[0] != -1)
@@ -285,10 +271,7 @@ void	exec(t_minishell *mshell)
 		i++;
 		cmd = cmd->next;
 	}
-	close(old[0]);
-	close(old[1]);
-	i = 0;
+	ft_close(old, new);
 	while (waitpid(-1, NULL, 0) != -1)
 		;
-	free(child_pids);
 }

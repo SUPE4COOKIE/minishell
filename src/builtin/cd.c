@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/30 17:16:51 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/03 21:47:14 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ char	*get_path(char **env, char *key)
 static bool	change_dir(t_minishell *mshell, char *path)
 {
 	char *return_path;
-	char *tmp;
 	char cwd[PATH_MAX];
 
 	return_path = NULL;
@@ -86,16 +85,11 @@ static bool	change_dir(t_minishell *mshell, char *path)
 		return (error_cmd(mshell, 1, "cd: no such file or directory"));
 	return_path = getcwd(cwd, PATH_MAX);
 	if (!return_path)
-		return (free(return_path), error_cmd(mshell, 1, "cd: getcwd failed"));
-	tmp = get_path(mshell->env, "PWD");
-	if (tmp < 0)
-		return (free(return_path), error_cmd(mshell, 1, "PWD not set"));
-	if (set_env(mshell, "OLDPWD", get_path(mshell->env, "PWD")) == EXIT_FAILURE)
-		return (free(return_path), free(tmp), error_cmd(mshell, 1, "OLDPWD not set"));
-	if (set_env(mshell, "PWD", return_path) == EXIT_FAILURE)
-		return (free(return_path), free(tmp), error_cmd(mshell, 1, "PWD not set"));
-	free(return_path);
-	free(tmp);
+		return (error_cmd(mshell, 1, "cd: getcwd failed"));
+	if (set_env(mshell, get_path(mshell->env, "PWD"), "OLDPWD") == EXIT_FAILURE)
+		return (error_cmd(mshell, 1, "cd: setenv failed"));
+	if (set_env(mshell, return_path, "PWD") == EXIT_FAILURE)
+		return (error_cmd(mshell, 1, "cd: setenv failed"));
 	return (EXIT_SUCCESS);
 }
 
@@ -134,9 +128,11 @@ void ft_create_list(char **args, t_arg **new_args)
 
 char *ft_lst_to_char(t_arg *new_args, char *path)
 {
-	int i;
+	size_t i;
 
 	i = 0;
+	if (!path)
+		return (NULL);
 	while (new_args)
 	{
 		ft_strlcpy(path + i, new_args->arg, ft_strlen(new_args->arg) + 1);
@@ -160,8 +156,9 @@ char *remove_double_point(char **args)
 	t_arg	*new_args;
 	t_arg	*prev_prev;
 	t_arg	*next;
-	char path[PATH_MAX]; // TODO: List_to_char *
+	char *path;
 
+	path = malloc(sizeof(char) * PATH_MAX);
 	ft_create_list(args, &new_args);
 	while (new_args)
 	{
@@ -210,5 +207,5 @@ int	builtin_cd(t_minishell *mshell, char **args)
 			return (error_cmd(mshell, 1, "OLDPWD not set"));
 		return (change_dir(mshell, path));
 	}
-	return(change_dir(mshell, args[1]));
+	return(change_dir(mshell, path));
 }
