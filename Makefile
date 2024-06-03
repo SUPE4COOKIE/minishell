@@ -34,6 +34,7 @@ SRCS = $(addprefix src/, \
 	$(addprefix utils/, \
 		error.c \
 		ft_atoi.c \
+		name_file.c \
 	) \
 	minishell.c \
 	)

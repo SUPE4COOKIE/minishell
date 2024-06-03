@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/31 16:24:48 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/03 11:18:48 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int main(int argc, char **argv, char **envp)
 	// free(mshell.line);
 	while (42)
 	{
-		mshell.line = readline("Minishffffffffffffffddddddddddddll $> ");
+		mshell.line = readline("Minishell $> ");
 		if (!mshell.line)
 			break ;
 		if (*mshell.line)
@@ -35,4 +35,9 @@ int main(int argc, char **argv, char **envp)
 		exec(&mshell);
 		free(mshell.line);
 	}
+	free(mshell.env);
+	free(mshell.path);
+	free(mshell.current_path);
+
+	return 0;
 }

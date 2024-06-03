@@ -5,6 +5,18 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
+/*   Updated: 2024/06/03 12:29:11 by scrumier         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 13:05:02 by sonamcrumie       #+#    #+#             */
 /*   Updated: 2024/05/31 16:38:58 by scrumier         ###   ########.fr       */
 /*                                                                            */
@@ -95,13 +107,9 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 {
 	int fd;
 	int i;
-	ssize_t n;
-	pid_t pid;
-	char buf[4096];
-	int pipe_fd[2];
 
 	i = 0;
-	//printf("cmd->op_type[1] = %d\n", cmd->op_type[1]);
+	(void)mshell;
 	if (cmd->outfile && cmd->outfile[i])
 	{
 		while (cmd->outfile[i + 1])
@@ -120,8 +128,6 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 			error_pipe("open failed", new, old, cmd);
 		if (dup2(fd, STDOUT_FILENO) == -1)
 			error_pipe("dup2 failed", new, old, cmd);
-		ft_close(old, new);
-		exec_cmd(mshell, cmd);
 		close(fd);
 	}
 	else if (cmd->op_type[1] == APP_OUT)
@@ -131,60 +137,25 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 			error_pipe("open failed", new, old, cmd);
 		if (dup2(fd, STDOUT_FILENO) == -1)
 			error_pipe("dup2 failed", new, old, cmd);
-		ft_close(old, new);
-		exec_cmd(mshell, cmd);
 		close(fd);
 	}
 	else if (cmd->op_type[0] == RED_IN)
 	{
-		if (pipe(new) == -1)
-			error_pipe("pipe failed", new, old, cmd);
-
-		pid = fork();
-		if (pid == -1)
-			error_pipe("fork failed", new, old, cmd);
-
-		if (pid == 0)
-		{
-			close(new[1]);
-
-			if (dup2(new[0], STDIN_FILENO) == -1)
-				error_pipe("dup2 failed", new, old, cmd);
-			close(pipe_fd[0]);
-
-			exec_cmd(mshell, cmd);
-		}
-		else
-		{
-			close(new[0]);
-			i = 0;
-			while (cmd->infile[i])
-			{
-				fd = open(cmd->infile[i], O_RDONLY);
-				if (fd == -1)
-					error_pipe("open failed", new, old, cmd);
-				n = 0;
-				while ((n = read(fd, buf, sizeof(buf))) > 0)
-				{
-					if (write(new[1], buf, n) != n)
-						error_pipe("write failed", new, old, cmd);
-				}
-				if (n == -1)
-					error_pipe("read failed", new, old, cmd);
-				close(fd);
-				i++;
-			}
-			close(new[1]);
-			wait(NULL);
-		}
+		fd = open(cmd->infile[0], O_RDONLY);
+		if (fd == -1)
+			error_pipe("open failed", new, old, cmd);
+		if (dup2(fd, STDIN_FILENO) == -1)
+			error_pipe("dup2 failed", new, old, cmd);
+		close(fd);
 	}
 }
+
 
 void dup_and_exec(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2])
 {
 	int fd[2];
 
-	if (old[0] != -1 && old[1] != -1)
+	if (old[0] != -1)
 		fd[0] = old[0];
 	else
 		fd[0] = STDIN_FILENO;
@@ -195,59 +166,58 @@ void dup_and_exec(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2])
 	if (cmd->infile || cmd->outfile)
 		handle_file_redirection(mshell, cmd, old, new);
 	if (dup2(fd[0], STDIN_FILENO) == -1)
-		error_pipe("dup2 failedd", new, old, cmd);
+		error_pipe("dup2(1) failed", new, old, cmd);
 	if (dup2(fd[1], STDOUT_FILENO) == -1)
-		error_pipe("dup2 failed", new, old, cmd);
+		error_pipe("dup2(2) failed", new, old, cmd);
 	ft_close(old, new);
 	exec_cmd(mshell, cmd);
+	exit(EXIT_FAILURE);
 }
 
-void replace_hdoc(int new[2], int old[2], t_cmd *cmd)
+void replace_hdoc(t_cmd *cmd)
 {
-	pid_t pid;
+	int fd;
+	char *tmp_filename;
 	char *line;
-	int pipe_fd[2];
+	int i;
 
+	i = 0;
 	while (cmd)
 	{
 		if (cmd->op_type[0] == HDOC)
 		{
-			if (pipe(pipe_fd) == -1)
-				error_pipe("pipe failed", new, old, cmd);
-			pid = fork();
-			if (pid == -1)
-				error_pipe("fork failed", new, old, cmd);
-			if (pid == 0)
+			tmp_filename = tmp_file(i++);
+			fd = open(tmp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+			if (fd == -1)
 			{
-				close(pipe_fd[0]);
-				while (42)
+				perror("open");
+				exit(EXIT_FAILURE);
+			}
+
+			while (1)
+			{
+				line = readline("> ");
+				if (!line || ft_strncmp(line, cmd->infile[0], ft_strlen(cmd->infile[0])) == 0)
 				{
-					ft_putstr_fd("heredoc> ", STDOUT_FILENO);
-					line = readline(NULL);
-					if (!line)
-						error_pipe("readline failed", new, old, cmd);
-					if (ft_strncmp(line, cmd->infile[0], ft_strlen(cmd->infile[0])) == 0)
-					{
-						free(line);
-						break;
-					}
-					ft_putendl_fd(line, new[1]);
 					free(line);
+					break;
 				}
-				close(new[1]);
-				exit(EXIT_SUCCESS);
+				write(fd, line, ft_strlen(line));
+				write(fd, "\n", 1);
+				free(line);
 			}
-			else
-			{
-				close(new[1]);
-				dup2(new[0], STDIN_FILENO);
-				close(new[0]);
-			}
+			close(fd);
+
+			// Replace heredoc with input redirection
+			free(cmd->infile[0]);
+			cmd->infile[0] = ft_strdup(tmp_filename);
 			cmd->op_type[0] = RED_IN;
 		}
 		cmd = cmd->next;
 	}
 }
+
+
 
 /*
 ** @brief execute the commands
@@ -260,20 +230,20 @@ void	exec(t_minishell *mshell)
 	int		old[2];
 	int		new[2];
 	int		child_count;
-	pid_t	*child_pids;
+	pid_t	*child_pid;
 	int i;
 
 	child_count = 1;
 	init_old_new(old, new);
 	cmd = mshell->cmds;
-	replace_hdoc(new, old, cmd);
+	replace_hdoc(cmd);
 	while (cmd)
 	{
 		child_count++;
 		cmd = cmd->next;
 	}
-	child_pids = malloc(sizeof(int) * child_count);
-	if (child_pids == NULL)
+	child_pid = malloc(sizeof(int) * child_count);
+	if (child_pid == NULL)
 	{
 		perror("malloc");
 		exit(EXIT_FAILURE);
@@ -294,7 +264,7 @@ void	exec(t_minishell *mshell)
 		}
 		else
 		{
-			child_pids[i] = id;
+			child_pid[i] = id;
 			i++;
 		}
 		old[0] = new[0];
@@ -302,9 +272,8 @@ void	exec(t_minishell *mshell)
 		cmd = cmd->next;
 	}
 	ft_close(old, new);
-	i = 0;
-	if (waitpid(child_pids[i], NULL, 0))
-		;
-
-	free(child_pids);
+	while (1)
+		if (wait(NULL) == -1)
+			break ;
+	free(child_pid);
 }
