@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/03 12:29:11 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/03 21:33:36 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,27 +151,32 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 }
 
 
-void dup_and_exec(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2])
+void dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 {
-	int fd[2];
-
-	if (old[0] != -1)
-		fd[0] = old[0];
-	else
-		fd[0] = STDIN_FILENO;
+	if (i != 0)
+	{
+		if (dup2(old[0], STDIN_FILENO) == -1)
+		{
+			perror("dup2 failed");
+			exit(EXIT_FAILURE);
+		}
+		if (old[0] != -1)
+			close(old[0]);
+		if (old[1] != -1)
+			close(old[1]);
+	}
 	if (cmd->next)
-		fd[1] = new[1];
-	else
-		fd[1] = STDOUT_FILENO;
-	if (cmd->infile || cmd->outfile)
-		handle_file_redirection(mshell, cmd, old, new);
-	if (dup2(fd[0], STDIN_FILENO) == -1)
-		error_pipe("dup2(1) failed", new, old, cmd);
-	if (dup2(fd[1], STDOUT_FILENO) == -1)
-		error_pipe("dup2(2) failed", new, old, cmd);
-	ft_close(old, new);
-	exec_cmd(mshell, cmd);
-	exit(EXIT_FAILURE);
+	{
+		if (dup2(new[1], STDOUT_FILENO) == -1)
+		{
+			perror("dup2 failed");
+			exit(EXIT_FAILURE);
+		}
+		if (new[0] != -1)
+			close(new[0]);
+		if (new[1] != -1)
+			close(new[1]);
+	}
 }
 
 void replace_hdoc(t_cmd *cmd)
@@ -230,7 +235,7 @@ void	exec(t_minishell *mshell)
 	int		old[2];
 	int		new[2];
 	int		child_count;
-	pid_t	*child_pid;
+	pid_t	*child_pids;
 	int i;
 
 	child_count = 1;
@@ -242,8 +247,8 @@ void	exec(t_minishell *mshell)
 		child_count++;
 		cmd = cmd->next;
 	}
-	child_pid = malloc(sizeof(int) * child_count);
-	if (child_pid == NULL)
+	child_pids = malloc(sizeof(int) * child_count);
+	if (child_pids == NULL)
 	{
 		perror("malloc");
 		exit(EXIT_FAILURE);
@@ -260,20 +265,30 @@ void	exec(t_minishell *mshell)
 			error_pipe("fork failed", new, old, cmd);
 		if (id == 0)
 		{
-			dup_and_exec(mshell, cmd, old, new);
+			dup_cmd(i, cmd, old, new);
+			exec_cmd(mshell, cmd);
+			exit(EXIT_FAILURE);
 		}
 		else
 		{
-			child_pid[i] = id;
-			i++;
+			child_pids[i] = id;
+			if (i != 0)
+			{
+				if (old[0] != -1)
+					close(old[0]);
+				if (old[1] != -1)
+					close(old[1]);
+			}
+			old[0] = new[0];
+			old[1] = new[1];
 		}
-		old[0] = new[0];
-		old[1] = new[1];
+		i++;
 		cmd = cmd->next;
 	}
-	ft_close(old, new);
-	while (1)
-		if (wait(NULL) == -1)
-			break ;
-	free(child_pid);
+	close(old[0]);
+	close(old[1]);
+	i = 0;
+	while (waitpid(-1, NULL, 0) != -1)
+		;
+	free(child_pids);
 }
