@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/03 21:47:14 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/04 13:11:03 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,29 +19,30 @@
 ** @param key The key to set
 ** @return 0 if success, 1 if error
 */
-bool	set_env(t_minishell *mshell, char *value, char *key)
-{
-	int		i;
-	char	*tmp;
+bool	set_env(t_minishell *mshell, char *value, char *key) {
+	int i;
+	char *tmp;
+	char *new_value;
 
 	i = 0;
-	tmp = NULL;
-	while (mshell->env[i])
-	{
-		if (ft_strncmp(mshell->env[i], key, ft_strlen(key)) == 0)
+	while (mshell->env[i]) {
+		if (ft_strncmp(mshell->env[i], key, ft_strlen(key)) == 0 && mshell->env[i][ft_strlen(key)] == '=')
 		{
 			tmp = ft_strjoin(key, "=");
 			if (!tmp)
-				return (error_cmd(mshell, 1, "malloc failed"));
-			free(mshell->env[i]);
-			mshell->env[i] = ft_strjoin(tmp, value);
-			if (!mshell->env[i])
-				return (error_cmd(mshell, 1, "malloc failed"));
+				return error_cmd(mshell, 1, "malloc failed");
+			new_value = ft_strjoin(tmp, value);
 			free(tmp);
+			if (!new_value)
+				return error_cmd(mshell, 1, "malloc failed");
+			free(mshell->env[i]);
+			mshell->env[i] = new_value;
 			return (EXIT_SUCCESS);
 		}
 		i++;
 	}
+	// Code to add a new environment variable if it doesn't exist
+	// Not provided in original code
 	return (EXIT_FAILURE);
 }
 
@@ -59,7 +60,7 @@ char	*get_path(char **env, char *key)
 	i = 0;
 	while (env[i])
 	{
-		if (ft_strncmp(env[i], key, ft_strlen(key)) == 0)
+		if (ft_strncmp(env[i], key, ft_strlen(key)) == 0 && env[i][ft_strlen(key)] == '=')
 		{
 			path = ft_strchr(env[i], '=') + 1;
 			return (path);
@@ -88,6 +89,7 @@ static bool	change_dir(t_minishell *mshell, char *path)
 		return (error_cmd(mshell, 1, "cd: getcwd failed"));
 	if (set_env(mshell, get_path(mshell->env, "PWD"), "OLDPWD") == EXIT_FAILURE)
 		return (error_cmd(mshell, 1, "cd: setenv failed"));
+	printf("return_path: %s\npath: %s\n", return_path, path);
 	if (set_env(mshell, return_path, "PWD") == EXIT_FAILURE)
 		return (error_cmd(mshell, 1, "cd: setenv failed"));
 	return (EXIT_SUCCESS);
@@ -102,25 +104,48 @@ void ft_create_list(char **args, t_arg **new_args)
 {
 	int i;
 	t_arg *tmp;
+	t_arg *current;
+	t_arg *last;
 
 	i = 0;
 	while (args[i])
 	{
 		tmp = malloc(sizeof(t_arg));
 		if (!tmp)
+		{
+			current = *new_args;
+			while (current) {
+				t_arg *next = current->next;
+				free(current->arg);
+				free(current);
+				current = next;
+			}
 			return ;
+		}
 		tmp->arg = ft_strdup(args[i]);
 		if (!tmp->arg)
-			return (free(tmp));
+		{
+			free(tmp);
+			current = *new_args;
+			while (current) {
+				t_arg *next = current->next;
+				free(current->arg);
+				free(current);
+				current = next;
+			}
+			return;
+		}
 		tmp->next = NULL;
 		tmp->prev = NULL;
 		if (!*new_args)
 			*new_args = tmp;
 		else
 		{
-			tmp->next = *new_args;
-			(*new_args)->prev = tmp;
-			*new_args = tmp;
+			last = *new_args;
+			while (last->next)
+				last = last->next;
+			last->next = tmp;
+			tmp->prev = last;
 		}
 		i++;
 	}
@@ -128,20 +153,14 @@ void ft_create_list(char **args, t_arg **new_args)
 
 char *ft_lst_to_char(t_arg *new_args, char *path)
 {
-	size_t i;
-
-	i = 0;
 	if (!path)
 		return (NULL);
+	path[0] = '\0';
 	while (new_args)
 	{
-		ft_strlcpy(path + i, new_args->arg, ft_strlen(new_args->arg) + 1);
-		i += ft_strlen(new_args->arg);
+		ft_strlcat(path, new_args->arg, PATH_MAX);
 		if (new_args->next)
-		{
-			ft_strlcpy(path + i, "/", 2);
-			i++;
-		}
+			ft_strlcat(path, "/", PATH_MAX);
 		new_args = new_args->next;
 	}
 	return (path);
@@ -156,28 +175,50 @@ char *remove_double_point(char **args)
 	t_arg	*new_args;
 	t_arg	*prev_prev;
 	t_arg	*next;
+	t_arg	*current;
 	char *path;
 
 	path = malloc(sizeof(char) * PATH_MAX);
+	if (!path)
+		return (NULL);
 	ft_create_list(args, &new_args);
-	while (new_args)
+	//print list
+	t_arg *tmp = new_args;
+	while (tmp)
 	{
-		if (new_args->prev && ft_strncmp(new_args->arg, "..", 2) != 0)
+		printf("%s\n", tmp->arg);
+		tmp = tmp->next;
+	}
+	current = new_args;
+	while (current)
+	{
+		if (current->prev && ft_strncmp(current->arg, "..", 2) != 0)
 		{
-			prev_prev = new_args->prev->prev;
-			next = new_args->next;
-			free(new_args->prev->arg);
-			free(new_args->prev);
-			free(new_args->arg);
-			free(new_args);
-			prev_prev->next = next;
-			next->prev = prev_prev;
-			new_args = next;
+			prev_prev = current->prev->prev;
+			next = current->next;
+			free(current->prev->arg);
+			free(current->prev);
+			free(current->arg);
+			free(current);
+			if (prev_prev)
+				prev_prev->next = next;
+			if (next)
+				next->prev = prev_prev;
+			current = next;
 		}
 		else
-			new_args = new_args->next;
+			current = current->next;
 	}
-	return (ft_lst_to_char(new_args, path));
+	path = ft_lst_to_char(current, path);
+	current = new_args;
+	while (current)
+	{
+		next = current->next;
+		free(current->arg);
+		free(current);
+		current = next;
+	}
+	return (path);
 }
 
 /*
@@ -189,8 +230,8 @@ char *remove_double_point(char **args)
 int	builtin_cd(t_minishell *mshell, char **args)
 {
 	char   *path;
+	int result;
 
-	path = remove_double_point(args);
 	if (!args || !args[1] || !args[1][0])
 	{
 		path = get_path(mshell->env, "HOME");
@@ -207,5 +248,13 @@ int	builtin_cd(t_minishell *mshell, char **args)
 			return (error_cmd(mshell, 1, "OLDPWD not set"));
 		return (change_dir(mshell, path));
 	}
-	return(change_dir(mshell, path));
+	else
+	{
+		path = remove_double_point(args);
+		if (!path)
+			return error_cmd(mshell, 1, "malloc failed");
+		result = change_dir(mshell, path);
+		free(path);
+		return (result);
+	}
 }
