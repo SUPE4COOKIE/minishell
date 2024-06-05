@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/31 18:41:06 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/05 18:16:24 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,36 @@
 */
 
 #include "minishell.h"
+
+char	*var_replacer(char *var, char *value)
+{
+	char *result;
+	size_t i;
+	
+	result = malloc(ft_strlen(var) + ft_strlen(value) + 1);
+	i = 0;
+	while (*var)
+	{
+		if (*var == '$' && *(var++))
+		{
+			while (*var && *var == '$')
+				var++;
+			while (*var && (ft_isalpha(*var) || *var == '_' || ft_isdigit(*var)))
+				var++;
+			while (value && *value)
+			{
+				result[i] = *value;
+				i++;
+				value++;
+			}
+		}
+		result[i] = *var;
+		i++;
+		var++;
+	}
+	result[i] = 0;
+	return (result);
+}
 
 char *var_finder(char *var, char **envp)
 {
@@ -41,7 +71,7 @@ char	*get_name(char *str)
 	size_t	i;
 
 	i = 0;
-	while (str[i] && (ft_isalpha(str[i]) || str[i] == '_'))
+	while (str[i] && (ft_isalpha(str[i]) || str[i] == '_' || ft_isdigit(str[i])))
 		i++;
 	name = ft_substr(str, 0, i);
 	if (!name)
@@ -64,7 +94,7 @@ int expand(t_lexer **lex, char **envp)
 		i = 0;
 		if (tmp->type == T_WORD || tmp->type == T_D_QUOTED_WORD)
 		{
-			while (tmp->value[i])
+			while (tmp->value && tmp->value[i])
 			{
 				if (tmp->value[i] == '$' && tmp->value[i + 1] && (ft_isalpha(tmp->value[i + 1]) || tmp->value[i + 1] == '_'))
 				{
@@ -73,11 +103,12 @@ int expand(t_lexer **lex, char **envp)
 					if (!var_name)
 						exit(1); // TODO: add a proper exit struct
 					var = var_finder(var_name, envp);
+					free(var_name);
+					var_name = tmp->value;
 					if (var)
-					{
-						printf("var: %s\n", var);
-						// replace var_name with var
-					}
+						tmp->value = var_replacer(tmp->value, var);
+					else
+						tmp->value = var_replacer(tmp->value, NULL);
 					free(var_name);
 				}
 				i++;

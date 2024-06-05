@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/04 17:02:21 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/05 15:21:03 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
 # endif
+# define PRINT_CAT false
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;
