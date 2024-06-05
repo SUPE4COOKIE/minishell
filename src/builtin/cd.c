@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/30 15:24:13 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/03 17:05:02 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ static bool	change_dir(t_minishell *mshell, char *path)
 	if (!return_path)
 		return (free(return_path), error_cmd(mshell, 1, "cd: getcwd failed"));
 	tmp = get_path(mshell->env, "PWD");
-	if (tmp < 0)
+	if (*tmp < 0)
 		return (free(return_path), error_cmd(mshell, 1, "PWD not set"));
 	if (set_env(mshell, "OLDPWD", get_path(mshell->env, "PWD")) == EXIT_FAILURE)
 		return (free(return_path), free(tmp), error_cmd(mshell, 1, "OLDPWD not set"));
@@ -197,7 +197,7 @@ int	builtin_cd(t_minishell *mshell, char **args)
 	if (!args || !args[1] || !args[1][0])
 	{
 		path = get_path(mshell->env, "HOME");
-		if (path < 0)
+		if (*path < 0)
 			return (error_cmd(mshell, 1, "HOME not set"));
 		return (change_dir(mshell, path));
 	}
@@ -206,7 +206,7 @@ int	builtin_cd(t_minishell *mshell, char **args)
 	else if (ft_strncmp(args[1], "-", 2) == 0)
 	{
 		path = get_path(mshell->env, "OLDPWD");
-		if (path < 0)
+		if (*path < 0)
 			return (error_cmd(mshell, 1, "OLDPWD not set"));
 		return (change_dir(mshell, path));
 	}
