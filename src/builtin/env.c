@@ -12,11 +12,11 @@
 
 #include "minishell.h"
 
-/*
+/**
 ** @brief Check if the character is in the string
 ** @param str The string
 ** @param c The character
-** @param n The number of occurence
+** @param n The number of occurrence
 ** @return 1 if the character is in the string n times, 0 otherwise
 */
 int	ft_contain(char *str, char c, int n)
@@ -35,7 +35,7 @@ int	ft_contain(char *str, char c, int n)
 	return (n);
 }
 
-/*
+/**
 ** @brief Print the environment variables
 ** @param mshell The minishell structure
 ** @param args The arguments of the command

@@ -18,5 +18,6 @@ int	error_cmd(t_minishell *mshell, int status, char *msg);
 int	error_msg_free(char *msg, void *ptr, void *ptr2, void *ptr3);
 long ft_atoi(const char *str);
 char *tmp_file(int nb);
+int free_tab(char **tab);
 
 #endif

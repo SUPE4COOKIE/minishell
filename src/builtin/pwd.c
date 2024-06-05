@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-/*
+/**
 ** @brief: Print the current working directory
 ** @param mshell The minishell structure
 ** @param args The arguments of the command

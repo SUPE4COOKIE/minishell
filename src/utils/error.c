@@ -89,3 +89,17 @@ int	error_msg_free(char *msg, void *ptr, void *ptr2, void *ptr3)
 		free(ptr3);
 	return (EXIT_FAILURE);
 }
+
+int free_tab(char **tab)
+{
+	int i;
+
+	i = 0;
+	while (tab[i])
+	{
+		free(tab[i]);
+		i++;
+	}
+	free(tab);
+	return (EXIT_FAILURE);
+}

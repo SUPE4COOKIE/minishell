@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-/*
+/**
 ** @brief: Free all allocated memory and exit the shell
 ** @param mshell The minishell structure
 ** @param status The exit status
@@ -37,7 +37,7 @@ int	free_shell(t_minishell *mshell, int status)
 	return(status);
 }
 
-/*
+/**
 ** @brief: Check if the command is between two commands
 ** @param mshell The minishell structure
 ** @return true if the command is between two commands, false otherwise
@@ -53,7 +53,7 @@ static bool	get_is_between_cmd(t_minishell *mshell)
 	return (false);
 }
 
-/*
+/**
 ** @brief: Exit the shell
 ** @param mshell The minishell structure
 ** @param args The arguments

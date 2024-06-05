@@ -6,13 +6,13 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/04 12:55:32 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/05 13:26:22 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*
+/**
 ** @brief Close the file descriptors
 ** @param old The old file descriptors
 ** @param new The new file descriptors
@@ -29,7 +29,7 @@ void	ft_close(int old[2], int new[2])
 		close(new[1]);
 }
 
-/*
+/**
 ** @brief Initialize the old and new file descriptors
 ** @param old The old file descriptors
 ** @param new The new file descriptors
@@ -42,6 +42,11 @@ static void	init_old_new(int old[2], int new[2])
 	new[1] = -1;
 }
 
+/**
+ * @brief Execute a builtin command
+ * @param mshell
+ * @param cmd
+ */
 void	exec_builtin(t_minishell *mshell, t_cmd *cmd)
 {
 	if (ft_strncmp(cmd->cmd, "echo", ft_strlen(cmd->cmd)) == 0)
@@ -60,6 +65,11 @@ void	exec_builtin(t_minishell *mshell, t_cmd *cmd)
 		builtin_exit(mshell, cmd->args);
 }
 
+/**
+ * @brief Check if the command is a builtin command
+ * @param cmd
+ * @return true if the command is a builtin command, false otherwise
+ */
 bool is_builtin(char *cmd)
 {
 	if (ft_strncmp(cmd, "echo", ft_strlen(cmd)) == 0)
@@ -79,18 +89,80 @@ bool is_builtin(char *cmd)
 	return (false);
 }
 
+char **copy_args(char **args)
+{
+    int arg_count;
+    char **args_copy;
+    int i;
+
+	arg_count = 0;
+	args_copy = NULL;
+	i = 0;
+    while (args[arg_count])
+        arg_count++;
+    args_copy = malloc((arg_count + 1) * sizeof(char *));
+    if (args_copy == NULL) {
+        return NULL;
+    }
+
+    while (args[i] != NULL) {
+        args_copy[i] = strdup(args[i]);
+        if (args_copy[i] == NULL) {
+            // If allocation fails, free any previously allocated strings
+            while (--i >= 0) {
+                free(args_copy[i]);
+            }
+            free(args_copy);
+            return NULL;
+        }
+        i++;
+    }
+
+    args_copy[arg_count] = NULL; // Null-terminate the array
+
+    return args_copy;
+}
+
+/**
+ * @brief Execute a command
+ * @param mshell
+ * @param cmd
+ */
 void exec_cmd(t_minishell *mshell, t_cmd *cmd)
 {
+	char *program;
+	char **args;
+
 	if (is_builtin(cmd->cmd) == true)
 	{
 		exec_builtin(mshell, cmd);
 	}
 	else
 	{
-		execve(cmd->cmd, cmd->args, mshell->env);
+		program = strdup(cmd->cmd);
+		if (program == NULL) {
+			perror("Failed to allocate memory for program path");
+			return ;
+		}
+		args = copy_args(cmd->args);
+		if (args == NULL) {
+			perror("Failed to allocate memory for arguments");
+			free(program);
+			return ;
+		}
+		execve(program, args, mshell->env);
+		free(program);
+		free_tab(args);
 	}
 }
 
+/**
+ * @brief Handle file redirection
+ * @param mshell
+ * @param cmd
+ * @param old
+ * @param new
+ */
 void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2])
 {
 	int fd;
@@ -138,7 +210,13 @@ void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 	}
 }
 
-
+/**
+ * @brief Duplicate the file descriptors
+ * @param i
+ * @param cmd
+ * @param old
+ * @param new
+ */
 void dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 {
 	if (i != 0)
@@ -232,9 +310,16 @@ void	exec(t_minishell *mshell)
 	while (cmd)
 	{
 		if (cmd->next)
+		{
 			if (pipe(new) == -1)
 				error_pipe("pipe failed", new, old, cmd);
-		id = fork();
+		}
+		if (is_builtin(cmd->cmd) == false)
+			id = fork();
+		else if (is_builtin(cmd->cmd) == true && cmd->next)
+			id = fork();
+		else
+			id = 0;
 		if (id == -1)
 			error_pipe("fork failed", new, old, cmd);
 		if (id == 0)
@@ -242,7 +327,8 @@ void	exec(t_minishell *mshell)
 			dup_cmd(i, cmd, old, new);
 			handle_file_redirection(mshell, cmd, old, new);
 			exec_cmd(mshell, cmd);
-			exit(EXIT_FAILURE);
+			if (is_builtin(cmd->cmd) == false)
+				exit(EXIT_FAILURE);
 		}
 		else
 		{

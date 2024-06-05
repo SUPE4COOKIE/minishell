@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sonam <sonam@student.42.fr>                +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/04 14:27:47 by sonam            ###   ########.fr       */
+/*   Updated: 2024/06/05 13:16:06 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*
+/**
 ** @brief Set the value of a key in the env
 ** @param mshell The minishell structure
 ** @param value The value to set
@@ -30,23 +30,22 @@ bool	set_env(t_minishell *mshell, char *value, char *key) {
 		{
 			tmp = ft_strjoin(key, "=");
 			if (!tmp)
-				return error_cmd(mshell, 1, "malloc failed");
+				return (error_cmd(mshell, 1, "malloc failed"));
 			new_value = ft_strjoin(tmp, value);
 			free(tmp);
 			if (!new_value)
-				return error_cmd(mshell, 1, "malloc failed");
-			free(mshell->env[i]);
-			mshell->env[i] = new_value;
+				return (error_cmd(mshell, 1, "malloc failed"));
 			return (EXIT_SUCCESS);
 		}
 		i++;
 	}
+	printf("%s not set\n", key);
 	// Code to add a new environment variable if it doesn't exist
 	// Not provided in original code
 	return (EXIT_FAILURE);
 }
 
-/*
+/**
 ** @brief Get the path of a key in the env
 ** @param env The env
 ** @param key The key to search
@@ -70,7 +69,7 @@ char	*get_path(char **env, char *key)
 	return (NULL);
 }
 
-/*
+/**
 ** @brief Change the current directory
 ** @param mshell The minishell structure
 ** @param path The path to change to
@@ -78,24 +77,24 @@ char	*get_path(char **env, char *key)
 */
 static bool	change_dir(t_minishell *mshell, char *path)
 {
-	char *return_path;
 	char cwd[PATH_MAX];
 
-	return_path = NULL;
-	if (chdir(path) < 0)
+	printf("path: %s\n", path);
+	if (chdir(path) != 0)
 		return (error_cmd(mshell, 1, "cd: no such file or directory"));
-	return_path = getcwd(cwd, PATH_MAX);
-	if (!return_path)
+	getcwd(cwd, PATH_MAX);
+	if (cwd[0] == '\0')
 		return (error_cmd(mshell, 1, "cd: getcwd failed"));
 	if (set_env(mshell, get_path(mshell->env, "PWD"), "OLDPWD") == EXIT_FAILURE)
 		return (error_cmd(mshell, 1, "cd: setenv failed"));
-	printf("return_path: %s\npath: %s\n", return_path, path);
-	if (set_env(mshell, return_path, "PWD") == EXIT_FAILURE)
+	if (set_env(mshell, cwd, "PWD") == EXIT_FAILURE) {
 		return (error_cmd(mshell, 1, "cd: setenv failed"));
+	}
+	printf("return_path: %s\n", cwd);
 	return (EXIT_SUCCESS);
 }
 
-/*
+/**
 ** @brief Create a list of arguments
 ** @param args The arguments
 ** @param new_args The new list
@@ -107,7 +106,7 @@ void ft_create_list(char **args, t_arg **new_args)
 	t_arg *current;
 	t_arg *last;
 
-	i = 0;
+	i = 1;
 	while (args[i])
 	{
 		tmp = malloc(sizeof(t_arg));
@@ -151,6 +150,12 @@ void ft_create_list(char **args, t_arg **new_args)
 	}
 }
 
+/**
+ * @brief Convert a list of arguments to a string
+ * @param new_args
+ * @param path
+ * @return
+ */
 char *ft_lst_to_char(t_arg *new_args, char *path)
 {
 	if (!path)
@@ -166,50 +171,49 @@ char *ft_lst_to_char(t_arg *new_args, char *path)
 	return (path);
 }
 
-/*
+/**
 ** @brief Remove the double point in the path
 ** @param args The arguments
 */
 char *remove_double_point(char **args)
 {
-	t_arg	*new_args;
-	t_arg	*prev_prev;
-	t_arg	*next;
-	t_arg	*current;
+	t_arg *new_args = NULL;
+	t_arg *current;
+	t_arg *to_remove;
+	t_arg *prev;
+	t_arg *next;
 	char *path;
 
 	path = malloc(sizeof(char) * PATH_MAX);
 	if (!path)
 		return (NULL);
+
 	ft_create_list(args, &new_args);
-	//print list
-	t_arg *tmp = new_args;
-	while (tmp)
-	{
-		printf("%s\n", tmp->arg);
-		tmp = tmp->next;
-	}
 	current = new_args;
+
 	while (current)
 	{
-		if (current->prev && ft_strncmp(current->arg, "..", 2) != 0)
+		if (current->prev && ft_strncmp(current->arg, "..", 2) == 0)
 		{
-			prev_prev = current->prev->prev;
+			to_remove = current;
+			prev = current->prev;
 			next = current->next;
-			free(current->prev->arg);
-			free(current->prev);
-			free(current->arg);
-			free(current);
-			if (prev_prev)
-				prev_prev->next = next;
+			if (prev->prev)
+				prev->prev->next = next;
 			if (next)
-				next->prev = prev_prev;
+				next->prev = prev->prev;
+			if (prev == new_args)
+				new_args = next;
+			free(prev->arg);
+			free(prev);
+			free(to_remove->arg);
+			free(to_remove);
 			current = next;
 		}
 		else
 			current = current->next;
 	}
-	path = ft_lst_to_char(current, path);
+	path = ft_lst_to_char(new_args, path);
 	current = new_args;
 	while (current)
 	{
@@ -221,7 +225,7 @@ char *remove_double_point(char **args)
 	return (path);
 }
 
-/*
+/**
 ** @brief Change the current directory
 ** @param mshell The minishell structure
 ** @param args The arguments of cd command
