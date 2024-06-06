@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/05 15:41:28 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/06 17:07:31 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -273,6 +273,7 @@ int	lexer_director(t_lexer **lex, size_t *end, size_t *start, char *line)
 			*start = *end;
 			add_quoted_word(lex, line + *start, end); // TODO: check return
 			*start = *end;
+			continue; // not retested might cause problems but avoid invalid read
 		}
 		if (is_operator_char(line[*end]))
 		{

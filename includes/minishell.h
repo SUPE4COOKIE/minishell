@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/05 19:40:29 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/06 15:36:06 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
 # endif
+# define PRINT_CAT false
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;

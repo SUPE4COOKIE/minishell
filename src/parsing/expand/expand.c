@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/05 18:49:03 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/06 16:44:52 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 #include "minishell.h"
 
-char	*var_replacer(char *var, char *value)
+char	*var_replacer(char *var, char *value, size_t *iter)
 {
 	char *result;
 	size_t i;
@@ -35,10 +35,21 @@ char	*var_replacer(char *var, char *value)
 			while (value && *value)
 			{
 				result[i] = *value;
+				(*iter)++;
 				i++;
 				value++;
 			}
+			break;
 		}
+		else
+		{
+			result[i] = *var;
+			i++;
+			var++;
+		}
+	}
+	while (*var)
+	{
 		result[i] = *var;
 		i++;
 		var++;
@@ -58,7 +69,7 @@ char *var_finder(char *var, char **envp)
 		j = 0;
 		while (envp[i][j] == var[j] && envp[i][j] != '=')
 			j++;
-		if (envp[i][j] == '=')
+		if (envp[i][j] == '=' && !var[j])
 			return (envp[i] + j + 1);
 		i++;
 	}
@@ -105,12 +116,18 @@ int expand(t_lexer **lex, char **envp)
 					var = var_finder(var_name, envp);
 					free(var_name);
 					var_name = tmp->value;
+					i--;
 					if (var)
-						tmp->value = var_replacer(tmp->value, var);
+						tmp->value = var_replacer(tmp->value, var, &i);
 					else
-						tmp->value = var_replacer(tmp->value, NULL);
+						tmp->value = var_replacer(tmp->value, NULL, &i);
 					free(var_name);
+					continue;
 				}
+				//else if (tmp->value[i] == '$' && tmp->value[i + 1])
+				//{
+				//	tmp->value = var_replacer(tmp->value, NULL, &i);
+				//}
 				i++;
 			}
 		}
