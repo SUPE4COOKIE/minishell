@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/05 13:16:06 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/06 14:57:57 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,29 +19,33 @@
 ** @param key The key to set
 ** @return 0 if success, 1 if error
 */
-bool	set_env(t_minishell *mshell, char *value, char *key) {
-	int i;
-	char *tmp;
-	char *new_value;
+bool	set_env(char ***env, char *value, char *key)
+{
+	int		i;
+	char	*new_env;
+	char	*tmp;
 
 	i = 0;
-	while (mshell->env[i]) {
-		if (ft_strncmp(mshell->env[i], key, ft_strlen(key)) == 0 && mshell->env[i][ft_strlen(key)] == '=')
+	while ((*env)[i])
+	{
+		if (ft_strncmp((*env)[i], key, ft_strlen(key)) == 0 && (*env)[i][ft_strlen(key)] == '=')
 		{
-			tmp = ft_strjoin(key, "=");
+			new_env = ft_strjoin(key, "=");
+			if (!new_env)
+				return (EXIT_FAILURE);
+			tmp = ft_strjoin(new_env, value);
 			if (!tmp)
-				return (error_cmd(mshell, 1, "malloc failed"));
-			new_value = ft_strjoin(tmp, value);
-			free(tmp);
-			if (!new_value)
-				return (error_cmd(mshell, 1, "malloc failed"));
+			{
+				free(new_env);
+				return (EXIT_FAILURE);
+			}
+			free(new_env);
+			(*env)[i] = tmp;
 			return (EXIT_SUCCESS);
 		}
 		i++;
 	}
-	printf("%s not set\n", key);
-	// Code to add a new environment variable if it doesn't exist
-	// Not provided in original code
+
 	return (EXIT_FAILURE);
 }
 
@@ -79,18 +83,20 @@ static bool	change_dir(t_minishell *mshell, char *path)
 {
 	char cwd[PATH_MAX];
 
-	printf("path: %s\n", path);
+	if (DEBUG == true)
+		printf("path: %s\n", path);
 	if (chdir(path) != 0)
 		return (error_cmd(mshell, 1, "cd: no such file or directory"));
 	getcwd(cwd, PATH_MAX);
 	if (cwd[0] == '\0')
 		return (error_cmd(mshell, 1, "cd: getcwd failed"));
-	if (set_env(mshell, get_path(mshell->env, "PWD"), "OLDPWD") == EXIT_FAILURE)
+	if (set_env(&mshell->env, get_path(mshell->env, "PWD"), "OLDPWD") == EXIT_FAILURE)
 		return (error_cmd(mshell, 1, "cd: setenv failed"));
-	if (set_env(mshell, cwd, "PWD") == EXIT_FAILURE) {
+	if (set_env(&mshell->env, cwd, "PWD") == EXIT_FAILURE) {
 		return (error_cmd(mshell, 1, "cd: setenv failed"));
 	}
-	printf("return_path: %s\n", cwd);
+	if (DEBUG == true)
+		printf("return_path: %s\n", cwd);
 	return (EXIT_SUCCESS);
 }
 

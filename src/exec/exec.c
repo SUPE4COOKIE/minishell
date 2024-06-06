@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/05 13:26:22 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/06 14:07:11 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ char **copy_args(char **args)
     }
 
     while (args[i] != NULL) {
-        args_copy[i] = strdup(args[i]);
+        args_copy[i] = ft_strdup(args[i]);
         if (args_copy[i] == NULL) {
             // If allocation fails, free any previously allocated strings
             while (--i >= 0) {
@@ -139,7 +139,7 @@ void exec_cmd(t_minishell *mshell, t_cmd *cmd)
 	}
 	else
 	{
-		program = strdup(cmd->cmd);
+		program = ft_strdup(cmd->cmd);
 		if (program == NULL) {
 			perror("Failed to allocate memory for program path");
 			return ;
