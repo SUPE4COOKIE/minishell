@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/06 16:44:52 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/06 18:09:46 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,11 @@ char	*var_replacer(char *var, char *value, size_t *iter)
 			while (*var && *var == '$')
 				var++;
 			while (*var && (ft_isalpha(*var) || *var == '_' || ft_isdigit(*var)))
+			{				
 				var++;
+				if (ft_isdigit(*(var - 1)) && *(var - 2) == '$')
+					break;
+			}
 			while (value && *value)
 			{
 				result[i] = *value;
@@ -120,14 +124,14 @@ int expand(t_lexer **lex, char **envp)
 					if (var)
 						tmp->value = var_replacer(tmp->value, var, &i);
 					else
-						tmp->value = var_replacer(tmp->value, NULL, &i);
+						tmp->value = var_replacer(tmp->value, NULL, &i); // TODO: delete the node if null
 					free(var_name);
 					continue;
 				}
-				//else if (tmp->value[i] == '$' && tmp->value[i + 1])
-				//{
-				//	tmp->value = var_replacer(tmp->value, NULL, &i);
-				//}
+				else if (tmp->value[i] == '$' && tmp->value[i + 1])
+				{
+					tmp->value = var_replacer(tmp->value, NULL, &i);
+				}
 				i++;
 			}
 		}
