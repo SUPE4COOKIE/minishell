@@ -12,6 +12,59 @@
 
 #include "minishell.h"
 
+void del_cmd(t_cmd *cmd)
+{
+	if (cmd->cmd)
+		free(cmd->cmd);
+	cmd->cmd = NULL;
+	if (cmd->args)
+		free_tab(cmd->args);
+	cmd->args = NULL;
+	if (cmd->args)
+		free_tab(cmd->args);
+	cmd->args = NULL;
+	if (cmd->outfile)
+		free_tab(cmd->outfile);
+	cmd->outfile = NULL;
+	if (cmd->infile)
+		free_tab(cmd->infile);
+	cmd->infile = NULL;
+	cmd->next = NULL;
+	cmd->prev = NULL;
+	free(cmd);
+	cmd = NULL;
+}
+
+void free_cmds(t_cmd *cmd)
+{
+	t_cmd	*tmp;
+
+	while (cmd)
+	{
+		tmp = cmd;
+		cmd = cmd->next;
+		del_cmd(tmp);
+	}
+}
+
+void free_mshell(t_minishell *mshell)
+{
+	if (mshell->env)
+		free_tab(mshell->env);
+	mshell->env = NULL;
+	if (mshell->path)
+		free_tab(mshell->path);
+	mshell->path = NULL;
+	if (mshell->line)
+		free(mshell->line);
+	mshell->line = NULL;
+	if (mshell->cmds)
+		free_cmds(mshell->cmds);
+	mshell->cmds = NULL;
+	free(mshell);
+	mshell = NULL;
+}
+
 /**
 ** @brief: Free all allocated memory and exit the shell
 ** @param mshell The minishell structure
@@ -19,22 +72,8 @@
 */
 int	free_shell(t_minishell *mshell, int status)
 {
-	int	i;
-
-	if (mshell->line)
-		free(mshell->line);
-	if (mshell->current_path)
-		free(mshell->current_path);
-	if (mshell->path)
-		free(mshell->path);
-	if (mshell->env)
-	{
-		i = 0;
-		while (mshell->env[i])
-			free(mshell->env[i++]);
-		free(mshell->env);
-	}
-	return(status);
+	free_mshell(mshell);
+	return (status);
 }
 
 /**
