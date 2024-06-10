@@ -75,6 +75,7 @@ $(OBJ_DIR):
 
 $(NAME): $(OBJ)
 	$(CC) $(FLAGS) $(OBJ) $(LIB) -o $@
+	@say
 
 clean:
 	$(RM) $(OBJ_DIR)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/09 12:38:16 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/30 17:06:22 by mwojtasi         ###   ########.fr       */
+/*   Created: 2024/06/06 11:57:22 by scrumier          #+#    #+#             */
+/*   Updated: 2024/06/06 16:59:15 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,5 +15,6 @@
 
 void exec(t_minishell *mshell);
 bool is_builtin(char *cmd);
+void replace_hdoc(t_cmd *cmd);
 
 #endif

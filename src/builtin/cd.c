@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:59:29 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/06 14:57:57 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/06 16:32:54 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ bool	set_env(char ***env, char *value, char *key)
 	int		i;
 	char	*new_env;
 	char	*tmp;
+	char	**new_env_tab;
+	int		j;
 
 	i = 0;
 	while ((*env)[i])
@@ -45,8 +47,35 @@ bool	set_env(char ***env, char *value, char *key)
 		}
 		i++;
 	}
+	// add the var in the env
+	new_env = ft_strjoin(key, "=");
+	if (!new_env)
+		return (EXIT_FAILURE);
+	tmp = ft_strjoin(new_env, value);
+	if (!tmp)
+	{
+		free(new_env);
+		return (EXIT_FAILURE);
+	}
+	free(new_env);
+	new_env_tab = malloc((i + 2) * sizeof(char *));
+	if (!new_env_tab)
+	{
+		free(tmp);
+		return (EXIT_FAILURE);
+	}
+	j = 0;
+	while (j < i)
+	{
+		new_env_tab[j] = (*env)[j];
+		j++;
+	}
+	new_env_tab[i] = tmp;
+	new_env_tab[i + 1] = NULL;
 
-	return (EXIT_FAILURE);
+	//free(*env);
+	*env = new_env_tab;
+	return (EXIT_SUCCESS);
 }
 
 /**
@@ -83,7 +112,7 @@ static bool	change_dir(t_minishell *mshell, char *path)
 {
 	char cwd[PATH_MAX];
 
-	if (DEBUG == true)
+	//if (DEBUG == true)
 		printf("path: %s\n", path);
 	if (chdir(path) != 0)
 		return (error_cmd(mshell, 1, "cd: no such file or directory"));
@@ -95,7 +124,7 @@ static bool	change_dir(t_minishell *mshell, char *path)
 	if (set_env(&mshell->env, cwd, "PWD") == EXIT_FAILURE) {
 		return (error_cmd(mshell, 1, "cd: setenv failed"));
 	}
-	if (DEBUG == true)
+	//if (DEBUG == true)
 		printf("return_path: %s\n", cwd);
 	return (EXIT_SUCCESS);
 }
@@ -105,54 +134,45 @@ static bool	change_dir(t_minishell *mshell, char *path)
 ** @param args The arguments
 ** @param new_args The new list
 */
-void ft_create_list(char **args, t_arg **new_args)
+void ft_create_list(char *args, t_arg **new_args)
 {
-	int i;
-	t_arg *tmp;
+	// i want my function to split the string on ? and put eatch argument in a node of a linked list
+	// i will use a linked list because i don't know how many arguments i will have
 	t_arg *current;
-	t_arg *last;
+	t_arg *prev;
+	char *arg;
+	int i;
 
-	i = 1;
+	i = 0;
 	while (args[i])
 	{
-		tmp = malloc(sizeof(t_arg));
-		if (!tmp)
+		arg = malloc(sizeof(char) * PATH_MAX);
+		if (!arg)
+			return ;
+		current = malloc(sizeof(t_arg));
+		if (!current)
 		{
-			current = *new_args;
-			while (current) {
-				t_arg *next = current->next;
-				free(current->arg);
-				free(current);
-				current = next;
-			}
+			free(arg);
 			return ;
 		}
-		tmp->arg = ft_strdup(args[i]);
-		if (!tmp->arg)
-		{
-			free(tmp);
-			current = *new_args;
-			while (current) {
-				t_arg *next = current->next;
-				free(current->arg);
-				free(current);
-				current = next;
-			}
-			return;
-		}
-		tmp->next = NULL;
-		tmp->prev = NULL;
+		current->arg = arg;
+		current->next = NULL;
+		current->prev = NULL;
 		if (!*new_args)
-			*new_args = tmp;
+			*new_args = current;
 		else
 		{
-			last = *new_args;
-			while (last->next)
-				last = last->next;
-			last->next = tmp;
-			tmp->prev = last;
+			prev->next = current;
+			current->prev = prev;
 		}
+		while (args[i] && args[i] != '/')
+		{
+			arg[i] = args[i];
+			i++;
+		}
+		arg[i] = '\0';
 		i++;
+		prev = current;
 	}
 }
 
@@ -177,48 +197,54 @@ char *ft_lst_to_char(t_arg *new_args, char *path)
 	return (path);
 }
 
+void	ft_remove_node(t_arg *node)
+{
+	t_arg *prev;
+	t_arg *next;
+
+	if (!node)
+		return ;
+	prev = node->prev;
+	next = node->next;
+	node->prev->next = next;
+	node->next->prev = prev;
+	free(node->arg);
+	free(node);
+}
+
 /**
 ** @brief Remove the double point in the path
 ** @param args The arguments
 */
 char *remove_double_point(char **args)
 {
-	t_arg *new_args = NULL;
+	t_arg *new_args;
 	t_arg *current;
-	t_arg *to_remove;
-	t_arg *prev;
 	t_arg *next;
 	char *path;
 
 	path = malloc(sizeof(char) * PATH_MAX);
 	if (!path)
-		return (NULL);
-
-	ft_create_list(args, &new_args);
+		return NULL;
+	ft_create_list(args[1], &new_args);
 	current = new_args;
-
+	//print list
+	t_arg *tmp = new_args;
+	while (tmp)
+	{
+		printf("arg: %s\n", tmp->arg);
+		tmp = tmp->next;
+	}
 	while (current)
 	{
-		if (current->prev && ft_strncmp(current->arg, "..", 2) == 0)
+		if (current->prev && ft_strncmp(current->prev->arg, "..", 3) != 0 && ft_strncmp(current->arg, "..", 3) == 0)
 		{
-			to_remove = current;
-			prev = current->prev;
-			next = current->next;
-			if (prev->prev)
-				prev->prev->next = next;
-			if (next)
-				next->prev = prev->prev;
-			if (prev == new_args)
-				new_args = next;
-			free(prev->arg);
-			free(prev);
-			free(to_remove->arg);
-			free(to_remove);
-			current = next;
+			ft_remove_node(current);
+			ft_remove_node(current->prev);
 		}
-		else
-			current = current->next;
+		current = current->next;
 	}
+	//print the list
 	path = ft_lst_to_char(new_args, path);
 	current = new_args;
 	while (current)
@@ -261,6 +287,7 @@ int	builtin_cd(t_minishell *mshell, char **args)
 	else
 	{
 		path = remove_double_point(args);
+		printf("path: %s\n", path);
 		if (!path)
 			return error_cmd(mshell, 1, "malloc failed");
 		result = change_dir(mshell, path);

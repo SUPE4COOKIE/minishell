@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/06 14:07:11 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/06 16:58:34 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,16 @@ void	ft_close(int old[2], int new[2])
 ** @param old The old file descriptors
 ** @param new The new file descriptors
 */
-static void	init_old_new(int old[2], int new[2])
+static void	init_exec(int old[2], int new[2], t_minishell *mshell)
 {
+	t_cmd *cmd;
+
 	old[0] = -1;
 	old[1] = -1;
 	new[0] = -1;
 	new[1] = -1;
+	cmd = mshell->cmds;
+	replace_hdoc(cmd);
 }
 
 /**
@@ -288,7 +292,16 @@ void replace_hdoc(t_cmd *cmd)
 	}
 }
 
-
+void close_old(int i, int old[2])
+{
+	if (i != 0)
+	{
+		if (old[0] != -1)
+			close(old[0]);
+		if (old[1] != -1)
+			close(old[1]);
+	}
+}
 
 /*
 ** @brief execute the commands
@@ -302,9 +315,7 @@ void	exec(t_minishell *mshell)
 	int		new[2];
 	int i;
 
-	init_old_new(old, new);
-	cmd = mshell->cmds;
-	replace_hdoc(cmd);
+	init_exec(old, new, mshell);
 	cmd = mshell->cmds;
 	i = 0;
 	while (cmd)
@@ -332,13 +343,7 @@ void	exec(t_minishell *mshell)
 		}
 		else
 		{
-			if (i != 0)
-			{
-				if (old[0] != -1)
-					close(old[0]);
-				if (old[1] != -1)
-					close(old[1]);
-			}
+			close_old(i, old);
 			old[0] = new[0];
 			old[1] = new[1];
 		}
