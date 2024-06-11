@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/06 18:09:46 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/11 20:00:49 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,17 @@ char	*var_replacer(char *var, char *value, size_t *iter)
 		{
 			while (*var && *var == '$')
 				var++;
-			while (*var && (ft_isalpha(*var) || *var == '_' || ft_isdigit(*var)))
-			{				
-				var++;
-				if (ft_isdigit(*(var - 1)) && *(var - 2) == '$')
-					break;
+			if (*var && *var != '?')
+			{
+				while ((ft_isalpha(*var) || *var == '_' || ft_isdigit(*var)))
+				{				
+					var++;
+					if (ft_isdigit(*(var - 1)) && *(var - 2) == '$')
+						break;
+				}
 			}
+			else if (*var == '?')
+				var++;
 			while (value && *value)
 			{
 				result[i] = *value;
@@ -68,6 +73,8 @@ char *var_finder(char *var, char **envp)
 	int j;
 
 	i = 0;
+	if (ft_strncmp(var, "UID", 3) == 0)
+		return ("COUCOU");
 	while (envp[i])
 	{
 		j = 0;
@@ -94,7 +101,7 @@ char	*get_name(char *str)
 	return (name);
 }
 
-int expand(t_lexer **lex, char **envp)
+int expand(t_lexer **lex, char **envp, int last_exit_status)
 {
 	t_lexer	*tmp;
 	size_t	i;
@@ -128,10 +135,16 @@ int expand(t_lexer **lex, char **envp)
 					free(var_name);
 					continue;
 				}
-				else if (tmp->value[i] == '$' && tmp->value[i + 1])
+				else if (tmp->value[i] == '$' && tmp->value[i + 1] == '?')
 				{
-					tmp->value = var_replacer(tmp->value, NULL, &i);
+					i++;
+					var = ft_itoa(last_exit_status);
+					tmp->value = var_replacer(tmp->value, var, &i);
+					free(var);
+					continue;
 				}
+				else if (tmp->value[i] == '$' && tmp->value[i + 1])
+					tmp->value = var_replacer(tmp->value, NULL, &i);
 				i++;
 			}
 		}

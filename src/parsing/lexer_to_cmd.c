@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/05 14:10:44 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/11 20:39:27 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,6 +214,33 @@ int	append_redir(t_cmd *cmd, t_lexer **lex)
 	return (0);	
 }
 
+int	nospace_add(char **args, t_lexer **lex)
+{
+	size_t	size;
+	t_lexer *start;
+
+	size = 0;
+	start = *lex;
+	while (*lex && (*lex)->value && !(*lex)->space_after && ((*lex)->type == T_WORD || (*lex)->type == T_S_QUOTED_WORD
+		|| (*lex)->type == T_D_QUOTED_WORD))
+	{
+		size += ft_strlen((*lex)->value) + 1;
+		*lex = (*lex)->next;
+	}
+	*lex = start;
+	*args = ft_calloc(size + 1, sizeof(char));
+	if (!*args)
+		return (1);
+	while (*lex && (*lex)->value && !(*lex)->space_after && ((*lex)->type == T_WORD || (*lex)->type == T_S_QUOTED_WORD
+		|| (*lex)->type == T_D_QUOTED_WORD))
+	{
+		ft_strlcat(*args, (*lex)->value, size + 1);
+		*lex = (*lex)->next;
+	}
+	ft_strlcat(*args, (*lex)->value, size + 1);
+	return (0);
+}
+
 int	append_cmds(t_cmd **cmd, t_lexer **lex)
 {
 	// need to add system to not add paths for redirections
@@ -235,7 +262,13 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 		else if ((*lex)->value && ((*lex)->type == T_WORD || (*lex)->type == T_S_QUOTED_WORD
 			|| (*lex)->type == T_D_QUOTED_WORD))
 		{
-			*args = ft_strdup((*lex)->value);
+			if (!(*lex)->space_after && (*lex)->next)
+			{
+				if (nospace_add(args, lex))
+					return (1);
+			}
+			else
+				*args = ft_strdup((*lex)->value);
 			args++;
 		}
 		else
