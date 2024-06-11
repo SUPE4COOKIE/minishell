@@ -12,6 +12,18 @@
 
 #include "minishell.h"
 
+void ft_print_lst(t_arg *new_args)
+{
+	t_arg *tmp;
+
+	tmp = new_args;
+	while (tmp)
+	{
+		printf("arg: %s\n", tmp->arg);
+		tmp = tmp->next;
+	}
+}
+
 /**
 ** @brief Set the value of a key in the env
 ** @param mshell The minishell structure
@@ -130,53 +142,6 @@ static bool	change_dir(t_minishell *mshell, char *path)
 }
 
 /**
-** @brief Create a list of arguments
-** @param args The arguments
-** @param new_args The new list
-*/
-void ft_create_list(char *args, t_arg **new_args)
-{
-	// i want my function to split the string on ? and put eatch argument in a node of a linked list
-	// i will use a linked list because i don't know how many arguments i will have
-	t_arg *current;
-	t_arg *prev;
-	char *arg;
-	int i;
-
-	i = 0;
-	while (args[i])
-	{
-		arg = malloc(sizeof(char) * PATH_MAX);
-		if (!arg)
-			return ;
-		current = malloc(sizeof(t_arg));
-		if (!current)
-		{
-			free(arg);
-			return ;
-		}
-		current->arg = arg;
-		current->next = NULL;
-		current->prev = NULL;
-		if (!*new_args)
-			*new_args = current;
-		else
-		{
-			prev->next = current;
-			current->prev = prev;
-		}
-		while (args[i] && args[i] != '/')
-		{
-			arg[i] = args[i];
-			i++;
-		}
-		arg[i] = '\0';
-		i++;
-		prev = current;
-	}
-}
-
-/**
  * @brief Convert a list of arguments to a string
  * @param new_args
  * @param path
@@ -193,66 +158,6 @@ char *ft_lst_to_char(t_arg *new_args, char *path)
 		if (new_args->next)
 			ft_strlcat(path, "/", PATH_MAX);
 		new_args = new_args->next;
-	}
-	return (path);
-}
-
-void	ft_remove_node(t_arg *node)
-{
-	t_arg *prev;
-	t_arg *next;
-
-	if (!node)
-		return ;
-	prev = node->prev;
-	next = node->next;
-	node->prev->next = next;
-	node->next->prev = prev;
-	free(node->arg);
-	free(node);
-}
-
-/**
-** @brief Remove the double point in the path
-** @param args The arguments
-*/
-char *remove_double_point(char **args)
-{
-	t_arg *new_args;
-	t_arg *current;
-	t_arg *next;
-	char *path;
-
-	path = malloc(sizeof(char) * PATH_MAX);
-	if (!path)
-		return NULL;
-	ft_create_list(args[1], &new_args);
-	current = new_args;
-	//print list
-	t_arg *tmp = new_args;
-	while (tmp)
-	{
-		printf("arg: %s\n", tmp->arg);
-		tmp = tmp->next;
-	}
-	while (current)
-	{
-		if (current->prev && ft_strncmp(current->prev->arg, "..", 3) != 0 && ft_strncmp(current->arg, "..", 3) == 0)
-		{
-			ft_remove_node(current);
-			ft_remove_node(current->prev);
-		}
-		current = current->next;
-	}
-	//print the list
-	path = ft_lst_to_char(new_args, path);
-	current = new_args;
-	while (current)
-	{
-		next = current->next;
-		free(current->arg);
-		free(current);
-		current = next;
 	}
 	return (path);
 }
@@ -286,7 +191,7 @@ int	builtin_cd(t_minishell *mshell, char **args)
 	}
 	else
 	{
-		path = remove_double_point(args);
+		path = args[1];//remove_double_point(args);
 		printf("path: %s\n", path);
 		if (!path)
 			return error_cmd(mshell, 1, "malloc failed");

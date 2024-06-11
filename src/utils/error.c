@@ -90,16 +90,36 @@ int	error_msg_free(char *msg, void *ptr, void *ptr2, void *ptr3)
 	return (EXIT_FAILURE);
 }
 
-int free_tab(char **tab)
+void print_tab(char **tab)
 {
 	int i;
 
 	i = 0;
+	if (!tab)
+		return ;
 	while (tab[i])
 	{
-		free(tab[i]);
+		printf("tab[%d]: %s\n", i, tab[i]);
 		i++;
 	}
+}
+
+int free_tab(char **tab)
+{
+	int i;
+
+	i = -1;
+	if (!tab) {
+		return (EXIT_FAILURE);
+	}
+	print_tab(tab);
+	while (tab[++i])
+	{
+		printf("tab will be freed: %s %ld\n", tab[i], ft_strlen(tab[i]));
+		free(tab[i]);
+		write(1, "f\n", 2);
+		tab[i] = NULL;
+	}
 	free(tab);
-	return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
