@@ -13,6 +13,8 @@ SRCS = $(addprefix src/, \
 	) \
 	$(addprefix exec/, \
 		exec.c \
+		handle_builtins.c \
+		handle_redir.c \
 	) \
 	$(addprefix parsing/, \
 		$(addprefix lexer/, \

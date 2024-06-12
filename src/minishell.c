@@ -18,7 +18,7 @@ int main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	mshell.env = envp;
+	allocate_env(&mshell, envp);
 	// mshell.line = ft_strdup(argv[1]);
 	// mshell.env = envp;
 	// parse(&mshell);
@@ -26,7 +26,7 @@ int main(int argc, char **argv, char **envp)
 	// free(mshell.line);
 	while (42)
 	{
-		mshell.line = readline("Minishell $> ");
+		mshell.line = readline("\033[1;34mminishell\033[0m\033[1;31m$\033[0m ");
 		if (!mshell.line)
 			break ;
 		if (*mshell.line)
@@ -35,9 +35,6 @@ int main(int argc, char **argv, char **envp)
 		exec(&mshell);
 		free(mshell.line);
 	}
-	free(mshell.env);
-	free(mshell.path);
-	free(mshell.current_path);
 
 	return 0;
 }

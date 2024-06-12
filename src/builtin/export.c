@@ -12,70 +12,60 @@
 
 #include "minishell.h"
 
-bool is_in_env(char *key, char **env)
+bool is_in_env(char *arg, char **env)
 {
 	size_t	i;
-	size_t	len;
 
 	i = 0;
-	len = ft_strlen(key);
-	if (!env)
-		return (false);
 	while (env[i])
 	{
-		if (!ft_strncmp(key, env[i], len) && env[i][len] == '=')
+		if (ft_strncmp(arg, env[i], ft_strlen(arg)) == 0 && env[i][ft_strlen(arg)] == '=')
 			return (true);
 		i++;
 	}
 	return (false);
 }
 
-char **ft_addenv(char *new_env, char **env)
+void	ft_addenv(t_minishell *mshell, char *new_arg)
 {
+	char	**new_env;
 	size_t	i;
-	char	**new_env_tab;
 
 	i = 0;
-	while (env[i])
+	while (mshell->env[i])
 		i++;
-	new_env_tab = malloc(sizeof(char *) * (i + 2));
-	if (!new_env_tab)
-		return (NULL);
+	new_env = malloc(sizeof(char *) * (i + 2));
+	if (!new_env)
+		return ;
 	i = 0;
-	while (env[i])
+	while (mshell->env[i])
 	{
-		new_env_tab[i] = ft_strdup(env[i]);
+		new_env[i] = ft_strdup(mshell->env[i]);
+		if (!new_env[i])
+		{
+			free_tab(new_env);
+			return ;
+		}
 		i++;
 	}
-	new_env_tab[i] = ft_strdup(new_env);
-	new_env_tab[i + 1] = NULL;
-	free_tab(env);
-	return (new_env_tab);
+	new_env[i] = ft_strdup(new_arg);
+	if (!new_env[i])
+	{
+		free_tab(new_env);
+		return ;
+	}
+	new_env[i + 1] = NULL;
+	//free_tab(mshell->env);
+	mshell->env = new_env;
+	return ;
 }
 
 void put_in_env(char **args, size_t i, t_minishell *mshell)
 {
-	char	*key;
-	char	*value;
-	char	*tmp;
-
-	key = ft_strdup(args[i]);
-	if (!args[i + 1])
-		value = ft_strdup("");
+	if (is_in_env(args[i], mshell->env))
+		set_env(&mshell->env, args[i] + ft_strlen(args[i]) + 1, args[i]);
 	else
-		value = ft_strdup(args[i + 1]);
-	tmp = ft_strjoin(key, "=");
-	free(key);
-	key = tmp;
-	tmp = ft_strjoin(key, value);
-	free(key);
-	free(value);
-	key = tmp;
-	if (is_in_env(key, mshell->env))
-		set_env(&mshell->env, value, key);
-	else
-		mshell->env = ft_addenv(key, mshell->env);
-	free(key);
+		ft_addenv(mshell, args[i]);
 }
 
 int check_input(char *args)
@@ -83,14 +73,15 @@ int check_input(char *args)
 	size_t	i;
 
 	i = 0;
-	if (!args || !args[0] || args[0] == '=')
-		return (0);
-	if (!ft_isalpha(args[0]))
-		return (0);
+	if (!ft_isalpha(args[i]) && args[i] != '_')
+		return (1);
+	i++;
 	while (args[i])
 	{
-		if (!ft_isalnum(args[i]) && args[i] != '_')
+		if (args[i] == '=')
 			return (0);
+		else if (!ft_isalnum(args[i]) && args[i] != '_')
+			return (1);
 		i++;
 	}
 	return (1);
@@ -108,13 +99,15 @@ int	builtin_export(t_minishell *mshell, char **args)
 	i = 1;
 	while (args[i])
 	{
-		if (!check_input(args[i]))
+		if (check_input(args[i]))
 		{
 			printf("minishell: export: `%s': not a valid identifier\n", args[i]);
-			continue ;
+			break ;
 		}
-		put_in_env(args, i, mshell);
+		else
+			put_in_env(args, i, mshell);
 		i++;
 	}
+	print_tab(mshell->env);
 	return (0);
 }

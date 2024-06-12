@@ -19,5 +19,6 @@ int	error_msg_free(char *msg, void *ptr, void *ptr2, void *ptr3);
 long ft_atoi(const char *str);
 char *tmp_file(int nb);
 int free_tab(char **tab);
+void print_tab(char **tab);
 
 #endif

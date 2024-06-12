@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/06 16:58:34 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/12 15:00:12 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,53 +44,6 @@ static void	init_exec(int old[2], int new[2], t_minishell *mshell)
 	new[1] = -1;
 	cmd = mshell->cmds;
 	replace_hdoc(cmd);
-}
-
-/**
- * @brief Execute a builtin command
- * @param mshell
- * @param cmd
- */
-void	exec_builtin(t_minishell *mshell, t_cmd *cmd)
-{
-	if (ft_strncmp(cmd->cmd, "echo", ft_strlen(cmd->cmd)) == 0)
-		builtin_echo(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "cd", ft_strlen(cmd->cmd)) == 0)
-		builtin_cd(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "pwd", ft_strlen(cmd->cmd)) == 0)
-		builtin_pwd(mshell);
-	if (ft_strncmp(cmd->cmd, "export", ft_strlen(cmd->cmd)) == 0)
-		//builtin_export // TODO : implement export
-	if (ft_strncmp(cmd->cmd, "unset", ft_strlen(cmd->cmd)) == 0)
-		builtin_unset(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "env", ft_strlen(cmd->cmd)) == 0)
-		builtin_env(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "exit", ft_strlen(cmd->cmd)) == 0)
-		builtin_exit(mshell, cmd->args);
-}
-
-/**
- * @brief Check if the command is a builtin command
- * @param cmd
- * @return true if the command is a builtin command, false otherwise
- */
-bool is_builtin(char *cmd)
-{
-	if (ft_strncmp(cmd, "echo", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "cd", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "pwd", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "export", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "unset", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "env", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "exit", ft_strlen(cmd)) == 0)
-		return (true);
-	return (false);
 }
 
 char **copy_args(char **args)
@@ -157,60 +110,6 @@ void exec_cmd(t_minishell *mshell, t_cmd *cmd)
 		execve(program, args, mshell->env);
 		free(program);
 		free_tab(args);
-	}
-}
-
-/**
- * @brief Handle file redirection
- * @param mshell
- * @param cmd
- * @param old
- * @param new
- */
-void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2])
-{
-	int fd;
-	int i;
-
-	i = 0;
-	(void)mshell;
-	if (cmd->outfile && cmd->outfile[i])
-	{
-		while (cmd->outfile[i + 1])
-		{
-			fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd == -1)
-				error_pipe("open failed", new, old, cmd);
-			close(fd);
-			i++;
-		}
-	}
-	if (cmd->op_type[1] == RED_OUT)
-	{
-		fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (fd == -1)
-			error_pipe("open failed", new, old, cmd);
-		if (dup2(fd, STDOUT_FILENO) == -1)
-			error_pipe("dup2 failed", new, old, cmd);
-		close(fd);
-	}
-	else if (cmd->op_type[1] == APP_OUT)
-	{
-		fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_APPEND, 0644);
-		if (fd == -1)
-			error_pipe("open failed", new, old, cmd);
-		if (dup2(fd, STDOUT_FILENO) == -1)
-			error_pipe("dup2 failed", new, old, cmd);
-		close(fd);
-	}
-	else if (cmd->op_type[0] == RED_IN)
-	{
-		fd = open(cmd->infile[0], O_RDONLY);
-		if (fd == -1)
-			error_pipe("open failed", new, old, cmd);
-		if (dup2(fd, STDIN_FILENO) == -1)
-			error_pipe("dup2 failed", new, old, cmd);
-		close(fd);
 	}
 }
 

@@ -52,7 +52,6 @@ typedef struct s_minishell
 	char	**env;
 	char	**path;
 	char	*line;
-	char	*current_path;
 	int		last_exit_status;
 	t_cmd	*cmds;
 }				t_minishell;
@@ -85,6 +84,5 @@ struct s_cmd
 # include "utils.h"
 # include "exec.h"
 # include "builtins.h"
-# include "utils.h"
 
 #endif

@@ -14,21 +14,9 @@
 
 void del_cmd(t_cmd *cmd)
 {
-	if (cmd->cmd)
-		free(cmd->cmd);
-	cmd->cmd = NULL;
 	if (cmd->args)
 		free_tab(cmd->args);
 	cmd->args = NULL;
-	if (cmd->args)
-		free_tab(cmd->args);
-	cmd->args = NULL;
-	if (cmd->outfile)
-		free_tab(cmd->outfile);
-	cmd->outfile = NULL;
-	if (cmd->infile)
-		free_tab(cmd->infile);
-	cmd->infile = NULL;
 	cmd->next = NULL;
 	cmd->prev = NULL;
 	free(cmd);
@@ -61,7 +49,6 @@ void free_mshell(t_minishell *mshell)
 	if (mshell->cmds)
 		free_cmds(mshell->cmds);
 	mshell->cmds = NULL;
-	free(mshell);
 	mshell = NULL;
 }
 
@@ -111,5 +98,5 @@ int	builtin_exit(t_minishell *mshell, char **args)
 		return (error_cmd(mshell, 1, "exit: too many arguments"));
 	if (args[1])
 		status = ft_atoi(args[1]);
-	return (free_shell(mshell, status));
+	exit(free_shell(mshell, status));
 }

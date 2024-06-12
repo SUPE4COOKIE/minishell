@@ -12,6 +12,30 @@
 
 #include "minishell.h"
 
+void allocate_env(t_minishell *mshell, char **envp)
+{
+	size_t i;
+	size_t len;
+
+	i = 0;
+	while (envp[i])
+		i++;
+	mshell->env = malloc(sizeof(char *) * (i + 1));
+	if (!mshell->env)
+		exit(1);
+	i = 0;
+	while (envp[i])
+	{
+		len = ft_strlen(envp[i]);
+		mshell->env[i] = malloc(sizeof(char) * (len + 1));
+		if (!mshell->env[i])
+			exit(1);
+		ft_strlcpy(mshell->env[i], envp[i], len + 1);
+		i++;
+	}
+	mshell->env[i] = NULL;
+}
+
 static int	parse_path(t_minishell *mshell, char *env)
 {
 	char	*path;

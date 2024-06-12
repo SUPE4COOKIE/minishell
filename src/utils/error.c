@@ -108,17 +108,15 @@ int free_tab(char **tab)
 {
 	int i;
 
-	i = -1;
+	i = 0;
 	if (!tab) {
 		return (EXIT_FAILURE);
 	}
-	print_tab(tab);
-	while (tab[++i])
+	while (tab[i])
 	{
-		printf("tab will be freed: %s %ld\n", tab[i], ft_strlen(tab[i]));
 		free(tab[i]);
-		write(1, "f\n", 2);
 		tab[i] = NULL;
+		i++;
 	}
 	free(tab);
 	return (EXIT_SUCCESS);
