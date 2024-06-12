@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/11 20:39:27 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/12 21:14:49 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,8 @@ int	nospace_add(char **args, t_lexer **lex)
 		ft_strlcat(*args, (*lex)->value, size + 1);
 		*lex = (*lex)->next;
 	}
-	ft_strlcat(*args, (*lex)->value, size + 1);
+	if (*lex && (*lex)->value)
+		ft_strlcat(*args, (*lex)->value, size + 1);
 	return (0);
 }
 
@@ -282,11 +283,13 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 	return (0);
 }
 
-void	delete_cmd(t_cmd **cmd, t_cmd *to_delete)
+t_cmd	*delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 {
 	t_cmd	*tmp;
+	t_cmd	*to_return;
 
 	tmp = *cmd;
+	to_return = to_delete->next;
 	if (tmp == to_delete)
 	{
 		*cmd = tmp->next;
@@ -295,12 +298,13 @@ void	delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 		free(tmp->infile);
 		free(tmp->outfile);
 		free(tmp);
-		return ;
+		return (to_return);
 	}
 	while (tmp && tmp != to_delete)
-		tmp = tmp->next;
+    	tmp = tmp->next;
 	if (tmp && tmp == to_delete)
 	{
+		to_return = tmp->next;
 		if (tmp->prev)
 			tmp->prev->next = tmp->next;
 		if (tmp->next)
@@ -311,6 +315,7 @@ void	delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 		free(tmp->outfile);
 		free(tmp);
 	}
+	return (to_return);
 }
 
 int	resolve_cmd_path(t_cmd **cmd, char **path)
@@ -321,11 +326,13 @@ int	resolve_cmd_path(t_cmd **cmd, char **path)
 	while (tmp)
 	{
 		get_cmd_path(&tmp, path);
-		//printf("is valid cmd: %d\n", tmp->is_valid_cmd);
 		if (tmp->is_valid_cmd)
 			printf("cmd: %s\n", tmp->cmd);
 		if (!tmp->is_valid_cmd)
-			delete_cmd(cmd, tmp);
+		{
+			tmp = delete_cmd(cmd, tmp);
+			continue ;
+		}
 		tmp = tmp->next;
 	}
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/11 20:00:49 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/12 21:03:00 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,9 +114,9 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 	while (tmp)
 	{
 		i = 0;
-		if (tmp->type == T_WORD || tmp->type == T_D_QUOTED_WORD)
+		if (tmp && (tmp->type == T_WORD || tmp->type == T_D_QUOTED_WORD))
 		{
-			while (tmp->value && tmp->value[i])
+			while (tmp && (tmp->value && tmp->value[i]))
 			{
 				if (tmp->value[i] == '$' && tmp->value[i + 1] && (ft_isalpha(tmp->value[i + 1]) || tmp->value[i + 1] == '_'))
 				{
@@ -132,6 +132,13 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 						tmp->value = var_replacer(tmp->value, var, &i);
 					else
 						tmp->value = var_replacer(tmp->value, NULL, &i); // TODO: delete the node if null
+					if (!tmp->value || (tmp->value && !tmp->value[0]))
+					{
+						tmp = delete_lexer(lex, tmp);
+						printf("tmp value: %s\n", tmp->value);
+						free(var_name);
+						break;
+					}
 					free(var_name);
 					continue;
 				}
@@ -143,12 +150,11 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 					free(var);
 					continue;
 				}
-				else if (tmp->value[i] == '$' && tmp->value[i + 1])
-					tmp->value = var_replacer(tmp->value, NULL, &i);
 				i++;
 			}
 		}
-		tmp = tmp->next;
+		if (tmp)
+			tmp = tmp->next;
 	}
 	return (0);
 }

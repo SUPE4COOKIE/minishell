@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/11 20:17:10 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/12 21:08:51 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,8 @@ void	print_lexer(t_lexer *lex)
 	while (lex)
 	{
 		printf("value: %s\n", lex->value);
-		printf("type: %s\n\n", get_token_type(lex->type));
+		printf("type: %s\n", get_token_type(lex->type));
+		printf("space_after: %d\n\n", lex->space_after);
 		lex = lex->next;
 	}
 }
@@ -128,7 +129,6 @@ int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 				if (!(*lex))
 					return (0);
 				get_last_lexer(*lex)->space_after = true;
-				//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
 			}
 			line += i + 1;
 			size -= i + 1;
@@ -177,6 +177,7 @@ int	new_lexer(t_lexer **lex, char *line, size_t size)
 	new->type = get_lexer_type(line);
 	append_new_lexer(lex, &new);
 	new->next = NULL;
+	new->space_after = false;
 	// temp code
 	//printf("value: %s\n", new->value);
 	//printf("type: %s\n", get_token_type(new->type));
@@ -224,9 +225,40 @@ t_lexer	*get_last_lexer(t_lexer *lex)
 	return (lex);
 }
 
+t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete)
+{
+	t_lexer	*tmp;
+	t_lexer	*to_return;
+
+	tmp = *lex;
+	to_return = tmp->next;
+	if (tmp == to_delete)
+	{
+		*lex = tmp->next;
+		free(tmp->value);
+		free(tmp);
+		return (to_return);
+	}
+	while (tmp && tmp != to_delete)
+    tmp = tmp->next;
+	if (tmp && tmp == to_delete)
+	{
+    	if (tmp->next)
+    	    to_return = tmp->next;
+    	if (tmp->prev)
+    	    tmp->prev->next = tmp->next;
+    	if (tmp->next)
+    	    tmp->next->prev = tmp->prev;
+    	free(tmp->value);
+    	free(tmp);
+	}
+	return (to_return);
+}
+
 int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
 {
 	size_t	len;
+	t_lexer *tmp;
 	char	quote;
 
 	quote = line[0];
@@ -238,11 +270,11 @@ int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
 	if (line[len] == quote)
 		len++;
 	(*end) += len;
-	if (ft_iswhitespace(line[len]))
-		get_last_lexer(*lex)->space_after = true;
-	else
-		get_last_lexer(*lex)->space_after = false;
-	//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
+	tmp = get_last_lexer(*lex);
+	if (ft_iswhitespace(line[len]) && tmp)
+		tmp->space_after = true;
+	else if (tmp && !tmp->space_after)
+		tmp->space_after = false;
 	return (0);
 }
 
