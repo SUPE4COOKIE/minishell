@@ -13,6 +13,10 @@ SRCS = $(addprefix src/, \
 	) \
 	$(addprefix exec/, \
 		exec.c \
+		handle_builtins.c \
+		handle_redir.c \
+		fork_exec.c \
+		handle_hdoc.c \
 	) \
 	$(addprefix parsing/, \
 		$(addprefix lexer/, \
@@ -34,6 +38,9 @@ SRCS = $(addprefix src/, \
 	$(addprefix utils/, \
 		error.c \
 		ft_atoi.c \
+		name_file.c \
+		fork.c \
+		pid_utils.c \
 	) \
 	minishell.c \
 	)

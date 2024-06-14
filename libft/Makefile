@@ -41,7 +41,7 @@ LIBFT_OBJ = $(addprefix $(LIBFT_OBJ_DIR), $(LIBFT_SRC:$(LIBFT_SRC_DIR)%.c=%.o))
 GNL_OBJ = $(addprefix $(GNL_OBJ_DIR), $(GNL_SRC:$(GNL_SRC_DIR)%.c=%.o))
 PRINTF_OBJ = $(addprefix $(PRINTF_OBJ_DIR), $(PRINTF_SRC:$(PRINTF_SRC_DIR)%.c=%.o))
 
-LIBFT_CC = gcc
+LIBFT_CC = cc
 LIBFT_FLAGS = -Wall -Wextra -Werror -g3
 
 LIBFT_NAME = libft.a

@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:11:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/30 15:10:26 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/14 14:18:00 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,4 +88,36 @@ int	error_msg_free(char *msg, void *ptr, void *ptr2, void *ptr3)
 	if (ptr3)
 		free(ptr3);
 	return (EXIT_FAILURE);
+}
+
+void print_tab(char **tab)
+{
+	int i;
+
+	i = 0;
+	if (!tab)
+		return ;
+	while (tab[i])
+	{
+		printf("tab[%d]: %s\n", i, tab[i]);
+		i++;
+	}
+}
+
+int free_tab(char **tab)
+{
+	int i;
+
+	i = 0;
+	if (!tab) {
+		return (EXIT_FAILURE);
+	}
+	while (tab[i])
+	{
+		free(tab[i]);
+		tab[i] = NULL;
+		i++;
+	}
+	free(tab);
+	return (EXIT_SUCCESS);
 }

@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-/*
+/**
 ** @brief Check if the argument is -n
 ** @param arg The argument
 ** @return true if the argument is -n, false otherwise
@@ -32,7 +32,7 @@ static bool	is_n(char *arg)
 	return (true);
 }
 
-/*
+/**
 ** @brief Print the arguments
 ** @param args The arguments
 ** @param i The index
@@ -58,7 +58,7 @@ static void	print_args(char **args, int i, bool n)
 		ft_putchar_fd('\n', STDOUT_FILENO);
 }
 
-/*
+/**
 ** @brief The echo builtin
 ** @param mshell The minishell structure
 ** @param args The arguments

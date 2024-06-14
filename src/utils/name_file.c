@@ -1,27 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*   name_file.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/15 15:30:41 by scrumier          #+#    #+#             */
-/*   Updated: 2024/03/25 16:30:10 by scrumier         ###   ########.fr       */
+/*   Created: 2024/06/03 12:21:56 by scrumier          #+#    #+#             */
+/*   Updated: 2024/06/03 12:31:17 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "minishell.h"
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+char *tmp_file(int nb)
 {
-	size_t	c;
+	char *tmp;
+	char *file_name;
 
-	c = 0;
-	if (n == 0)
-		return (0);
-	if (s1 == NULL || s2 == NULL)
-		return (-1);
-	while (s1[c] == s2[c] && s1[c] && c < n - 1)
-		c++;
-	return (((unsigned char)(s1[c]) - (unsigned char)(s2[c])));
+	file_name = ft_itoa(nb);
+	if (file_name)
+	{
+		tmp = file_name;
+		file_name = ft_strjoin("/tmp/", file_name);
+		free(tmp);
+		if (file_name)
+			return (file_name);
+	}
+	return (NULL);
 }

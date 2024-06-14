@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/12 19:49:39 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/14 15:38:48 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # endif
 # define PRINT_CAT false
 # define PROMPT_ENABLED false
+# define DEBUG true
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;
@@ -53,7 +54,6 @@ typedef struct s_minishell
 	char	**path;
 	char	**local_vars;
 	char	*line;
-	char	*current_path;
 	int		last_exit_status;
 	t_cmd	*cmds;
 }				t_minishell;
@@ -86,6 +86,5 @@ struct s_cmd
 # include "utils.h"
 # include "exec.h"
 # include "builtins.h"
-# include "utils.h"
 
 #endif

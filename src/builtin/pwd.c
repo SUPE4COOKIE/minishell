@@ -6,13 +6,13 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:12:57 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/30 15:08:25 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/30 16:09:24 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*
+/**
 ** @brief: Print the current working directory
 ** @param mshell The minishell structure
 ** @param args The arguments of the command

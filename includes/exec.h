@@ -3,16 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/09 12:38:16 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/30 17:06:22 by mwojtasi         ###   ########.fr       */
+/*   Created: 2024/06/06 11:57:22 by scrumier          #+#    #+#             */
+/*   Updated: 2024/06/14 14:37:33 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXEC_H
 # define EXEC_H
 
-void exec(t_minishell *mshell);
-bool is_builtin(char *cmd);
+void	exec(t_minishell *mshell);
+bool	is_builtin(char *cmd);
+void	replace_hdoc(t_cmd *cmd, int old[2], int new[2]);
+bool	is_builtin(char *cmd);
+void	exec_builtin(t_minishell *mshell, t_cmd *cmd);
+void	handle_file_redirection(t_cmd *cmd, int old[2], int new[2]);
+void	handle_hdoc(t_cmd *cmd, int old[2], int new[2]);
+void	ft_close(int old[2], int new[2]);
+void	init_exec(int old[2], int new[2], t_minishell *mshell);
+void	close_old(int i, int old[2]);
+void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i);
+void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2]);
+void	exec_cmd(t_minishell *mshell, t_cmd *cmd);
+
 #endif

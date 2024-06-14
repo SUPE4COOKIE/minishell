@@ -5,239 +5,98 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/09 13:05:02 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/30 15:14:12 by scrumier         ###   ########.fr       */
+/*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
+/*   Updated: 2024/06/14 14:30:33 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*
-** @brief Close the file descriptors
-** @param old The old file descriptors
-** @param new The new file descriptors
-*/
-void	ft_close(int old[2], int new[2])
+char	**copy_args(char **args)
 {
-	if (old[0])
-		close(old[0]);
-	if (old[1])
-		close(old[1]);
-	if (new[0])
-		close(new[0]);
-	if (new[1])
-		close(new[1]);
+	int		arg_count;
+	char	**args_copy;
+	int		i;
+
+	arg_count = 0;
+	args_copy = NULL;
+	i = 0;
+	while (args[arg_count])
+		arg_count++;
+	args_copy = malloc((arg_count + 1) * sizeof(char *));
+	if (args_copy == NULL)
+		return (NULL);
+	while (args[i] != NULL)
+	{
+		args_copy[i] = ft_strdup(args[i]);
+		if (args_copy[i] == NULL)
+			return (free_tab(args_copy), NULL);
+		i++;
+	}
+	args_copy[arg_count] = NULL;
+	return (args_copy);
 }
 
-/*
-** @brief Initialize the old and new file descriptors
-** @param old The old file descriptors
-** @param new The new file descriptors
-*/
-static void	init_old_new(int old[2], int new[2])
+/**
+ * @brief Execute a command
+ * @param mshell
+ * @param cmd
+ */
+void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 {
-	old[0] = -1;
-	old[1] = -1;
-	new[0] = -1;
-	new[1] = -1;
-}
+	char	*program;
+	char	**args;
 
-void	exec_builtin(t_minishell *mshell, t_cmd *cmd)
-{
-	if (ft_strncmp(cmd->cmd, "echo", ft_strlen(cmd->cmd)) == 0)
-		builtin_echo(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "cd", ft_strlen(cmd->cmd)) == 0)
-		builtin_cd(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "pwd", ft_strlen(cmd->cmd)) == 0)
-		builtin_pwd(mshell);
-	if (ft_strncmp(cmd->cmd, "export", ft_strlen(cmd->cmd)) == 0)
-		//builtin_export // TODO : implement export
-	if (ft_strncmp(cmd->cmd, "unset", ft_strlen(cmd->cmd)) == 0)
-		builtin_unset(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "env", ft_strlen(cmd->cmd)) == 0)
-		builtin_env(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "exit", ft_strlen(cmd->cmd)) == 0)
-		builtin_exit(mshell, cmd->args);
-}
-
-bool is_builtin(char *cmd)
-{
-	if (ft_strncmp(cmd, "echo", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "cd", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "pwd", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "export", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "unset", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "env", ft_strlen(cmd)) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "exit", ft_strlen(cmd)) == 0)
-		return (true);
-	return (false);
-}
-
-void exec_cmd(t_minishell *mshell, t_cmd *cmd)
-{
 	if (is_builtin(cmd->cmd) == true)
 	{
 		exec_builtin(mshell, cmd);
 	}
-	else// if (cmd->is_valid_cmd == true)
+	else
 	{
-		execve(cmd->cmd, cmd->args, mshell->env);
+		program = ft_strdup(cmd->cmd);
+		if (program == NULL)
+			return ;
+		args = copy_args(cmd->args);
+		if (args == NULL)
+			return (free(program));
+		execve(program, args, mshell->env);
+		free(program);
+		free_tab(args);
 	}
 }
 
-void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2])
+/**
+ * @brief Duplicate the file descriptors
+ * @param i
+ * @param cmd
+ * @param old
+ * @param new
+ */
+void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 {
-	int fd;
-	int i;
-	ssize_t n;
-	char *line;
-	pid_t pid;
-	char buf[4096];
-	int pipe_fd[2];
-
-	i = 0;
-	printf("cmd->op_type[1] = %d\n", cmd->op_type[1]);
-	if (cmd->outfile && cmd->outfile[i])
+	if (i != 0)
 	{
-		while (cmd->outfile[i + 1])
+		if (dup2(old[0], STDIN_FILENO) == -1)
 		{
-			fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd == -1)
-				error_pipe("open failed", new, old, cmd);
-			close(fd);
-			i++;
+			perror("dup2 failed");
+			exit(EXIT_FAILURE);
 		}
+		if (old[0] != -1)
+			close(old[0]);
+		if (old[1] != -1)
+			close(old[1]);
 	}
-	if (cmd->op_type[1] == RED_OUT)
-	{
-		fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (fd == -1)
-			error_pipe("open failed", new, old, cmd);
-		if (dup2(fd, STDOUT_FILENO) == -1)
-			error_pipe("dup2 failed", new, old, cmd);
-		ft_close(old, new);
-		exec_cmd(mshell, cmd);
-		close(fd);
-	}
-	else if (cmd->op_type[1] == APP_OUT)
-	{
-		fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_APPEND, 0644);
-		if (fd == -1)
-			error_pipe("open failed", new, old, cmd);
-		if (dup2(fd, STDOUT_FILENO) == -1)
-			error_pipe("dup2 failed", new, old, cmd);
-		ft_close(old, new);
-		exec_cmd(mshell, cmd);
-		close(fd);
-	}
-	else if (cmd->op_type[0] == RED_IN)
-	{
-		if (pipe(pipe_fd) == -1)
-			error_pipe("pipe failed", new, old, cmd);
-
-		pid = fork();
-		if (pid == -1)
-			error_pipe("fork failed", new, old, cmd);
-
-		if (pid == 0)
-		{
-			close(pipe_fd[1]);  // Close write end of pipe in child
-
-			if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
-				error_pipe("dup2 failed", new, old, cmd);
-			close(pipe_fd[0]);  // Close read end of pipe in child
-
-			exec_cmd(mshell, cmd);
-		}
-		else
-		{
-			close(pipe_fd[0]);  // Close read end of pipe in parent
-			i = 0;
-			while (cmd->infile[i])
-			{
-				fd = open(cmd->infile[i], O_RDONLY);
-				if (fd == -1)
-					error_pipe("open failed", new, old, cmd);
-				n = 0;
-				while ((n = read(fd, buf, sizeof(buf))) > 0)
-				{
-					if (write(pipe_fd[1], buf, n) != n)
-						error_pipe("write failed", new, old, cmd);
-				}
-				if (n == -1)
-					error_pipe("read failed", new, old, cmd);
-				close(fd);
-				i++;
-			}
-
-			close(pipe_fd[1]);  // Close write end of pipe in parent
-			wait(NULL);  // Wait for child to finish
-		}
-	}
-	else if (cmd->op_type[0] == HDOC)
-	{
-		if (pipe(pipe_fd) == -1)
-			error_pipe("pipe failed", new, old, cmd);
-		pid = fork();
-		if (pid == -1)
-			error_pipe("fork failed", new, old, cmd);
-		if (pid == 0)
-		{
-			close(pipe_fd[0]);
-			while (1) {
-				ft_putstr_fd("> ", STDOUT_FILENO);
-				line = get_next_line(STDIN_FILENO);
-				if (!line)
-					error_pipe("get_next_line failed", new, old, cmd);
-				if (ft_strncmp(line, cmd->infile[0], ft_strlen(cmd->infile[0])) == 0)
-				{
-					free(line);
-					break;
-				}
-				ft_putendl_fd(line, pipe_fd[1]);
-				free(line);
-			}
-			close(pipe_fd[1]);
-			ft_close(old, new);
-			exec_cmd(mshell, cmd);
-		}
-	}
-	else
-	{
-		ft_close(old, new);
-		exec_cmd(mshell, cmd);
-	}
-}
-
-void dup_and_exec(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2])
-{
-	int fd[2];
-
-	if (old[0] != -1 && old[1] != -1)
-		fd[0] = old[0];
-	else
-		fd[0] = 0;
 	if (cmd->next)
-		fd[1] = new[1];
-	else
-		fd[1] = 1;
-	if (cmd->infile || cmd->outfile)
-		handle_file_redirection(mshell, cmd, old, new);
-	else
 	{
-		if (dup2(fd[0], STDIN_FILENO) == -1)
-			error_pipe("dup2 failedd", new, old, cmd);
-		if (dup2(fd[1], STDOUT_FILENO) == -1)
-			error_pipe("dup2 failed", new, old, cmd);
-		ft_close(old, new);
-		exec_cmd(mshell, cmd);
-		perror("execve");
+		if (dup2(new[1], STDOUT_FILENO) == -1)
+		{
+			perror("dup2 failed");
+			exit(EXIT_FAILURE);
+		}
+		if (new[0] != -1)
+			close(new[0]);
+		if (new[1] != -1)
+			close(new[1]);
 	}
 }
 
@@ -248,30 +107,25 @@ void dup_and_exec(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2])
 void	exec(t_minishell *mshell)
 {
 	t_cmd	*cmd;
-	int		id;
 	int		old[2];
 	int		new[2];
+	int		i;
 
-	init_old_new(old, new);
+	init_exec(old, new, mshell);
 	cmd = mshell->cmds;
+	i = 0;
 	while (cmd)
 	{
 		if (cmd->next)
+		{
 			if (pipe(new) == -1)
 				error_pipe("pipe failed", new, old, cmd);
-		// if (cmd->is_valid_cmd == true)
-		// {
-		id = fork();
-		if (id == -1)
-			error_pipe("fork failed", new, old, cmd);
-		if (id == 0)
-		{
-			dup_and_exec(mshell, cmd, old, new);
 		}
-		old[0] = new[0];
-		old[1] = new[1];
-		// }
+		fork_exec(mshell, old, new, i);
+		i++;
 		cmd = cmd->next;
 	}
-	waitpid(id, &mshell->last_exit_status, 0);
+	ft_close(old, new);
+	while (waitpid(-1, NULL, 0) != -1)
+		;
 }

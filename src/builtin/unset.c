@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-/*
+/**
 ** @brief Get the length of a table
 ** @param tab The table
 ** @return The length of the table
@@ -29,7 +29,7 @@ int ft_tablen(char **tab)
 	return (i);
 }
 
-/*
+/**
 ** @brief Remove an environment variable
 ** @param env The environment
 ** @param index The index of the variable to remove
@@ -74,7 +74,7 @@ char **remove_env_var(char **env, int index)
 	return (new_env);
 }
 
-/*
+/**
 ** @brief Check if the variable is a valid environment variable
 ** @param var The variable
 ** @return true if the variable is valid, false otherwise
@@ -95,7 +95,7 @@ bool is_valid_env_var(char *var)
 	return (true);
 }
 
-/*
+/**
 ** @brief Get the index of an environment variable
 ** @param env The environment
 ** @param var The variable
@@ -127,7 +127,7 @@ int	get_index_env(char **env, char *var)
 	return (-1);
 }
 
-/*
+/**
 ** @brief Unset the environment variables
 ** @param mshell The minishell structure
 ** @param args The arguments of the command
