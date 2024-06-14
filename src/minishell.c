@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/14 17:39:52 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/14 22:41:46 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 int main(int argc, char **argv, char **envp)
 {
-	(void)argc;
     t_minishell mshell = {0};
 
 	if (PRINT_CAT)
@@ -45,7 +44,7 @@ int main(int argc, char **argv, char **envp)
 	}
 	allocate_env(&mshell, envp);
 	mshell.last_exit_status = 0;
-	if (!PROMPT_ENABLED)
+	if (argc > 1)
 	{
 		mshell.line = ft_strdup(argv[1]);
 		parse(&mshell);
@@ -77,3 +76,4 @@ int main(int argc, char **argv, char **envp)
 
 	return 0;
 }
+

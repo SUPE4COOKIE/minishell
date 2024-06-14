@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/14 22:15:33 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/14 22:37:29 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 #  define PATH_MAX 4096
 # endif
 # define PRINT_CAT true
-# define PROMPT_ENABLED true
 # define DEBUG true
 
 typedef struct s_cmd	t_cmd;

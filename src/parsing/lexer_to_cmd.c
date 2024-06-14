@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/14 22:06:22 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/14 23:19:56 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,8 +187,13 @@ void	print_cmd(t_cmd *cmd)
 {
 	printf("cmd: %s\n", cmd->cmd);
 	printf("args: ");
-	for (int i = 0; cmd->args[i]; i++)
-		printf("%s, ", cmd->args[i]);
+	if (cmd->args)
+	{
+		for (int i = 0; cmd->args[i]; i++)
+			printf("%s, ", cmd->args[i]);
+	}
+	else
+		printf("(null)");
 	printf("\ninfile op type: %s\n", cmd_type_to_str(cmd->op_type[0]));
 	printf("outfile op type: %s\n", cmd_type_to_str(cmd->op_type[1]));
 	if (cmd->op_type[0] != UNDEFINED)
@@ -307,7 +312,14 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 			*lex = (*lex)->next;
 	}
 	last_cmd->args = args_start;
-	last_cmd->cmd = ft_strdup(args_start[0]);
+	if (*args_start)
+		last_cmd->cmd = ft_strdup(args_start[0]);
+	else
+	{
+		last_cmd->cmd = NULL;
+		last_cmd->args = NULL;
+		last_cmd->is_valid_cmd = true;
+	}
 	return (0);
 }
 
@@ -347,6 +359,11 @@ int	resolve_cmd_path(t_cmd **cmd, char **path)
 	tmp = *cmd;
 	while (tmp)
 	{
+		if (!tmp->cmd && tmp->is_valid_cmd)
+		{
+			tmp = tmp->next;
+			continue ;
+		}
 		get_cmd_path(&tmp, path);
 		if (!tmp->is_valid_cmd)
 		{
