@@ -6,78 +6,35 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/12 15:00:12 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/14 14:30:33 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/**
-** @brief Close the file descriptors
-** @param old The old file descriptors
-** @param new The new file descriptors
-*/
-void	ft_close(int old[2], int new[2])
+char	**copy_args(char **args)
 {
-	if (old[0])
-		close(old[0]);
-	if (old[1])
-		close(old[1]);
-	if (new[0])
-		close(new[0]);
-	if (new[1])
-		close(new[1]);
-}
-
-/**
-** @brief Initialize the old and new file descriptors
-** @param old The old file descriptors
-** @param new The new file descriptors
-*/
-static void	init_exec(int old[2], int new[2], t_minishell *mshell)
-{
-	t_cmd *cmd;
-
-	old[0] = -1;
-	old[1] = -1;
-	new[0] = -1;
-	new[1] = -1;
-	cmd = mshell->cmds;
-	replace_hdoc(cmd);
-}
-
-char **copy_args(char **args)
-{
-    int arg_count;
-    char **args_copy;
-    int i;
+	int		arg_count;
+	char	**args_copy;
+	int		i;
 
 	arg_count = 0;
 	args_copy = NULL;
 	i = 0;
-    while (args[arg_count])
-        arg_count++;
-    args_copy = malloc((arg_count + 1) * sizeof(char *));
-    if (args_copy == NULL) {
-        return NULL;
-    }
-
-    while (args[i] != NULL) {
-        args_copy[i] = ft_strdup(args[i]);
-        if (args_copy[i] == NULL) {
-            // If allocation fails, free any previously allocated strings
-            while (--i >= 0) {
-                free(args_copy[i]);
-            }
-            free(args_copy);
-            return NULL;
-        }
-        i++;
-    }
-
-    args_copy[arg_count] = NULL; // Null-terminate the array
-
-    return args_copy;
+	while (args[arg_count])
+		arg_count++;
+	args_copy = malloc((arg_count + 1) * sizeof(char *));
+	if (args_copy == NULL)
+		return (NULL);
+	while (args[i] != NULL)
+	{
+		args_copy[i] = ft_strdup(args[i]);
+		if (args_copy[i] == NULL)
+			return (free_tab(args_copy), NULL);
+		i++;
+	}
+	args_copy[arg_count] = NULL;
+	return (args_copy);
 }
 
 /**
@@ -85,10 +42,10 @@ char **copy_args(char **args)
  * @param mshell
  * @param cmd
  */
-void exec_cmd(t_minishell *mshell, t_cmd *cmd)
+void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 {
-	char *program;
-	char **args;
+	char	*program;
+	char	**args;
 
 	if (is_builtin(cmd->cmd) == true)
 	{
@@ -97,16 +54,11 @@ void exec_cmd(t_minishell *mshell, t_cmd *cmd)
 	else
 	{
 		program = ft_strdup(cmd->cmd);
-		if (program == NULL) {
-			perror("Failed to allocate memory for program path");
+		if (program == NULL)
 			return ;
-		}
 		args = copy_args(cmd->args);
-		if (args == NULL) {
-			perror("Failed to allocate memory for arguments");
-			free(program);
-			return ;
-		}
+		if (args == NULL)
+			return (free(program));
 		execve(program, args, mshell->env);
 		free(program);
 		free_tab(args);
@@ -120,7 +72,7 @@ void exec_cmd(t_minishell *mshell, t_cmd *cmd)
  * @param old
  * @param new
  */
-void dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
+void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 {
 	if (i != 0)
 	{
@@ -148,60 +100,6 @@ void dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 	}
 }
 
-void replace_hdoc(t_cmd *cmd)
-{
-	int fd;
-	char *tmp_filename;
-	char *line;
-	int i;
-
-	i = 0;
-	while (cmd)
-	{
-		if (cmd->op_type[0] == HDOC)
-		{
-			tmp_filename = tmp_file(i++);
-			fd = open(tmp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0600);
-			if (fd == -1)
-			{
-				perror("open");
-				exit(EXIT_FAILURE);
-			}
-
-			while (1)
-			{
-				line = readline("> ");
-				if (!line || ft_strncmp(line, cmd->infile[0], ft_strlen(cmd->infile[0])) == 0)
-				{
-					free(line);
-					break;
-				}
-				write(fd, line, ft_strlen(line));
-				write(fd, "\n", 1);
-				free(line);
-			}
-			close(fd);
-
-			// Replace heredoc with input redirection
-			free(cmd->infile[0]);
-			cmd->infile[0] = ft_strdup(tmp_filename);
-			cmd->op_type[0] = RED_IN;
-		}
-		cmd = cmd->next;
-	}
-}
-
-void close_old(int i, int old[2])
-{
-	if (i != 0)
-	{
-		if (old[0] != -1)
-			close(old[0]);
-		if (old[1] != -1)
-			close(old[1]);
-	}
-}
-
 /*
 ** @brief execute the commands
 ** @param mshell The minishell structure
@@ -209,10 +107,9 @@ void close_old(int i, int old[2])
 void	exec(t_minishell *mshell)
 {
 	t_cmd	*cmd;
-	int		id;
 	int		old[2];
 	int		new[2];
-	int i;
+	int		i;
 
 	init_exec(old, new, mshell);
 	cmd = mshell->cmds;
@@ -224,28 +121,7 @@ void	exec(t_minishell *mshell)
 			if (pipe(new) == -1)
 				error_pipe("pipe failed", new, old, cmd);
 		}
-		if (is_builtin(cmd->cmd) == false)
-			id = fork();
-		else if (is_builtin(cmd->cmd) == true && cmd->next)
-			id = fork();
-		else
-			id = 0;
-		if (id == -1)
-			error_pipe("fork failed", new, old, cmd);
-		if (id == 0)
-		{
-			dup_cmd(i, cmd, old, new);
-			handle_file_redirection(mshell, cmd, old, new);
-			exec_cmd(mshell, cmd);
-			if (is_builtin(cmd->cmd) == false)
-				exit(EXIT_FAILURE);
-		}
-		else
-		{
-			close_old(i, old);
-			old[0] = new[0];
-			old[1] = new[1];
-		}
+		fork_exec(mshell, old, new, i);
 		i++;
 		cmd = cmd->next;
 	}

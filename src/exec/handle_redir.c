@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 15:01:08 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/12 15:04:17 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/14 14:32:19 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	handle_red_out(t_cmd *cmd, int old[2], int new[2])
 {
-	int fd;
+	int	fd;
 
 	fd = open(cmd->outfile[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
@@ -26,7 +26,7 @@ void	handle_red_out(t_cmd *cmd, int old[2], int new[2])
 
 void	handle_red_in(t_cmd *cmd, int old[2], int new[2])
 {
-	int fd;
+	int	fd;
 
 	fd = open(cmd->infile[0], O_RDONLY);
 	if (fd == -1)
@@ -38,7 +38,7 @@ void	handle_red_in(t_cmd *cmd, int old[2], int new[2])
 
 void	handle_append_out(t_cmd *cmd, int old[2], int new[2])
 {
-	int fd;
+	int	fd;
 
 	fd = open(cmd->outfile[0], O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd == -1)
@@ -55,13 +55,12 @@ void	handle_append_out(t_cmd *cmd, int old[2], int new[2])
  * @param old
  * @param new
  */
-void handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2])
+void	handle_file_redirection(t_cmd *cmd, int old[2], int new[2])
 {
-	int fd;
-	int i;
+	int	fd;
+	int	i;
 
 	i = 0;
-	(void)mshell;
 	if (cmd->outfile && cmd->outfile[i])
 	{
 		while (cmd->outfile[i + 1])
