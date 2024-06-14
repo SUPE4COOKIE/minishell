@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/14 15:38:48 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/14 17:08:38 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
 # endif
-# define PRINT_CAT false
-# define PROMPT_ENABLED false
+# define PRINT_CAT true
+# define PROMPT_ENABLED true
 # define DEBUG true
 
 typedef struct s_cmd	t_cmd;
@@ -86,5 +86,5 @@ struct s_cmd
 # include "utils.h"
 # include "exec.h"
 # include "builtins.h"
-
+int is_n_only_spaces(char *line, size_t size);
 #endif

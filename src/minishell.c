@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/14 15:36:04 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/14 17:14:13 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,15 @@ int main(int argc, char **argv, char **envp)
 			mshell.line = readline("\033[1;34mminishell\033[0m\033[1;31m$\033[0m ");
 			if (!mshell.line)
 				break ;
+			if (is_n_only_spaces(mshell.line, ft_strlen(mshell.line)) == 1)
+			{
+				free(mshell.line);
+				continue ;
+			}
 			if (*mshell.line)
 				add_history(mshell.line);
 			parse(&mshell);
-			exec(&mshell);
+			//exec(&mshell);
 			free(mshell.line);
 		}
 	}
