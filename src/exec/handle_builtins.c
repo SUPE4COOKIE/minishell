@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_builtins.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 14:57:14 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/12 14:58:31 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/14 19:18:45 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,19 @@
  */
 bool	is_builtin(char *cmd)
 {
-	if (ft_strncmp(cmd, "echo", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "echo", 5) == 0)
 		return (true);
-	if (ft_strncmp(cmd, "cd", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "cd", 3) == 0)
 		return (true);
-	if (ft_strncmp(cmd, "pwd", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "pwd", 4) == 0)
 		return (true);
-	if (ft_strncmp(cmd, "export", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "export", 7) == 0)
 		return (true);
-	if (ft_strncmp(cmd, "unset", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "unset", 6) == 0)
 		return (true);
-	if (ft_strncmp(cmd, "env", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "env", 4) == 0)
 		return (true);
-	if (ft_strncmp(cmd, "exit", ft_strlen(cmd)) == 0)
+	if (ft_strncmp(cmd, "exit", 6) == 0)
 		return (true);
 	return (false);
 }
@@ -43,18 +43,18 @@ bool	is_builtin(char *cmd)
  */
 void	exec_builtin(t_minishell *mshell, t_cmd *cmd)
 {
-	if (ft_strncmp(cmd->cmd, "echo", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "echo", 5) == 0)
 		builtin_echo(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "cd", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "cd", 3) == 0)
 		builtin_cd(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "pwd", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "pwd", 4) == 0)
 		builtin_pwd(mshell);
-	if (ft_strncmp(cmd->cmd, "export", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "export", 7) == 0)
 		builtin_export(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "unset", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "unset", 6) == 0)
 		builtin_unset(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "env", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "env", 4) == 0)
 		builtin_env(mshell, cmd->args);
-	if (ft_strncmp(cmd->cmd, "exit", ft_strlen(cmd->cmd)) == 0)
+	if (ft_strncmp(cmd->cmd, "exit", 6) == 0)
 		builtin_exit(mshell, cmd->args);
 }

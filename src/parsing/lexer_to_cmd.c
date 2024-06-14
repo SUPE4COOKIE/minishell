@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/14 15:37:16 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/14 22:06:22 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,31 @@ char	*cmd_type_to_str(t_cmd_type type)
 	else if (type == HDOC)
 		return ("HDOC");
 	return ("UNDEFINED");
+}
+
+void	free_cmd(t_cmd *cmd)
+{
+	if (cmd->cmd)
+		free(cmd->cmd);
+	if (cmd->args)
+	{
+		for (int i = 0; cmd->args[i]; i++)
+			free(cmd->args[i]);
+		free(cmd->args);
+	}
+	if (cmd->infile)
+	{
+		for (int i = 0; cmd->infile[i]; i++)
+			free(cmd->infile[i]);
+		free(cmd->infile);
+	}
+	if (cmd->outfile)
+	{
+		for (int i = 0; cmd->outfile[i]; i++)
+			free(cmd->outfile[i]);
+		free(cmd->outfile);
+	}
+	free(cmd);
 }
 
 t_cmd	*new_cmd(char **args)
@@ -146,8 +171,6 @@ t_cmd_type get_op_type(t_lexer *lex)
 		return (token_to_cmd(lex->type));
 }
 
-void	print_cmd(t_cmd *cmd);
-
 void	print_cmds(t_cmd *cmd)
 {
 	t_cmd	*tmp;
@@ -216,6 +239,13 @@ int	append_redir(t_cmd *cmd, t_lexer **lex)
 	return (0);	
 }
 
+bool	is_nospace_addable(t_token_type type)
+{
+	if (type == T_WORD || type == T_S_QUOTED_WORD || type == T_D_QUOTED_WORD)
+		return (true);
+	return (false);
+}
+
 int	nospace_add(char **args, t_lexer **lex)
 {
 	size_t	size;
@@ -223,8 +253,7 @@ int	nospace_add(char **args, t_lexer **lex)
 
 	size = 0;
 	start = *lex;
-	while (*lex && (*lex)->value && !(*lex)->space_after && ((*lex)->type == T_WORD || (*lex)->type == T_S_QUOTED_WORD
-		|| (*lex)->type == T_D_QUOTED_WORD))
+	while (*lex && (*lex)->value && !(*lex)->space_after && is_nospace_addable((*lex)->type))
 	{
 		size += ft_strlen((*lex)->value) + 1;
 		*lex = (*lex)->next;
@@ -233,8 +262,7 @@ int	nospace_add(char **args, t_lexer **lex)
 	*args = ft_calloc(size + 1, sizeof(char));
 	if (!*args)
 		return (1);
-	while (*lex && (*lex)->value && !(*lex)->space_after && ((*lex)->type == T_WORD || (*lex)->type == T_S_QUOTED_WORD
-		|| (*lex)->type == T_D_QUOTED_WORD))
+	while (*lex && (*lex)->value && !(*lex)->space_after && is_nospace_addable((*lex)->type))
 	{
 		ft_strlcat(*args, (*lex)->value, size + 1);
 		*lex = (*lex)->next;
@@ -262,10 +290,9 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 		if ((*lex)->type == T_REDIR_IN || (*lex)->type == T_REDIR_OUT
 			|| (*lex)->type == T_APPEND_OUT || (*lex)->type == T_HERE_DOC)
 			append_redir(last_cmd, lex);
-		else if ((*lex)->value && ((*lex)->type == T_WORD || (*lex)->type == T_S_QUOTED_WORD
-			|| (*lex)->type == T_D_QUOTED_WORD))
+		else if ((*lex)->value && is_nospace_addable((*lex)->type))
 		{
-			if (!(*lex)->space_after && (*lex)->next)
+			if (!(*lex)->space_after && (*lex)->next && is_nospace_addable((*lex)->next->type))
 			{
 				if (nospace_add(args, lex))
 					return (1);
@@ -280,45 +307,37 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 			*lex = (*lex)->next;
 	}
 	last_cmd->args = args_start;
-	last_cmd->cmd = args_start[0];
-	if (DEBUG)
-		print_cmd(last_cmd);
+	last_cmd->cmd = ft_strdup(args_start[0]);
 	return (0);
 }
 
 t_cmd	*delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 {
 	t_cmd	*tmp;
-	t_cmd	*to_return;
-
+	t_cmd	*next;
+	
 	tmp = *cmd;
-	to_return = to_delete->next;
-	if (tmp == to_delete)
+	if (*cmd == to_delete)
 	{
-		*cmd = tmp->next;
-		free(tmp->cmd);
-		free(tmp->args);
-		free(tmp->infile);
-		free(tmp->outfile);
-		free(tmp);
-		return (to_return);
+		*cmd = to_delete->next;
+		if (*cmd)
+			(*cmd)->prev = NULL;
+		free_cmd(to_delete);
+		return (*cmd);
 	}
 	while (tmp && tmp != to_delete)
-    	tmp = tmp->next;
+		tmp = tmp->next;
 	if (tmp && tmp == to_delete)
 	{
-		to_return = tmp->next;
 		if (tmp->prev)
 			tmp->prev->next = tmp->next;
 		if (tmp->next)
 			tmp->next->prev = tmp->prev;
-		free(tmp->cmd);
-		free(tmp->args);
-		free(tmp->infile);
-		free(tmp->outfile);
-		free(tmp);
+		next = tmp->next;
+		free_cmd(tmp);
+		return (next);
 	}
-	return (to_return);
+	return (NULL);
 }
 
 int	resolve_cmd_path(t_cmd **cmd, char **path)
@@ -329,8 +348,6 @@ int	resolve_cmd_path(t_cmd **cmd, char **path)
 	while (tmp)
 	{
 		get_cmd_path(&tmp, path);
-		if (tmp->is_valid_cmd)
-			//printf("cmd: %s\n", tmp->cmd);
 		if (!tmp->is_valid_cmd)
 		{
 			tmp = delete_cmd(cmd, tmp);

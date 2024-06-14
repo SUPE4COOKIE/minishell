@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/14 15:38:00 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/14 22:18:37 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,31 +227,27 @@ t_lexer	*get_last_lexer(t_lexer *lex)
 t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete)
 {
 	t_lexer	*tmp;
-	t_lexer	*to_return;
-
+	
 	tmp = *lex;
-	to_return = tmp->next;
 	if (tmp == to_delete)
 	{
 		*lex = tmp->next;
 		free(tmp->value);
 		free(tmp);
-		return (to_return);
+		return (NULL);
 	}
 	while (tmp && tmp != to_delete)
-    tmp = tmp->next;
+		tmp = tmp->next;
 	if (tmp && tmp == to_delete)
 	{
-    	if (tmp->next)
-    	    to_return = tmp->next;
-    	if (tmp->prev)
-    	    tmp->prev->next = tmp->next;
-    	if (tmp->next)
-    	    tmp->next->prev = tmp->prev;
-    	free(tmp->value);
-    	free(tmp);
+		if (tmp->prev)
+			tmp->prev->next = tmp->next;
+		if (tmp->next)
+			tmp->next->prev = tmp->prev;
+		free(tmp->value);
+		free(tmp);
 	}
-	return (to_return);
+	return (*lex);
 }
 
 int	add_quoted_word(t_lexer **lex, char *line, size_t *end)

@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/12 21:03:00 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/14 17:29:35 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,6 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 					if (!tmp->value || (tmp->value && !tmp->value[0]))
 					{
 						tmp = delete_lexer(lex, tmp);
-						printf("tmp value: %s\n", tmp->value);
 						free(var_name);
 						break;
 					}
