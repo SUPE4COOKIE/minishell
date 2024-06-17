@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/14 17:29:35 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/17 04:56:07 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,30 +17,71 @@
 
 #include "minishell.h"
 
-char	*var_replacer(char *var, char *value, size_t *iter)
+bool	is_other_cmd(t_lexer *lex)
+{
+	size_t	redirect_count;
+	size_t	word_count;
+	t_lexer	*tmp;
+
+	tmp = lex;
+	redirect_count = 0;
+	word_count = 0;
+	while (tmp->prev && tmp->type != T_PIPE)
+	{
+		if (tmp->type == T_REDIR_IN || tmp->type == T_REDIR_OUT || tmp->type == T_APPEND_OUT || tmp->type == T_HERE_DOC)
+			redirect_count++;
+		tmp = tmp->prev;
+	}
+	if (tmp->type == T_REDIR_IN || tmp->type == T_REDIR_OUT || tmp->type == T_APPEND_OUT || tmp->type == T_HERE_DOC)
+		redirect_count++;
+	while (tmp != lex && tmp->type != T_PIPE)
+	{
+		if (tmp->type == T_WORD || tmp->type == T_D_QUOTED_WORD || tmp->type == T_S_QUOTED_WORD)
+			word_count++;
+		tmp = tmp->next;
+	}
+	if (word_count > redirect_count)
+		return (true);
+	return (false);
+}
+
+char	*lexer_replacer(t_lexer *lex, char *value)
+{
+	t_lexer	*tmp;
+
+	printf("replacing '%s' with '%s' as a cmd\n", lex->value, value);
+	tmp = lexer(value);
+	printf("\033[0;31mnew lexer:\n\033[0m");
+	print_lexer(tmp);
+	return (NULL);
+}
+
+char	*var_replacer(t_lexer *var, char *value, size_t *iter)
 {
 	char *result;
 	size_t i;
 	
-	result = malloc(ft_strlen(var) + ft_strlen(value) + 1);
+	if (!is_other_cmd(var) && var->type == T_WORD)
+		lexer_replacer(var, value);
+	result = malloc(ft_strlen(var->value) + ft_strlen(value) + 1);
 	i = 0;
-	while (*var)
+	while (*(var->value))
 	{
-		if (*var == '$' && *(var++))
+		if (*(var->value) == '$' && *(var->value + 1))
 		{
-			while (*var && *var == '$')
-				var++;
-			if (*var && *var != '?')
+			while (*(var->value) && *(var->value) == '$')
+				(var->value)++;
+			if (*(var->value) && *(var->value) != '?')
 			{
-				while ((ft_isalpha(*var) || *var == '_' || ft_isdigit(*var)))
+				while ((ft_isalpha(*(var->value)) || *(var->value) == '_' || ft_isdigit(*(var->value))))
 				{				
-					var++;
-					if (ft_isdigit(*(var - 1)) && *(var - 2) == '$')
+					(var->value)++;
+					if (ft_isdigit(*((var->value) - 1)) && *((var->value) - 2) == '$')
 						break;
 				}
 			}
-			else if (*var == '?')
-				var++;
+			else if (*(var->value) == '?')
+				(var->value)++;
 			while (value && *value)
 			{
 				result[i] = *value;
@@ -52,16 +93,16 @@ char	*var_replacer(char *var, char *value, size_t *iter)
 		}
 		else
 		{
-			result[i] = *var;
+			result[i] = *(var->value);
 			i++;
-			var++;
+			(var->value)++;
 		}
 	}
-	while (*var)
+	while (*(var->value))
 	{
-		result[i] = *var;
+		result[i] = *(var->value);
 		i++;
-		var++;
+		(var->value)++;
 	}
 	result[i] = 0;
 	return (result);
@@ -116,7 +157,7 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 		i = 0;
 		if (tmp && (tmp->type == T_WORD || tmp->type == T_D_QUOTED_WORD))
 		{
-			while (tmp && (tmp->value && tmp->value[i]))
+			while (tmp && (tmp->value && ft_strlen(tmp->value) > i))
 			{
 				if (tmp->value[i] == '$' && tmp->value[i + 1] && (ft_isalpha(tmp->value[i + 1]) || tmp->value[i + 1] == '_'))
 				{
@@ -129,9 +170,9 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 					var_name = tmp->value;
 					i--;
 					if (var)
-						tmp->value = var_replacer(tmp->value, var, &i);
+						tmp->value = var_replacer(tmp, var, &i);
 					else
-						tmp->value = var_replacer(tmp->value, NULL, &i); // TODO: delete the node if null
+						tmp->value = var_replacer(tmp, NULL, &i); // TODO: delete the node if null
 					if (!tmp->value || (tmp->value && !tmp->value[0]))
 					{
 						tmp = delete_lexer(lex, tmp);
@@ -145,10 +186,13 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 				{
 					i++;
 					var = ft_itoa(last_exit_status);
-					tmp->value = var_replacer(tmp->value, var, &i);
+					tmp->value = var_replacer(tmp, var, &i);
+					i--;
 					free(var);
 					continue;
 				}
+				//else if (tmp->value[i] == '$' && tmp->value[i + 1])
+				//	tmp->value = var_replacer(tmp, NULL, &i);
 				i++;
 			}
 		}

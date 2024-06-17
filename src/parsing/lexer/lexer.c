@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/14 22:18:37 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/17 03:46:56 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,6 +224,7 @@ t_lexer	*get_last_lexer(t_lexer *lex)
 	return (lex);
 }
 
+//TODO: opti
 t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete)
 {
 	t_lexer	*tmp;
