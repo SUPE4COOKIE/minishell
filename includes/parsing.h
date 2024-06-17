@@ -39,4 +39,7 @@ int		get_cmd_path(t_cmd **cmd, char **path);
 int		expand(t_lexer **lex, char **envp);
 void	delete_cmd(t_cmd **cmd, t_cmd *to_delete);
 void	allocate_env(t_minishell *mshell, char **envp);
+void	print_cmds(t_cmd *cmd);
+void	print_cmd(t_cmd *cmd);
+
 #endif

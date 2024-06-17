@@ -20,6 +20,7 @@ int	parse(t_minishell *mshell)
 	save_path(mshell, mshell->env);
 	//print_lexer(lex);
 	mshell->cmds = lexer_to_cmd(lex, mshell->path);
+	print_cmds(mshell->cmds);
 	// get cmd fo all path
 	return (0);
 }

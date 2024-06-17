@@ -42,23 +42,26 @@ char	**copy_args(char **args)
  * @param mshell
  * @param cmd
  */
-void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
+void exec_cmd(t_minishell *mshell, t_cmd *cmd)
 {
-	char	*program;
-	char	**args;
+	char *program;
+	char **args;
 
 	if (is_builtin(cmd->cmd) == true)
-	{
 		exec_builtin(mshell, cmd);
-	}
 	else
 	{
 		program = ft_strdup(cmd->cmd);
-		if (program == NULL)
+		if (program == NULL) {
+			perror("Failed to allocate memory for program path");
 			return ;
+		}
 		args = copy_args(cmd->args);
-		if (args == NULL)
-			return (free(program));
+		if (args == NULL) {
+			perror("Failed to allocate memory for arguments");
+			free(program);
+			return ;
+		}
 		execve(program, args, mshell->env);
 		free(program);
 		free_tab(args);
@@ -72,7 +75,7 @@ void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
  * @param old
  * @param new
  */
-void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
+void dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 {
 	if (i != 0)
 	{
@@ -90,7 +93,7 @@ void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 	{
 		if (dup2(new[1], STDOUT_FILENO) == -1)
 		{
-			perror("dup2 failed");
+			perror("dup2(2) failed");
 			exit(EXIT_FAILURE);
 		}
 		if (new[0] != -1)
@@ -116,6 +119,11 @@ void	exec(t_minishell *mshell)
 	i = 0;
 	while (cmd)
 	{
+		if (cmd->is_valid_cmd == false)
+		{
+			cmd = cmd->next;
+			continue ;
+		}
 		if (cmd->next)
 		{
 			if (pipe(new) == -1)
