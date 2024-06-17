@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 05:31:43 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/14 18:18:56 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/17 18:24:54 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,6 @@ int	parse(t_minishell *mshell)
 	mshell->cmds = lexer_to_cmd(lex, mshell->path);
 	print_cmds(mshell->cmds);
 	// get cmd fo all path
+	free_lexer(lex);
 	return (0);
 }

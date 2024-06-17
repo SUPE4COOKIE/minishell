@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/17 04:56:07 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/17 20:02:59 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,24 +45,38 @@ bool	is_other_cmd(t_lexer *lex)
 	return (false);
 }
 
-char	*lexer_replacer(t_lexer *lex, char *value)
+char	*lexer_replacer(t_lexer *lex, char *value, t_lexer **origin)
 {
 	t_lexer	*tmp;
+	t_lexer	*before;
+	t_lexer	*after;
+	t_lexer	*last;
 
-	printf("replacing '%s' with '%s' as a cmd\n", lex->value, value);
+	printf("\033[1;36mreplacing '%s' with '%s' as a cmd\033[0m\n", lex->value, value);
 	tmp = lexer(value);
-	printf("\033[0;31mnew lexer:\n\033[0m");
-	print_lexer(tmp);
-	return (NULL);
+	if (!tmp)
+		exit(1); // TODO: add a proper exit struct
+	before = lex->prev;
+	after = lex->next;
+	if (before)
+		before->next = tmp;
+	last = get_last_lexer(tmp);
+	last->next = after;
+	if (after)
+		after->prev = last;
+	if (!after && !before)
+	{
+		printf("\033[1;36mreplacing the first node\033[0m\n");
+		*origin = tmp;
+	}
+	return (tmp->value);
 }
 
 char	*var_replacer(t_lexer *var, char *value, size_t *iter)
 {
 	char *result;
 	size_t i;
-	
-	if (!is_other_cmd(var) && var->type == T_WORD)
-		lexer_replacer(var, value);
+
 	result = malloc(ft_strlen(var->value) + ft_strlen(value) + 1);
 	i = 0;
 	while (*(var->value))
@@ -105,6 +119,7 @@ char	*var_replacer(t_lexer *var, char *value, size_t *iter)
 		(var->value)++;
 	}
 	result[i] = 0;
+	//free(var->value);
 	return (result);
 }
 
@@ -114,8 +129,6 @@ char *var_finder(char *var, char **envp)
 	int j;
 
 	i = 0;
-	if (ft_strncmp(var, "UID", 3) == 0)
-		return ("COUCOU");
 	while (envp[i])
 	{
 		j = 0;
@@ -167,19 +180,32 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 						exit(1); // TODO: add a proper exit struct
 					var = var_finder(var_name, envp);
 					free(var_name);
-					var_name = tmp->value;
 					i--;
 					if (var)
-						tmp->value = var_replacer(tmp, var, &i);
+					{
+						if (!is_other_cmd(tmp) && tmp->type == T_WORD && var)
+						{
+							lexer_replacer(tmp, var, lex);
+							break;
+						}
+						else
+							tmp->value = var_replacer(tmp, var, &i);
+					}
 					else
-						tmp->value = var_replacer(tmp, NULL, &i); // TODO: delete the node if null
+					{
+						if (!is_other_cmd(tmp) && tmp->type == T_WORD && var)
+						{
+							lexer_replacer(tmp, NULL, lex);
+							break;
+						}
+						else
+							tmp->value = var_replacer(tmp, NULL, &i); // TODO: delete the node if null
+					}
 					if (!tmp->value || (tmp->value && !tmp->value[0]))
 					{
 						tmp = delete_lexer(lex, tmp);
-						free(var_name);
 						break;
 					}
-					free(var_name);
 					continue;
 				}
 				else if (tmp->value[i] == '$' && tmp->value[i + 1] == '?')

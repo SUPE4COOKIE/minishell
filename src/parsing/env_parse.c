@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 16:40:14 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/15 19:23:04 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/17 18:31:51 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,25 @@ void allocate_env(t_minishell *mshell, char **envp)
 	mshell->env[i] = NULL;
 }
 
+void	free_env_path(t_minishell *mshell)
+{
+	size_t i;
+
+	i = 0;
+	while (mshell->env[i])
+	{
+		free(mshell->env[i]);
+		i++;
+	}
+	i = 0;
+	while (mshell->path[i])
+	{
+		free(mshell->path[i]);
+		i++;
+	}
+	free(mshell->env);
+}
+
 static int	parse_path(t_minishell *mshell, char *env)
 {
 	char	*path;
@@ -44,9 +63,9 @@ static int	parse_path(t_minishell *mshell, char *env)
 	if (!path)
 		return (1); // TODO: add a free struct
 	mshell->path = ft_split(path, ':');
+	free(path);
 	if (!mshell->path)
 		return (1); // TODO: add a free struct
-	free(path);
 	return (0);
 }
 
