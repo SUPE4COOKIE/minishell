@@ -121,6 +121,5 @@ int	builtin_export(t_minishell *mshell, char **args)
 			put_in_env(args, i, mshell);
 		i++;
 	}
-	print_tab(mshell->env);
 	return (0);
 }
