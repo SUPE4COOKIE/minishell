@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void del_cmd(t_cmd *cmd)
+void	del_cmd(t_cmd *cmd)
 {
 	if (cmd->args)
 		free_tab(cmd->args);
@@ -23,7 +23,7 @@ void del_cmd(t_cmd *cmd)
 	cmd = NULL;
 }
 
-void free_cmds(t_cmd *cmd)
+void	free_cmds(t_cmd *cmd)
 {
 	t_cmd	*tmp;
 
@@ -35,7 +35,7 @@ void free_cmds(t_cmd *cmd)
 	}
 }
 
-void free_mshell(t_minishell *mshell)
+int	free_shell(t_minishell *mshell, int status)
 {
 	if (mshell->env)
 		free_tab(mshell->env);
@@ -50,16 +50,6 @@ void free_mshell(t_minishell *mshell)
 		free_cmds(mshell->cmds);
 	mshell->cmds = NULL;
 	mshell = NULL;
-}
-
-/**
-** @brief: Free all allocated memory and exit the shell
-** @param mshell The minishell structure
-** @param status The exit status
-*/
-int	free_shell(t_minishell *mshell, int status)
-{
-	free_mshell(mshell);
 	return (status);
 }
 
@@ -87,7 +77,7 @@ static bool	get_is_between_cmd(t_minishell *mshell)
 */
 int	builtin_exit(t_minishell *mshell, char **args)
 {
-	uint8_t status;
+	uint8_t	status;
 	bool	is_between;
 
 	status = mshell->last_exit_status;

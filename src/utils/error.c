@@ -37,12 +37,6 @@ int	error_pipe(char *msg, int new[2], int old[2], t_cmd *cmd)
 		close(new[0]);
 	if (new[1])
 		close(new[1]);
-	// TODO: correctly free cmd
-	//if (cmd)
-	//{
-	//	free_cmd(cmd);
-	//	cmd = NULL;
-	//}
 	exit(1);
 }
 

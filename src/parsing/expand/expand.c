@@ -135,7 +135,6 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 					if (!tmp->value || (tmp->value && !tmp->value[0]))
 					{
 						tmp = delete_lexer(lex, tmp);
-						printf("tmp value: %s\n", tmp->value);
 						free(var_name);
 						break;
 					}

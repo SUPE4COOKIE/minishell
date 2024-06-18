@@ -29,9 +29,9 @@
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
 # endif
-# define PRINT_CAT true
+# define PRINT_CAT false
 # define PROMPT_ENABLED true
-# define DEBUG true
+# define DEBUG false
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;

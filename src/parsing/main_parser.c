@@ -19,9 +19,9 @@ int	parse(t_minishell *mshell)
 	lex = lexer(mshell->line);
 	save_path(mshell, mshell->env);
 	expand(&lex, mshell->env, mshell->last_exit_status);
-	print_lexer(lex);
+	// print_lexer(lex);
 	mshell->cmds = lexer_to_cmd(lex, mshell->path);
-	print_cmds(mshell->cmds);
+	// print_cmds(mshell->cmds);
 	// get cmd fo all path
 	return (0);
 }
