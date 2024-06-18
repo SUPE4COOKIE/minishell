@@ -12,6 +12,11 @@
 
 #include "minishell.h"
 
+/**
+ * @brief Close the old file descriptors and cpy new to old
+ * @param i The index
+ * @param old The old file descriptors
+ */
 void	close_and_cpy(int old[2], int new[2], int i)
 {
 	close_old(i, old);

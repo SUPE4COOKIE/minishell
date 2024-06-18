@@ -12,6 +12,11 @@
 
 #include "minishell.h"
 
+/**
+ * @brief Copy the arguments
+ * @param args
+ * @return The copied arguments
+ */
 char	**copy_args(char **args)
 {
 	int		arg_count;
@@ -134,10 +139,10 @@ void	process_commands(t_minishell *mshell, int old[2], int new[2])
 	}
 }
 
-/*
-** @brief execute the commands
-** @param mshell The minishell structure
-*/
+/**
+ * @brief Execute the minishell
+ * @param mshell
+ */
 void	exec(t_minishell *mshell)
 {
 	int	old[2];

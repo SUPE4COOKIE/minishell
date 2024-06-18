@@ -13,12 +13,12 @@
 #include "minishell.h"
 
 /**
- * @brief Handle here document
- * @param cmd
- * @param old
- * @param new
+ * @brief Read the line
+ * @param line The line
+ * @param fd The file descriptor
+ * @param cmd The command
+ * @param i The index
  */
-
 void	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 {
 	while (1)
@@ -37,6 +37,12 @@ void	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 	}
 }
 
+/**
+ * @brief Handle here document
+ * @param cmd The command
+ * @param old The old file descriptors
+ * @param new The new file descriptors
+ */
 void	handle_hdoc(t_cmd *cmd, int old[2], int new[2])
 {
 	int		fd;
@@ -61,6 +67,12 @@ void	handle_hdoc(t_cmd *cmd, int old[2], int new[2])
 	close(fd);
 }
 
+/**
+ * @brief Replace the here document
+ * @param cmd The command
+ * @param old The old file descriptors
+ * @param new The new file descriptors
+ */
 void	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
 {
 	while (cmd)

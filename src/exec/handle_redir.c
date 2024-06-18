@@ -12,6 +12,12 @@
 
 #include "minishell.h"
 
+/**
+ * @brief Handle the redirection of the standard output
+ * @param cmd The command
+ * @param old The old file descriptors
+ * @param new The new file descriptors
+ */
 void	handle_red_out(t_cmd *cmd, int old[2], int new[2])
 {
 	int	fd;
@@ -24,6 +30,12 @@ void	handle_red_out(t_cmd *cmd, int old[2], int new[2])
 	close(fd);
 }
 
+/**
+ * @brief Handle the redirection of the standard input
+ * @param cmd The command
+ * @param old The old file descriptors
+ * @param new The new file descriptors
+ */
 void	handle_red_in(t_cmd *cmd, int old[2], int new[2])
 {
 	int	fd;
@@ -36,6 +48,12 @@ void	handle_red_in(t_cmd *cmd, int old[2], int new[2])
 	close(fd);
 }
 
+/**
+ * @brief Handle the append of the standard output
+ * @param cmd The command
+ * @param old The old file descriptors
+ * @param new The new file descriptors
+ */
 void	handle_append_out(t_cmd *cmd, int old[2], int new[2])
 {
 	int	fd;
@@ -49,11 +67,10 @@ void	handle_append_out(t_cmd *cmd, int old[2], int new[2])
 }
 
 /**
- * @brief Handle file redirection
- * @param mshell
- * @param cmd
- * @param old
- * @param new
+ * @brief Handle the file redirection
+ * @param cmd The command
+ * @param old The old file descriptors
+ * @param new The new file descriptors
  */
 void	handle_file_redirection(t_cmd *cmd, int old[2], int new[2])
 {

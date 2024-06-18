@@ -12,18 +12,6 @@
 
 #include "minishell.h"
 
-void ft_print_lst(t_arg *new_args)
-{
-	t_arg *tmp;
-
-	tmp = new_args;
-	while (tmp)
-	{
-		printf("arg: %s\n", tmp->arg);
-		tmp = tmp->next;
-	}
-}
-
 /**
 ** @brief Set the value of a key in the env
 ** @param mshell The minishell structure
