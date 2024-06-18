@@ -59,7 +59,7 @@ int main(int argc, char **argv, char **envp)
 		(void)argv;
 		while (42)
 		{
-			mshell.line = readline("\033[1;34mminishell\033[0m\033[1;31m$\033[0m ");
+			mshell.line = readline("minishell$ ");
 			if (!mshell.line)
 				break ;
 			if (is_n_only_spaces(mshell.line, ft_strlen(mshell.line)) == 1)

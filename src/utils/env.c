@@ -24,7 +24,7 @@ void	put_in_env(char **args, size_t i, t_minishell *mshell)
 	key = ft_substr(args[i], 0, ft_varlen(args[i], '='));
 	value = ft_strdup(args[i] + ft_varlen(args[i], '=') + 1);
 	if (is_in_env(mshell->env, key))
-		set_env(&mshell->env, value, key);
+		set_env(&mshell->env, key, value);
 	else
 		ft_addenv(mshell, key, value);
 }
@@ -60,7 +60,6 @@ bool	update_existing_env(char ***env, char *key, char *value, int index)
 	return (EXIT_SUCCESS);
 }
 
-
 bool	set_env(char ***env, char *key, char *value)
 {
 	int	i;
@@ -69,8 +68,9 @@ bool	set_env(char ***env, char *key, char *value)
 	while ((*env)[i])
 	{
 		if (ft_strncmp((*env)[i], key, ft_strlen(key)) == 0 && (*env)[i][ft_strlen(key)] == '=')
-			return update_existing_env(env, key, value, i);
+			return (update_existing_env(env, key, value, i));
 		i++;
 	}
+	printf("key: %s\n", key);
 	return (add_new_env_var(env, key, value, i));
 }
