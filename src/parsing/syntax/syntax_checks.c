@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pre_parse.c                                        :+:      :+:    :+:   */
+/*   syntax_checks.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/13 22:55:03 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/22 20:07:58 by mwojtasi         ###   ########.fr       */
+/*   Created: 2024/06/18 21:26:52 by mwojtasi          #+#    #+#             */
+/*   Updated: 2024/06/18 22:56:45 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-	things to check :
-	numbers of pipes
-	numbers of redirections
-	numbers of here_docs
-	open files and create necessary files
-*/
+#include "minishell.h"
+
+//bool	check_syntax(t_lexer **lex, int *status_code)
+//{
+//	
+//}

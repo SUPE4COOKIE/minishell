@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 17:01:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/17 18:31:41 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/18 21:56:45 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ void	print_lexer(t_lexer *lex);
 int		validate(t_lexer *lex);
 int	new_lexer(t_lexer **lex, char *line, size_t size);
 int	save_path(t_minishell *mshell, char **env);
-t_cmd	*lexer_to_cmd(t_lexer *lex, char **path);
+t_cmd	*lexer_to_cmd(t_lexer *lex, char **path, int *exit_status);
 t_lexer	*get_last_lexer(t_lexer *lex);
-int		get_cmd_path(t_cmd **cmd, char **path);
+int		get_cmd_path(t_cmd **cmd, char **path, int *exit_status);
 int		expand(t_lexer **lex, char **envp, int last_exit_status);
 t_cmd	*delete_cmd(t_cmd **cmd, t_cmd *to_delete);
 t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete);

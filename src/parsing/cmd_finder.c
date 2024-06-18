@@ -6,14 +6,14 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 20:55:03 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/31 17:48:52 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/18 23:06:19 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "exec.h"
 
-static int is_full_path(t_cmd **cmd)
+static int is_full_path(t_cmd **cmd, int *exit_status)
 {
 	char *tmp;
 	struct	stat buf;
@@ -34,6 +34,7 @@ static int is_full_path(t_cmd **cmd)
 		if (((buf.st_mode) & 0170000) == (0040000))
 		{
 			(*cmd)->is_valid_cmd = false;
+			*exit_status = 126;
 			tmp = ft_strjoin((*cmd)->cmd, ": is a directory\n");
 			if (!tmp)
 				exit(1); // TODO: add a proper exit struct
@@ -47,6 +48,7 @@ static int is_full_path(t_cmd **cmd)
 		}
 		else if (access((*cmd)->cmd, F_OK) == 0 && access((*cmd)->cmd, X_OK) != 0)
 		{
+			*exit_status = 126;
 			tmp = ft_strjoin((*cmd)->cmd, ": permission denied\n");
 			if (!tmp)
 				exit(1); // TODO: add a proper exit struct
@@ -56,6 +58,7 @@ static int is_full_path(t_cmd **cmd)
 		}
 		else
 		{
+			*exit_status = 127;
 			tmp = ft_strjoin((*cmd)->cmd, ": command not found\n");
 			if (!tmp)
 				exit(1); // TODO: add a proper exit struct
@@ -67,14 +70,15 @@ static int is_full_path(t_cmd **cmd)
 	return (0);
 }
 
-static void cmd_no_path(t_cmd **cmd, char **path)
+static void cmd_no_path(t_cmd **cmd, char **path, int *exit_status)
 {
 	char *tmp;
 
 	if (!path)
 	{
-		if (!is_full_path(cmd))
+		if (!is_full_path(cmd, exit_status))
 		{
+			*exit_status = 127;
 			tmp = ft_strjoin((*cmd)->cmd, ": command not found\n");
 			if (!tmp)
 				exit(1); // TODO: add a proper exit struct
@@ -83,33 +87,19 @@ static void cmd_no_path(t_cmd **cmd, char **path)
 		}
 	}
 }
-static	void	cmd_not_found(t_cmd **cmd)
+static	void	cmd_not_found(t_cmd **cmd, int *exit_status)
 {
 	char	*tmp;
 
 	if (is_builtin((*cmd)->cmd))
 		return ;
-	if (!ft_strnstr((*cmd)->cmd, "/", ft_strlen((*cmd)->cmd)))
-	{
-		if (access((*cmd)->cmd , F_OK) == 0 && access((*cmd)->cmd , X_OK) != 0)
-		{
-			tmp = ft_strjoin((*cmd)->cmd , ": permission denied\n");
-			if (!tmp)
-				exit(1); // TODO: add a proper exit struct
-			write(2, tmp, ft_strlen(tmp));
-			(*cmd)->is_valid_cmd = false;
-			(*cmd)->cmd = NULL;
-		}
-		else
-		{
-			tmp = ft_strjoin((*cmd)->cmd , ": command not found\n");
-			if (!tmp)
-				exit(1); // TODO: add a proper exit struct
-			write(2, tmp, ft_strlen(tmp));
-			(*cmd)->is_valid_cmd = false;
-			(*cmd)->cmd = NULL;
-		}
-	}
+	*exit_status = 127;
+	tmp = ft_strjoin((*cmd)->cmd , ": command not found\n");
+	if (!tmp)
+	exit(1); // TODO: add a proper exit struct
+	write(2, tmp, ft_strlen(tmp));
+	(*cmd)->is_valid_cmd = false;
+	(*cmd)->cmd = NULL;
 }
 
 static	int	cmd_for_path(t_cmd **cmd, char *path)
@@ -138,10 +128,11 @@ static	int	cmd_for_path(t_cmd **cmd, char *path)
 	return (0);
 }
 
-int get_cmd_path(t_cmd **cmd, char **path)
+int get_cmd_path(t_cmd **cmd, char **path, int *exit_status)
 {
-	cmd_no_path(cmd, path);
-	if ((*cmd)->cmd && !is_full_path(cmd))
+	*exit_status = 0;
+	cmd_no_path(cmd, path, exit_status);
+	if ((*cmd)->cmd && !is_full_path(cmd, exit_status))
 	{
 		while (path && *path)
 		{
@@ -150,6 +141,6 @@ int get_cmd_path(t_cmd **cmd, char **path)
 			path++;
 		}
 	}
-	cmd_not_found(cmd);
+	cmd_not_found(cmd, exit_status);
 	return 1;
 }

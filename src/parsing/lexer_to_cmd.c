@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/17 18:51:57 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/18 22:08:45 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -352,7 +352,7 @@ t_cmd	*delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 	return (NULL);
 }
 
-int	resolve_cmd_path(t_cmd **cmd, char **path)
+int	resolve_cmd_path(t_cmd **cmd, char **path, int *exit_status)
 {
 	t_cmd	*tmp;
 
@@ -364,7 +364,7 @@ int	resolve_cmd_path(t_cmd **cmd, char **path)
 			tmp = tmp->next;
 			continue ;
 		}
-		get_cmd_path(&tmp, path);
+		get_cmd_path(&tmp, path, exit_status);
 		if (!tmp->is_valid_cmd)
 		{
 			tmp = delete_cmd(cmd, tmp);
@@ -375,12 +375,11 @@ int	resolve_cmd_path(t_cmd **cmd, char **path)
 	return (0);
 }
 
-t_cmd	*lexer_to_cmd(t_lexer *lex, char **path)
+t_cmd	*lexer_to_cmd(t_lexer *lex, char **path, int *exit_status)
 {
 	t_cmd	*cmd;
 	t_lexer	*current_lex;
 
-	(void)path;
 	cmd = NULL;
 	current_lex = lex;
 	while (current_lex)
@@ -389,6 +388,6 @@ t_cmd	*lexer_to_cmd(t_lexer *lex, char **path)
 		if (current_lex)
 			current_lex = current_lex->next;
 	}
-	resolve_cmd_path(&cmd, path);
+	resolve_cmd_path(&cmd, path, exit_status);
 	return (cmd);
 }

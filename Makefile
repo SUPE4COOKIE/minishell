@@ -26,6 +26,10 @@ SRCS = $(addprefix src/, \
 		$(addprefix expand/, \
 			expand.c \
 		) \
+		$(addprefix syntax/, \
+			pre_parse.c \
+			syntax_checks.c \
+		) \
 		cmd_finder.c \
 		env_parse.c \
 		files_validator.c \
@@ -33,7 +37,6 @@ SRCS = $(addprefix src/, \
 		ft_split_args.c \
 		lexer_to_cmd.c \
 		main_parser.c \
-		pre_parse.c \
 	) \
 	$(addprefix utils/, \
 		error.c \
@@ -75,6 +78,7 @@ $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)/parsing
 	mkdir -p $(OBJ_DIR)/parsing/lexer
 	mkdir -p $(OBJ_DIR)/parsing/expand
+	mkdir -p $(OBJ_DIR)/parsing/syntax
 	mkdir -p $(OBJ_DIR)/builtin
 	mkdir -p $(OBJ_DIR)/exec
 	mkdir -p $(OBJ_DIR)/utils

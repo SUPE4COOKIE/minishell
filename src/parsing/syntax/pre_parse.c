@@ -1,28 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_parser.c                                      :+:      :+:    :+:   */
+/*   pre_parse.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 05:31:43 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/18 21:54:23 by mwojtasi         ###   ########.fr       */
+/*   Created: 2024/05/13 22:55:03 by mwojtasi          #+#    #+#             */
+/*   Updated: 2024/06/18 22:09:13 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
+	things to check :
+	numbers of pipes
+	numbers of redirections
+	numbers of here_docs
+	open files and create necessary files
+*/
+
 #include "minishell.h"
-
-int	parse(t_minishell *mshell)
-{
-	t_lexer	*lex;
-
-	lex = lexer(mshell->line);
-	save_path(mshell, mshell->env);
-	expand(&lex, mshell->env, mshell->last_exit_status);
-	print_lexer(lex);
-	mshell->cmds = lexer_to_cmd(lex, mshell->path, &(mshell->last_exit_status));
-	print_cmds(mshell->cmds);
-	// get cmd fo all path
-	free_lexer(lex);
-	return (0);
-}

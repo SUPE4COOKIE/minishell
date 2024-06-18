@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/17 20:02:59 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/18 19:39:27 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,34 +16,6 @@
 */
 
 #include "minishell.h"
-
-bool	is_other_cmd(t_lexer *lex)
-{
-	size_t	redirect_count;
-	size_t	word_count;
-	t_lexer	*tmp;
-
-	tmp = lex;
-	redirect_count = 0;
-	word_count = 0;
-	while (tmp->prev && tmp->type != T_PIPE)
-	{
-		if (tmp->type == T_REDIR_IN || tmp->type == T_REDIR_OUT || tmp->type == T_APPEND_OUT || tmp->type == T_HERE_DOC)
-			redirect_count++;
-		tmp = tmp->prev;
-	}
-	if (tmp->type == T_REDIR_IN || tmp->type == T_REDIR_OUT || tmp->type == T_APPEND_OUT || tmp->type == T_HERE_DOC)
-		redirect_count++;
-	while (tmp != lex && tmp->type != T_PIPE)
-	{
-		if (tmp->type == T_WORD || tmp->type == T_D_QUOTED_WORD || tmp->type == T_S_QUOTED_WORD)
-			word_count++;
-		tmp = tmp->next;
-	}
-	if (word_count > redirect_count)
-		return (true);
-	return (false);
-}
 
 char	*lexer_replacer(t_lexer *lex, char *value, t_lexer **origin)
 {
@@ -183,7 +155,7 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 					i--;
 					if (var)
 					{
-						if (!is_other_cmd(tmp) && tmp->type == T_WORD && var)
+						if (tmp->type == T_WORD && var)
 						{
 							lexer_replacer(tmp, var, lex);
 							break;
@@ -193,7 +165,7 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 					}
 					else
 					{
-						if (!is_other_cmd(tmp) && tmp->type == T_WORD && var)
+						if (tmp->type == T_WORD && var)
 						{
 							lexer_replacer(tmp, NULL, lex);
 							break;

@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 16:40:14 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/17 18:31:51 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/18 17:23:38 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,12 @@ static int	parse_path(t_minishell *mshell, char *env)
 
 static int	set_sysbin(t_minishell *mshell)
 {
-	mshell->path = malloc(sizeof(char *) * 2);
+	size_t	i;
+
+	i = 0;
+	mshell->path = ft_split(DEFAULT_PATH, ':');
 	if (!mshell->path)
 		return (1); // TODO: add a free struct
-	mshell->path[0] = ft_strdup("/bin");
-	if (!mshell->path[0])
-		return (1); // TODO: add a free struct
-	mshell->path[1] = NULL;
 	return (0);
 }
 
