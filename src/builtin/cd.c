@@ -262,7 +262,10 @@ char *remove_double_point(char *path)
 			tmp = tmp->prev;
 			remove_nodes(&new_args, to_remove);
 		}
-		tmp = tmp->next;
+		if (tmp)
+			tmp = tmp->next;
+		else
+			return (NULL);
 	}
 	new_path = lst_to_path(new_args);
 	free_tab(tab);
@@ -300,9 +303,9 @@ int	builtin_cd(t_minishell *mshell, char **args)
 	else
 	{
 		path = remove_double_point(args[1]);
-		printf("path: %s\n", path);
 		if (!path)
-			return error_cmd(mshell, 1, "malloc failed");
+			return (0);
+		printf("path: %s\n", path);
 		result = change_dir(mshell, path);
 		free(path);
 		return (result);
