@@ -84,9 +84,9 @@ int	builtin_exit(t_minishell *mshell, char **args)
 	is_between = get_is_between_cmd(mshell);
 	if (is_between)
 		ft_putstr_fd("exit\n", 2);
-	if (args[2])
-		return (error_cmd(mshell, 1, "exit: too many arguments"));
 	if (args[1])
 		status = ft_atoi(args[1]);
+	if (args[1] && args[2])
+		return (error_cmd(mshell, 1, "exit: too many arguments"));
 	exit(free_shell(mshell, status));
 }
