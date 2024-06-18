@@ -19,10 +19,10 @@
  * @param new
  * @param i
  */
-void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
-{
-	pid_t	id;
-	t_cmd	*cmd;
+void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i) {
+	pid_t id;
+	t_cmd *cmd;
+	int y;
 
 	y = 0;
 	cmd = mshell->cmds;

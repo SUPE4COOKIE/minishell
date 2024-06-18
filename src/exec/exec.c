@@ -93,7 +93,7 @@ void dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 	{
 		if (dup2(new[1], STDOUT_FILENO) == -1)
 		{
-			perror("dup2 failed");
+			perror("dup2(2) failed");
 			exit(EXIT_FAILURE);
 		}
 		if (new[0] != -1)

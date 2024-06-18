@@ -70,7 +70,7 @@ int main(int argc, char **argv, char **envp)
 			if (*mshell.line)
 				add_history(mshell.line);
 			parse(&mshell);
-			//exec(&mshell);
+			exec(&mshell);
 			free(mshell.line);
 		}
 	}
