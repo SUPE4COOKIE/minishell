@@ -141,25 +141,133 @@ static bool	change_dir(t_minishell *mshell, char *path)
 	return (EXIT_SUCCESS);
 }
 
-/**
- * @brief Convert a list of arguments to a string
- * @param new_args
- * @param path
- * @return
- */
-char *ft_lst_to_char(t_arg *new_args, char *path)
+void tab_to_lst(t_arg **new_args, char **tab)
 {
-	if (!path)
-		return (NULL);
-	path[0] = '\0';
-	while (new_args)
+	t_arg *new_arg;
+	t_arg *tmp;
+	int i;
+
+	i = 0;
+	while (tab[i])
 	{
-		ft_strlcat(path, new_args->arg, PATH_MAX);
-		if (new_args->next)
-			ft_strlcat(path, "/", PATH_MAX);
-		new_args = new_args->next;
+		new_arg = malloc(sizeof(t_arg));
+		if (!new_arg)
+			return ;
+		new_arg->arg = ft_strdup(tab[i]);
+		if (!new_arg->arg)
+		{
+			free(new_arg);
+			return ;
+		}
+		new_arg->next = NULL;
+		new_arg->prev = NULL;
+		if (!*new_args)
+			*new_args = new_arg;
+		else
+		{
+			tmp = *new_args;
+			while (tmp->next)
+				tmp = tmp->next;
+			tmp->next = new_arg;
+			new_arg->prev = tmp;
+		}
+		i++;
+	}
+}
+
+char *lst_to_path(t_arg *new_args)
+{
+	t_arg *tmp;
+	char *path;
+	char *tmp_path;
+
+	path = NULL;
+	tmp = new_args;
+	if (!tmp)
+		path = ft_strdup("/");
+	while (tmp)
+	{
+		if (!path)
+		{
+			path = ft_strdup(tmp->arg);
+		}
+		else
+		{
+			tmp_path = ft_strjoin(path, "/");
+			free(path);
+			path = ft_strjoin(tmp_path, tmp->arg);
+			free(tmp_path);
+		}
+		tmp = tmp->next;
 	}
 	return (path);
+}
+
+void free_lst(t_arg *new_args)
+{
+	t_arg *tmp;
+
+	while (new_args)
+	{
+		tmp = new_args;
+		new_args = new_args->next;
+		free(tmp->arg);
+		free(tmp);
+	}
+}
+
+void remove_nodes(t_arg **head, t_arg *node)
+{
+	if (node == *head) {
+		*head = node->next;
+		if (*head) {
+			(*head)->prev = NULL;
+		}
+	} else {
+		if (node->prev) {
+			node->prev->next = node->next;
+		}
+		if (node->next) {
+			node->next->prev = node->prev;
+		}
+	}
+	if (node->arg) {
+		free(node->arg);
+	}
+	free(node);
+}
+
+char *remove_double_point(char *path)
+{
+	t_arg *new_args;
+	t_arg *tmp;
+	t_arg *to_remove;
+	char **tab;
+	char *new_path;
+
+	new_args = NULL;
+	tab = ft_split(path, '/');
+	if (!tab)
+		return (NULL);
+	tab_to_lst(&new_args, tab);
+	tmp = new_args;
+	while (tmp)
+	{
+		if (tmp->prev && ft_strncmp(tmp->prev->arg, "..", 3) != 0 && ft_strncmp(tmp->arg, "..", 3) == 0)
+		{
+			to_remove = tmp;
+			tmp = tmp->prev;
+			remove_nodes(&new_args, to_remove);
+			to_remove = tmp;
+			tmp = tmp->prev;
+			remove_nodes(&new_args, to_remove);
+		}
+		tmp = tmp->next;
+	}
+	new_path = lst_to_path(new_args);
+	free_tab(tab);
+	free_lst(new_args);
+	return (new_path);
 }
 
 /**
@@ -191,7 +299,7 @@ int	builtin_cd(t_minishell *mshell, char **args)
 	}
 	else
 	{
-		path = args[1];//remove_double_point(args);
+		path = remove_double_point(args[1]);
 		printf("path: %s\n", path);
 		if (!path)
 			return error_cmd(mshell, 1, "malloc failed");

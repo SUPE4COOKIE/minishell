@@ -146,8 +146,6 @@ t_cmd_type get_op_type(t_lexer *lex)
 		return (token_to_cmd(lex->type));
 }
 
-void	print_cmd(t_cmd *cmd);
-
 void	print_cmds(t_cmd *cmd)
 {
 	t_cmd	*tmp;
@@ -280,7 +278,7 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 			*lex = (*lex)->next;
 	}
 	last_cmd->args = args_start;
-	last_cmd->cmd = args_start[0];
+	last_cmd->cmd = ft_strdup(args_start[0]);
 	if (DEBUG)
 		print_cmd(last_cmd);
 	return (0);
@@ -330,7 +328,7 @@ int	resolve_cmd_path(t_cmd **cmd, char **path)
 	{
 		get_cmd_path(&tmp, path);
 		if (tmp->is_valid_cmd)
-			//printf("cmd: %s\n", tmp->cmd);
+			printf("cmd: %s\n", tmp->cmd);
 		if (!tmp->is_valid_cmd)
 		{
 			tmp = delete_cmd(cmd, tmp);

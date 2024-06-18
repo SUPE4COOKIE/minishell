@@ -40,4 +40,7 @@ int		expand(t_lexer **lex, char **envp, int last_exit_status);
 t_cmd	*delete_cmd(t_cmd **cmd, t_cmd *to_delete);
 t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete);
 void	allocate_env(t_minishell *mshell, char **envp);
+void	print_cmds(t_cmd *cmd);
+void	print_cmd(t_cmd *cmd);
+
 #endif

@@ -24,10 +24,15 @@ void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 	pid_t	id;
 	t_cmd	*cmd;
 
+	y = 0;
 	cmd = mshell->cmds;
-	if (is_builtin(cmd->cmd) == false)
-		id = fork();
-	else if (is_builtin(cmd->cmd) == true && cmd->next)
+	while (y < i)
+	{
+		cmd = cmd->next;
+		y++;
+	}
+	printf("cmd->cmd = %s\n", cmd->cmd);
+	if (is_builtin(cmd->cmd) == false || (is_builtin(cmd->cmd) == true && cmd->next))
 		id = fork();
 	else
 		id = 0;
@@ -40,7 +45,6 @@ void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 		exec_cmd(mshell, cmd);
 		if (is_builtin(cmd->cmd) == false)
 			exit(EXIT_FAILURE);
-		return ;
 	}
 	else
 	{
@@ -48,5 +52,4 @@ void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 		old[0] = new[0];
 		old[1] = new[1];
 	}
-
 }
