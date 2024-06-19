@@ -55,7 +55,7 @@ OBJ = $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
 
 # Compiler and flags
 CC = cc
-FLAGS = -Wall -Wextra -Werror -Iincludes -Ilibft -g3
+CFLAGS = -Wall -Wextra -Werror -Iincludes -Ilibft -g3
 
 # Libraries
 LIB = -Llibft -lft -lreadline
@@ -65,26 +65,32 @@ LIBFT = $(LIBFT_DIR)/libft.a
 # Clean up command
 RM = rm -rf
 
+# Directory structure
+DIRS = $(OBJ_DIR) \
+	   $(OBJ_DIR)/parsing \
+	   $(OBJ_DIR)/parsing/lexer \
+	   $(OBJ_DIR)/parsing/expand \
+	   $(OBJ_DIR)/builtin \
+	   $(OBJ_DIR)/exec \
+	   $(OBJ_DIR)/utils
+
+# Header files
+HEADERS = $(wildcard includes/*.h) $(wildcard libft/*.h)
+
 # Targets
 all: $(LIBFT) $(NAME)
 
 $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
 
-$(OBJ_DIR)/%.o: src/%.c | $(OBJ_DIR)
-	$(CC) $(FLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o: src/%.c $(HEADERS) Makefile | $(DIRS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
-	mkdir -p $(OBJ_DIR)/parsing
-	mkdir -p $(OBJ_DIR)/parsing/lexer
-	mkdir -p $(OBJ_DIR)/parsing/expand
-	mkdir -p $(OBJ_DIR)/builtin
-	mkdir -p $(OBJ_DIR)/exec
-	mkdir -p $(OBJ_DIR)/utils
+$(DIRS):
+	mkdir -p $(DIRS)
 
 $(NAME): $(OBJ)
-	$(CC) $(FLAGS) $(OBJ) $(LIB) -o $@
+	$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $@
 
 clean:
 	$(RM) $(OBJ_DIR)
@@ -95,3 +101,5 @@ fclean: clean
 	$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
+
+.PHONY: all clean fclean re
