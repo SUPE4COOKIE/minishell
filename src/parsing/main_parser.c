@@ -21,7 +21,8 @@ int	parse(t_minishell *mshell)
 	expand(&lex, mshell->env, mshell->last_exit_status);
 	// print_lexer(lex);
 	mshell->cmds = lexer_to_cmd(lex, mshell->path);
-	print_cmds(mshell->cmds);
+	if (DEBUG)
+		print_cmds(mshell->cmds);
 	// get cmd fo all path
 	return (0);
 }

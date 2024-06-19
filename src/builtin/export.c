@@ -88,10 +88,7 @@ int	builtin_export(t_minishell *mshell, char **args)
 	size_t	i;
 
 	if (!args || !args[1])
-	{
-		// print the environment, idk how to do that
 		return (1);
-	}
 	i = 1;
 	while (args[i])
 	{

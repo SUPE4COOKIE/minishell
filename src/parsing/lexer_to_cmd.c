@@ -327,7 +327,7 @@ int	resolve_cmd_path(t_cmd **cmd, char **path)
 	while (tmp)
 	{
 		get_cmd_path(&tmp, path);
-		if (tmp->is_valid_cmd)
+		if (tmp->is_valid_cmd && DEBUG)
 			printf("cmd: %s\n", tmp->cmd);
 		if (!tmp->is_valid_cmd)
 		{
