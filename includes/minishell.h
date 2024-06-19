@@ -31,7 +31,7 @@
 # endif
 # define PRINT_CAT false
 # define PROMPT_ENABLED true
-# define DEBUG false
+# define DEBUG true
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;
@@ -86,5 +86,5 @@ struct s_cmd
 # include "utils.h"
 # include "exec.h"
 # include "builtins.h"
-int is_n_only_spaces(char *line, size_t size);
+
 #endif
