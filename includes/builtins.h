@@ -46,6 +46,7 @@ int	change_to_specified(t_minishell *mshell, char *arg);
 bool	change_dir(t_minishell *mshell, char *path);
 char	*get_path(char **env, char *key);
 bool	set_env(char ***env, char *key, char *value);
+int	free_shell(t_minishell *mshell, int status);
 
 
 #endif

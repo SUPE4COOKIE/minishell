@@ -52,7 +52,8 @@ void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 		dup_cmd(i, cmd, old, new);
 		handle_file_redirection(cmd, old, new);
 		exec_cmd(mshell, cmd);
-		if (is_builtin(cmd->cmd) == false)
+		if (is_builtin(cmd->cmd) == false || \
+				(is_builtin(cmd->cmd) == true && cmd->next))
 			exit(EXIT_FAILURE);
 	}
 	else

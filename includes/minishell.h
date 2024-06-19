@@ -15,12 +15,13 @@
 
 # include "../libft/libft.h"
 # include <sys/types.h>
-#include <sys/stat.h>
+# include <sys/stat.h>
 # include <sys/wait.h>
 # include <fcntl.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
+# include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <stdbool.h>
@@ -31,7 +32,7 @@
 # endif
 # define PRINT_CAT false
 # define PROMPT_ENABLED true
-# define DEBUG true
+# define DEBUG false
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;
@@ -55,6 +56,7 @@ typedef struct s_minishell
 	char	**local_vars;
 	char	*line;
 	int		last_exit_status;
+	bool	in_heredoc;
 	t_cmd	*cmds;
 }				t_minishell;
 

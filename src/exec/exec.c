@@ -49,29 +49,14 @@ char	**copy_args(char **args)
  */
 void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 {
-	char	*program;
-	char	**args;
+//	char	*program;
+//	char	**args;
 
 	if (is_builtin(cmd->cmd) == true)
 		exec_builtin(mshell, cmd);
 	else
 	{
-		program = ft_strdup(cmd->cmd);
-		if (program == NULL)
-		{
-			perror("Failed to allocate memory for program path");
-			return ;
-		}
-		args = copy_args(cmd->args);
-		if (args == NULL)
-		{
-			perror("Failed to allocate memory for arguments");
-			free(program);
-			return ;
-		}
-		execve(program, args, mshell->env);
-		free(program);
-		free_tab(args);
+		execve(cmd->cmd, cmd->args, mshell->env);
 	}
 }
 

@@ -17,6 +17,7 @@ SRCS = $(addprefix src/, \
 		handle_redir.c \
 		fork_exec.c \
 		handle_hdoc.c \
+		name_file.c \
 	) \
 	$(addprefix parsing/, \
 		$(addprefix lexer/, \
@@ -75,15 +76,16 @@ DIRS = $(OBJ_DIR) \
 	   $(OBJ_DIR)/utils
 
 # Header files
-HEADERS = $(wildcard includes/*.h) $(wildcard libft/*.h)
+HEADERS = $(wildcard includes/*.h)
+LIBFT_HEADERS = $(wildcard libft/*.h)
 
 # Targets
 all: $(LIBFT) $(NAME)
 
-$(LIBFT):
+$(LIBFT): $(LIBFT_HEADERS) libft/Makefile
 	$(MAKE) -C $(LIBFT_DIR)
 
-$(OBJ_DIR)/%.o: src/%.c $(HEADERS) Makefile | $(DIRS)
+$(OBJ_DIR)/%.o: src/%.c $(HEADERS) Makefile $(LIBFT) | $(DIRS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(DIRS):

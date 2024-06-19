@@ -23,5 +23,6 @@ void	print_tab(char **tab);
 int		ft_tablen(char **tab);
 void	put_in_env(char **args, size_t i, t_minishell *mshell);
 size_t	ft_varlen(char *var, char c);
+int is_n_only_spaces(char *line, size_t size);
 
 #endif
