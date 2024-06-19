@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/18 17:17:48 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/19 19:43:37 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
 # endif
-# define PRINT_CAT true
+# define PRINT_CAT false
 # define DEBUG true
 # define DEFAULT_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 

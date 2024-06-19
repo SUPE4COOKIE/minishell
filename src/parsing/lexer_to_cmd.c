@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/18 22:08:45 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/19 19:54:20 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,7 +258,7 @@ int	nospace_add(char **args, t_lexer **lex)
 
 	size = 0;
 	start = *lex;
-	while (*lex && (*lex)->value && !(*lex)->space_after && is_nospace_addable((*lex)->type))
+	while (*lex && (*lex)->value && (!size || (!(*lex)->prev->space_after)) && is_nospace_addable((*lex)->type))
 	{
 		size += ft_strlen((*lex)->value) + 1;
 		*lex = (*lex)->next;

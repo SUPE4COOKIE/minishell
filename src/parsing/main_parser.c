@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 05:31:43 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/18 21:54:23 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/19 19:33:59 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,11 @@ int	parse(t_minishell *mshell)
 	lex = lexer(mshell->line);
 	save_path(mshell, mshell->env);
 	expand(&lex, mshell->env, mshell->last_exit_status);
-	print_lexer(lex);
+	if (DEBUG)
+		print_lexer(lex);
 	mshell->cmds = lexer_to_cmd(lex, mshell->path, &(mshell->last_exit_status));
-	print_cmds(mshell->cmds);
+	if (DEBUG)
+		print_cmds(mshell->cmds);
 	// get cmd fo all path
 	free_lexer(lex);
 	return (0);

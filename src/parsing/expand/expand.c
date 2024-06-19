@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/18 19:39:27 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/19 22:46:47 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ char	*lexer_replacer(t_lexer *lex, char *value, t_lexer **origin)
 	t_lexer	*after;
 	t_lexer	*last;
 
-	printf("\033[1;36mreplacing '%s' with '%s' as a cmd\033[0m\n", lex->value, value);
 	tmp = lexer(value);
 	if (!tmp)
 		exit(1); // TODO: add a proper exit struct
@@ -38,7 +37,6 @@ char	*lexer_replacer(t_lexer *lex, char *value, t_lexer **origin)
 		after->prev = last;
 	if (!after && !before)
 	{
-		printf("\033[1;36mreplacing the first node\033[0m\n");
 		*origin = tmp;
 	}
 	return (tmp->value);
@@ -127,6 +125,26 @@ char	*get_name(char *str)
 	return (name);
 }
 
+bool	contain_spaced_words(char *str)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i] && ft_iswhitespace(str[i]))
+		i++;
+	if (!str[i])
+		return (false);
+	while (str[i] && !ft_iswhitespace(str[i]))
+		i++;
+	if (!str[i])
+		return (false);
+	while (str[i] && ft_iswhitespace(str[i]))
+		i++;
+	if (!str[i])
+		return (false);
+	return (true);
+}
+
 int expand(t_lexer **lex, char **envp, int last_exit_status)
 {
 	t_lexer	*tmp;
@@ -155,18 +173,18 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 					i--;
 					if (var)
 					{
-						if (tmp->type == T_WORD && var)
-						{
-							lexer_replacer(tmp, var, lex);
+						if (tmp->type == T_WORD && var && contain_spaced_words(var))
+						{//possible memory leak
+							lexer_replacer(tmp, var_replacer(tmp, var, &i), lex);
 							break;
 						}
 						else
 							tmp->value = var_replacer(tmp, var, &i);
 					}
-					else
+					else //humm might delete
 					{
-						if (tmp->type == T_WORD && var)
-						{
+						if (tmp->type == T_WORD && var && contain_spaced_words(var))
+						{//possible memory leak
 							lexer_replacer(tmp, NULL, lex);
 							break;
 						}

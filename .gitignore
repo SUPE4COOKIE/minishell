@@ -52,4 +52,5 @@ Mkfile.old
 dkms.conf
 
 .vscode
+minishell_test.log
 minishell

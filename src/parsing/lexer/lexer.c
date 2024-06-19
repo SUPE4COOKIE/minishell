@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/17 03:46:56 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/19 20:34:46 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,11 @@ t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete)
 	if (tmp && tmp == to_delete)
 	{
 		if (tmp->prev)
+		{
 			tmp->prev->next = tmp->next;
+			if (!tmp->prev->space_after)
+				tmp->prev->space_after = tmp->space_after;
+		}
 		if (tmp->next)
 			tmp->next->prev = tmp->prev;
 		free(tmp->value);
