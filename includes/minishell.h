@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/19 23:56:32 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/20 20:52:44 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 #  define PATH_MAX 4096
 # endif
 # define PRINT_CAT false
-# define DEBUG false
+# define DEBUG true
 # define DEFAULT_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 typedef struct s_cmd	t_cmd;
@@ -52,7 +52,6 @@ typedef struct s_minishell
 {
 	char	**env;
 	char	**path;
-	char	**local_vars;
 	char	*line;
 	int		last_exit_status;
 	t_cmd	*cmds;
@@ -78,6 +77,7 @@ struct s_cmd
 	t_cmd_type		op_type[2];
 	char			**infile;
 	char			**outfile;
+	t_cmd_type		*type_chain;
 	t_cmd			*prev;
 	t_cmd			*next;
 };

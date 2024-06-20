@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/20 19:40:43 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/20 21:26:04 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,40 @@ void	free_cmd(t_cmd *cmd)
 	free(cmd);
 }
 
+bool	is_redir_before(t_cmd *cmd, char **redir, char **reference)
+{
+	size_t	i;
+	size_t	redir_in;
+	size_t	redir_out;
+	bool	reference_found;
+	
+	i = 0;
+	redir_in = 0;
+	redir_out = 0;
+	reference_found = false;
+	while (cmd->type_chain[i] != UNDEFINED)
+	{
+		if (cmd->type_chain[i] == RED_IN || cmd->type_chain[i] == HDOC)
+		{
+			if (cmd->infile[redir_in] == *reference)
+				reference_found = true;
+			if (cmd->infile[redir_in] == *redir && !reference_found)
+				return (true);
+			redir_in++;
+		}
+		else
+		{
+			if (cmd->outfile[redir_out] == *reference)
+				reference_found = true;
+			if (cmd->outfile[redir_out] == *redir && !reference_found)
+				return (true);
+			redir_out++;
+		}
+		i++;
+	}
+	return (false);
+}
+
 t_cmd	*new_cmd(char **args)
 {
 	t_cmd	*new;
@@ -95,6 +129,7 @@ t_cmd	*new_cmd(char **args)
 	new->op_type[1] = UNDEFINED;
 	new->next = NULL;
 	new->prev = NULL;
+	new->type_chain = NULL;
 	return (new);
 }
 
@@ -183,6 +218,19 @@ void	print_cmds(t_cmd *cmd)
 	}
 }
 
+void	print_types(t_cmd_type *type)
+{
+	int	i;
+
+	i = 0;
+	while (type[i] != UNDEFINED)
+	{
+		printf("%s, ", cmd_type_to_str(type[i]));
+		i++;
+	}
+	printf("\n");
+}
+
 void	print_cmd(t_cmd *cmd)
 {
 	printf("cmd: %s\n", cmd->cmd);
@@ -211,8 +259,45 @@ void	print_cmd(t_cmd *cmd)
 		printf("\n");
 	
 	}
+	if (cmd->op_type[0] != UNDEFINED || cmd->op_type[1] != UNDEFINED)
+	{
+		printf("type chain: ");
+		print_types(cmd->type_chain);
+	}
 	printf("\n");
 	(void)cmd;
+}
+
+void	append_type(t_cmd_type **type_chain, t_cmd_type type)
+{
+	t_cmd_type	*new;
+	int			i;
+
+	i = 0;
+	if (!type_chain || !*type_chain)
+	{
+		*type_chain = malloc(sizeof(t_cmd_type) * 2);
+		if (!*type_chain)
+			return ;
+		(*type_chain)[0] = type;
+		(*type_chain)[1] = UNDEFINED;
+		return ;
+	}
+	while ((*type_chain)[i] != UNDEFINED)
+		i++;
+	new = malloc(sizeof(t_cmd_type) * (i + 2));
+	if (!new)
+		return ;
+	i = 0;
+	while ((*type_chain)[i] != UNDEFINED)
+	{
+		new[i] = (*type_chain)[i];
+		i++;
+	}
+	new[i] = type;
+	new[i + 1] = UNDEFINED;
+	free(*type_chain);
+	*type_chain = new;
 }
 
 int	append_redir(t_cmd *cmd, t_lexer **lex)
@@ -222,26 +307,30 @@ int	append_redir(t_cmd *cmd, t_lexer **lex)
 		(*lex) = (*lex)->next;
 		cmd->op_type[0] = RED_IN;
 		ft_append_str(&(cmd->infile), (*lex)->value);
+		append_type(&(cmd->type_chain), RED_IN);
 	}
 	else if ((*lex)->type == T_REDIR_OUT)
 	{
 		(*lex) = (*lex)->next;
 		cmd->op_type[1] = RED_OUT;
 		ft_append_str(&(cmd->outfile), (*lex)->value);
+		append_type(&(cmd->type_chain), RED_OUT);
 	}
 	else if ((*lex)->type == T_APPEND_OUT)
 	{
 		(*lex) = (*lex)->next;
 		cmd->op_type[1] = APP_OUT;
 		ft_append_str(&(cmd->outfile), (*lex)->value);
+		append_type(&(cmd->type_chain), APP_OUT);
 	}
 	else if ((*lex)->type == T_HERE_DOC)
 	{
 		(*lex) = (*lex)->next;
 		cmd->op_type[0] = HDOC;
 		ft_append_str(&(cmd->infile), (*lex)->value);
+		append_type(&(cmd->type_chain), HDOC);
 	}
-	return (0);	
+	return (0);
 }
 
 bool	is_nospace_addable(t_token_type type)

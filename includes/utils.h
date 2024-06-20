@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:15:47 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/03 12:26:28 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/20 21:27:56 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,5 +20,5 @@ long ft_atoi(const char *str);
 char *tmp_file(int nb);
 int free_tab(char **tab);
 void print_tab(char **tab);
-
+bool	is_redir_before(t_cmd *cmd, char **redir, char **reference);
 #endif
