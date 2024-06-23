@@ -21,13 +21,11 @@ SRCS = $(addprefix src/, \
 	$(addprefix parsing/, \
 		$(addprefix lexer/, \
 			lexer.c \
-			validator.c \
 		) \
 		$(addprefix expand/, \
 			expand.c \
 		) \
 		$(addprefix syntax/, \
-			pre_parse.c \
 			syntax_checks.c \
 		) \
 		cmd_finder.c \
@@ -44,6 +42,7 @@ SRCS = $(addprefix src/, \
 		name_file.c \
 		fork.c \
 		pid_utils.c \
+		exit_free.c \
 	) \
 	minishell.c \
 	)

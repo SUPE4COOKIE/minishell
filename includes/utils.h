@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:15:47 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/20 21:27:56 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/23 22:28:45 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,4 +21,5 @@ char *tmp_file(int nb);
 int free_tab(char **tab);
 void print_tab(char **tab);
 bool	is_redir_before(t_cmd *cmd, char **redir, char **reference);
+void	free_mshell(t_minishell *mshell);
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_checks.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 21:26:52 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/23 08:17:48 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/23 20:42:52 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,34 @@ bool	validate(t_lexer *lex, int *exit_code)
 		{
 			if (!tmp->next)
 				return (syntax_error("newline", exit_code));
-			if (tmp->next->type != T_WORD || tmp->next->type != T_D_QUOTED_WORD || tmp->next->type != T_S_QUOTED_WORD || tmp->next->type != T_HERE_DOC)
+			if (!(tmp->next->type == T_WORD || tmp->next->type == T_D_QUOTED_WORD || tmp->next->type == T_S_QUOTED_WORD))
 				return (syntax_error(tmp->next->value, exit_code));
 		}
 		tmp = tmp->next;
 	}
-	return (1);
+	return (true);
+}
+
+bool	is_valid_quotes(char *line, int *status_code)
+{
+	size_t	s_quotes;
+	size_t	d_quotes;
+	size_t	i;
+
+	s_quotes = 0;
+	d_quotes = 0;
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == '\'')
+			s_quotes++;
+		if (line[i] == '\"')
+			d_quotes++;
+		i++;
+	}
+	if (s_quotes % 2)
+		return (syntax_error("'", status_code));
+	if (d_quotes % 2)
+		return (syntax_error("\"", status_code));
+	return (true);
 }

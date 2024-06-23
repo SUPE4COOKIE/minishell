@@ -3,54 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:04:04 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/30 16:37:05 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/23 22:21:30 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void del_cmd(t_cmd *cmd)
-{
-	if (cmd->args)
-		free_tab(cmd->args);
-	cmd->args = NULL;
-	cmd->next = NULL;
-	cmd->prev = NULL;
-	free(cmd);
-	cmd = NULL;
-}
-
-void free_cmds(t_cmd *cmd)
-{
-	t_cmd	*tmp;
-
-	while (cmd)
-	{
-		tmp = cmd;
-		cmd = cmd->next;
-		del_cmd(tmp);
-	}
-}
-
-void free_mshell(t_minishell *mshell)
-{
-	if (mshell->env)
-		free_tab(mshell->env);
-	mshell->env = NULL;
-	if (mshell->path)
-		free_tab(mshell->path);
-	mshell->path = NULL;
-	if (mshell->line)
-		free(mshell->line);
-	mshell->line = NULL;
-	if (mshell->cmds)
-		free_cmds(mshell->cmds);
-	mshell->cmds = NULL;
-	mshell = NULL;
-}
 
 /**
 ** @brief: Free all allocated memory and exit the shell

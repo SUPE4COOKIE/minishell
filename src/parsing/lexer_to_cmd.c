@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/20 21:26:04 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/23 23:15:11 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ char	*cmd_type_to_str(t_cmd_type type)
 
 void	free_cmd(t_cmd *cmd)
 {
+	if (!cmd)
+		return ;
 	if (cmd->cmd)
 		free(cmd->cmd);
 	if (cmd->args)
@@ -56,19 +58,33 @@ void	free_cmd(t_cmd *cmd)
 			free(cmd->args[i]);
 		free(cmd->args);
 	}
-	if (cmd->infile)
+	if (cmd->op_type[0] != UNDEFINED && cmd->infile)
 	{
 		for (int i = 0; cmd->infile[i]; i++)
 			free(cmd->infile[i]);
 		free(cmd->infile);
 	}
-	if (cmd->outfile)
+	if (cmd->op_type[1] != UNDEFINED && cmd->outfile)
 	{
 		for (int i = 0; cmd->outfile[i]; i++)
 			free(cmd->outfile[i]);
 		free(cmd->outfile);
 	}
+	if (cmd->type_chain)
+		free(cmd->type_chain);
 	free(cmd);
+}
+
+void	free_cmds(t_cmd *cmd)
+{
+	t_cmd	*tmp;
+
+	while (cmd)
+	{
+		tmp = cmd->next;
+		free_cmd(cmd);
+		cmd = tmp;
+	}
 }
 
 bool	is_redir_before(t_cmd *cmd, char **redir, char **reference)
@@ -306,7 +322,7 @@ int	append_redir(t_cmd *cmd, t_lexer **lex)
 	{
 		(*lex) = (*lex)->next;
 		cmd->op_type[0] = RED_IN;
-		ft_append_str(&(cmd->infile), (*lex)->value);
+		ft_append_str(&(cmd->infile), (*lex)->value);// TODO: check return
 		append_type(&(cmd->type_chain), RED_IN);
 	}
 	else if ((*lex)->type == T_REDIR_OUT)
