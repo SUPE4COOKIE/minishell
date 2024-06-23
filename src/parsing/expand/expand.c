@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/19 22:46:47 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/23 02:07:41 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,34 @@ bool	contain_spaced_words(char *str)
 	if (!str[i])
 		return (false);
 	return (true);
+}
+
+bool	is_other_cmd(t_lexer *lex)
+{
+	size_t	redirect_count;
+	size_t	word_count;
+	t_lexer	*tmp;
+
+	tmp = lex;
+	redirect_count = 0;
+	word_count = 0;
+	while (tmp->prev && tmp->type != T_PIPE)
+	{
+		if (tmp->type == T_REDIR_IN || tmp->type == T_REDIR_OUT || tmp->type == T_APPEND_OUT || tmp->type == T_HERE_DOC)
+			redirect_count++;
+		tmp = tmp->prev;
+	}
+	if (tmp->type == T_REDIR_IN || tmp->type == T_REDIR_OUT || tmp->type == T_APPEND_OUT || tmp->type == T_HERE_DOC)
+		redirect_count++;
+	while (tmp != lex && tmp->type != T_PIPE)
+	{
+		if (tmp->type == T_WORD || tmp->type == T_D_QUOTED_WORD || tmp->type == T_S_QUOTED_WORD)
+			word_count++;
+		tmp = tmp->next;
+	}
+	if (word_count > redirect_count)
+		return (true);
+	return (false);
 }
 
 int expand(t_lexer **lex, char **envp, int last_exit_status)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/20 20:23:17 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/23 01:42:28 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int main(int argc, char **argv, char **envp)
 		mshell.line = ft_strdup(argv[2]);
 		mshell.line[ft_strlen(mshell.line) - 1] = 0;
 		parse(&mshell);
-		//exec(&mshell);
+		exec(&mshell);
 		free(mshell.line);
 		mshell.last_exit_status = 0;
 		return (0);
@@ -58,7 +58,7 @@ int main(int argc, char **argv, char **envp)
 	{
 		mshell.line = ft_strdup(argv[1]);
 		parse(&mshell);
-		//exec(&mshell);
+		exec(&mshell);
 		free(mshell.line);
 		mshell.last_exit_status = 0;
 		return (0);
@@ -79,7 +79,7 @@ int main(int argc, char **argv, char **envp)
 			if (*mshell.line)
 				add_history(mshell.line);
 			parse(&mshell);
-			//exec(&mshell);
+			exec(&mshell);
 			free(mshell.line);
 		}
 	}
