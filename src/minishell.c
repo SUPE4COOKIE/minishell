@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/23 22:23:42 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/24 08:23:16 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,6 @@ int main(int argc, char **argv, char **envp)
 		}
 		//exec(&mshell);
 		mshell.last_exit_status = 0;
-		free_mshell(&mshell);
-		return (0);
 	}
 	else if (argc > 1)
 	{
@@ -78,8 +76,6 @@ int main(int argc, char **argv, char **envp)
 		}
 		//exec(&mshell);
 		mshell.last_exit_status = 0;
-		free_mshell(&mshell);
-		return (0);
 	}
 	else
 	{
@@ -104,8 +100,8 @@ int main(int argc, char **argv, char **envp)
 			if (parse(&mshell))
 				continue ;
 			//exec(&mshell);
-			free_mshell(&mshell);
 		}
 	}
+	free_mshell(&mshell);
 	return 0;
 }

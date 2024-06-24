@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_to_cmd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/23 23:15:11 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/24 08:06:27 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -422,6 +422,7 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 	else
 	{
 		last_cmd->cmd = NULL;
+		free_tab(args_start);
 		last_cmd->args = NULL;
 		last_cmd->is_valid_cmd = true;
 	}

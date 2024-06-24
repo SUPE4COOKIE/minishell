@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/23 02:07:41 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/24 08:57:55 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,7 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 	size_t	i;
 	char	*var;
 	char	*var_name;
+	char	*tmp_value;
 
 	tmp = *lex;
 	var = NULL;
@@ -207,7 +208,12 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 							break;
 						}
 						else
-							tmp->value = var_replacer(tmp, var, &i);
+						{
+							tmp_value = var_replacer(tmp, var, &i);
+							if (tmp->value)
+								free(tmp->value);
+							tmp->value = tmp_value;
+						}
 					}
 					else //humm might delete
 					{
@@ -217,7 +223,12 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 							break;
 						}
 						else
-							tmp->value = var_replacer(tmp, NULL, &i); // TODO: delete the node if null
+						{
+							tmp_value = var_replacer(tmp, var, &i);
+							if (tmp->value)
+								free(tmp->value);
+							tmp->value = tmp_value;
+						}
 					}
 					if (!tmp->value || (tmp->value && !tmp->value[0]))
 					{
@@ -230,7 +241,10 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 				{
 					i++;
 					var = ft_itoa(last_exit_status);
-					tmp->value = var_replacer(tmp, var, &i);
+					tmp_value = var_replacer(tmp, var, &i);
+					if (tmp->value)
+						free(tmp->value);
+					tmp->value = tmp_value;
 					i--;
 					free(var);
 					continue;
