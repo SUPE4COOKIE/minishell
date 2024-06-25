@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 21:26:52 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/23 20:42:52 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/25 16:01:14 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,16 +63,19 @@ bool	is_valid_quotes(char *line, int *status_code)
 {
 	size_t	s_quotes;
 	size_t	d_quotes;
+	char	in_quote;
 	size_t	i;
 
 	s_quotes = 0;
 	d_quotes = 0;
 	i = 0;
+	in_quote = 0;
 	while (line[i])
 	{
-		if (line[i] == '\'')
+		is_in_quote(line[i], &in_quote);
+		if (line[i] == '\'' && in_quote != '"')
 			s_quotes++;
-		if (line[i] == '\"')
+		else if (line[i] == '"' && in_quote != '\'')
 			d_quotes++;
 		i++;
 	}
