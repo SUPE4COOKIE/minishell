@@ -32,7 +32,7 @@
 # endif
 # define PRINT_CAT false
 # define PROMPT_ENABLED true
-# define DEBUG false
+# define DEBUG true
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;

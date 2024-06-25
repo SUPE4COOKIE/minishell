@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+bool g_in_hdoc;
+
 static void signal_handler(int sig, siginfo_t *info, void *context)
 {
 	(void)info;
@@ -31,6 +33,8 @@ void readline_event_hook(void)
 {
 //	if (g_in_hdoc == true)
 //		rl_done = 1;
+//	else
+//		rl_done = 0;
 }
 
 int main(int argc, char **argv, char **envp)
@@ -41,6 +45,7 @@ int main(int argc, char **argv, char **envp)
 
 	allocate_env(&mshell, envp);
 	mshell.last_exit_status = 0;
+	g_in_hdoc = false;
 	mshell.in_heredoc = false;
 	rl_event_hook = (int (*)(void)) readline_event_hook;
 	sa.sa_sigaction = &signal_handler;
@@ -70,13 +75,13 @@ int main(int argc, char **argv, char **envp)
 			mshell.line = readline("minishell$ ");
 			if (!mshell.line) {
 				free_shell(&mshell, 0);
-				printf("\n");
+				printf("exit\n");
 				exit(0);
 			}
 			if (is_n_only_spaces(mshell.line, ft_strlen(mshell.line)) == 1)
 			{
 				free(mshell.line);
-				continue ;
+				break ;
 			}
 			if (*mshell.line) {
 				add_history(mshell.line);
@@ -86,5 +91,5 @@ int main(int argc, char **argv, char **envp)
 			free(mshell.line);
 		}
 	}
-	return (0);
+	return (free_shell(&mshell, 0));
 }
