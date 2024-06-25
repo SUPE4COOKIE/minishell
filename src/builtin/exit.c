@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:04:04 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/23 22:21:30 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/25 11:43:39 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,16 +47,22 @@ static bool	get_is_between_cmd(t_minishell *mshell)
 */
 int	builtin_exit(t_minishell *mshell, char **args)
 {
-	uint8_t status;
+	uint8_t	status;
 	bool	is_between;
 
-	status = mshell->last_exit_status;
-	is_between = get_is_between_cmd(mshell);
-	if (is_between)
+	if (!mshell || !args)
 		ft_putstr_fd("exit\n", 2);
-	if (args[2])
-		return (error_cmd(mshell, 1, "exit: too many arguments"));
-	if (args[1])
-		status = ft_atoi(args[1]);
-	exit(free_shell(mshell, status));
+	else
+	{
+		status = mshell->last_exit_status;
+		is_between = get_is_between_cmd(mshell);
+		if (is_between)
+			ft_putstr_fd("exit\n", 2);
+		if (args[1])
+			status = ft_atoi(args[1]);
+		if (args[1] && args[2])
+			return (error_cmd(mshell, 1, "exit: too many arguments"));
+		exit(free_shell(mshell, status));
+	}
+	return (0);
 }

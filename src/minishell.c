@@ -3,18 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/25 05:31:52 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/25 12:17:53 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+bool g_in_hdoc;
+
+static void signal_handler(int sig, siginfo_t *info, void *context)
+{
+	(void)info;
+	(void)context;
+	if (sig == SIGINT)
+	{
+		printf("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+	else if (sig == SIGQUIT)
+		return ;
+}
+
+void readline_event_hook(void)
+{
+//	if (g_in_hdoc == true)
+//		rl_done = 1;
+//	else
+//		rl_done = 0;
+}
+
 int main(int argc, char **argv, char **envp)
 {
     t_minishell mshell = {0};
+	struct sigaction sa;
 
 	if (PRINT_CAT)
 	{
@@ -44,6 +70,18 @@ int main(int argc, char **argv, char **envp)
 	}
 	allocate_env(&mshell, envp);
 	mshell.last_exit_status = 0;
+	g_in_hdoc = false;
+	mshell.in_heredoc = false;
+	rl_event_hook = (int (*)(void)) readline_event_hook;
+	sa.sa_sigaction = &signal_handler;
+	sa.sa_flags = SA_SIGINFO;
+	sigemptyset(&sa.sa_mask);
+	if (sigaction(SIGINT, &sa, NULL) == -1 ||
+		sigaction(SIGQUIT, &sa, NULL) == -1)
+	{
+		printf("Error: signal\n");
+		return (1);
+	}
 	if (argc > 1 && strcmp(argv[1], "-c") == 0)
 	{
 		mshell.line = ft_strdup(argv[2]);
@@ -58,7 +96,7 @@ int main(int argc, char **argv, char **envp)
 			free_mshell(&mshell);
 			return (1);
 		}
-		//exec(&mshell);
+		exec(&mshell);
 		mshell.last_exit_status = 0;
 	}
 	else if (argc > 1)
@@ -74,7 +112,7 @@ int main(int argc, char **argv, char **envp)
 			free_mshell(&mshell);
 			return (1);
 		}
-		//exec(&mshell);
+		exec(&mshell);
 		mshell.last_exit_status = 0;
 	}
 	else
@@ -99,7 +137,7 @@ int main(int argc, char **argv, char **envp)
 				add_history(mshell.line);
 			if (parse(&mshell))
 				continue ;
-			//exec(&mshell);
+			exec(&mshell);
 		}
 	}
 	free_mshell(&mshell);

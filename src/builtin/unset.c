@@ -12,87 +12,57 @@
 
 #include "minishell.h"
 
-/**
-** @brief Get the length of a table
-** @param tab The table
-** @return The length of the table
-*/
-int ft_tablen(char **tab)
+void	free_new_env(char **new_env, int count)
 {
-	int	i;
-
-	i = 0;
-	if (!tab)
-		return (0);
-	while (tab[i])
-		i++;
-	return (i);
+	while (count > 0)
+	{
+		free(new_env[count]);
+		count--;
+	}
+	free(new_env);
 }
 
-/**
-** @brief Remove an environment variable
-** @param env The environment
-** @param index The index of the variable to remove
-** @return The new environment without the variable
-*/
-char **remove_env_var(char **env, int index)
+char	**allocate_and_copy_env(char **env, int index)
 {
 	char	**new_env;
 	int		i;
 	int		j;
 
-	if (!env || index < 0)
-		return (NULL);
-	new_env = malloc(sizeof(char *) * (ft_tablen(env)));
-	if (!new_env)
-		return (NULL);
 	i = 0;
 	j = 0;
+	new_env = malloc(sizeof(char *) * ft_tablen(env));
+	if (!new_env)
+		return (NULL);
 	while (env[i])
 	{
 		if (i != index)
 		{
 			new_env[j] = ft_strdup(env[i]);
 			if (!new_env[j])
-			{
-				while (i-- > 0)
-					free(new_env[i]);
-				free(new_env);
-				return (NULL);
-			}
+				return (free_new_env(new_env, j), NULL);
 			j++;
 		}
 		i++;
 	}
 	new_env[j] = NULL;
-	while (env[i])
-	{
-		free(env[i]);
-		i++;
-	}
-	free(env);
 	return (new_env);
 }
 
-/**
-** @brief Check if the variable is a valid environment variable
-** @param var The variable
-** @return true if the variable is valid, false otherwise
-*/
-bool is_valid_env_var(char *var)
+char	**remove_env_var(char **env, int index)
 {
-	int	i;
+	char	**new_env;
+	int		i;
 
 	i = 0;
-	if (ft_isdigit(var[0]))
-		return (false);
-	while (var[i])
-	{
-		if (ft_isalnum(var[i]) == false && var[i] != '_')
-			return (false);
-		i++;
-	}
-	return (true);
+	if (!env || index < 0)
+		return (NULL);
+	new_env = allocate_and_copy_env(env, index);
+	if (!new_env)
+		return (NULL);
+	while (env[i])
+		free(env[i++]);
+	free(env);
+	return (new_env);
 }
 
 /**
@@ -134,9 +104,9 @@ int	get_index_env(char **env, char *var)
 */
 void	builtin_unset(t_minishell *mshell, char **args)
 {
-	int	i;
-	int	index;
-	char **new_env;
+	int		i;
+	int		index;
+	char	**new_env;
 
 	if (!args || !args[1] || !mshell->env || !mshell->env[0])
 		return ;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/20 20:52:44 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/25 11:42:19 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,13 @@
 
 # include "../libft/libft.h"
 # include <sys/types.h>
-#include <sys/stat.h>
+# include <sys/stat.h>
 # include <sys/wait.h>
 # include <fcntl.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
+# include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <stdbool.h>
@@ -54,6 +55,7 @@ typedef struct s_minishell
 	char	**path;
 	char	*line;
 	int		last_exit_status;
+	bool	in_heredoc;
 	t_cmd	*cmds;
 }				t_minishell;
 
@@ -86,5 +88,5 @@ struct s_cmd
 # include "utils.h"
 # include "exec.h"
 # include "builtins.h"
-int is_n_only_spaces(char *line, size_t size);
+
 #endif

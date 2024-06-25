@@ -31,7 +31,22 @@ int	builtin_env(t_minishell *mshell, char **args);
 int	builtin_exit(t_minishell *mshell, char **args);
 int	builtin_pwd(t_minishell *mshell);
 void	builtin_unset(t_minishell *mshell, char **args);
-bool	set_env(char ***env, char *value, char *key);
 int	builtin_export(t_minishell *mshell, char **args);
+int	ft_addenv(t_minishell *mshell, char *key, char *value);
+void remove_nodes(t_arg **head, t_arg *node);
+void free_lst(t_arg *new_args);
+char *lst_to_path(t_arg *new_args);
+void tab_to_lst(t_arg **new_args, char **tab);
+bool	update_existing_env(char ***env, char *key, char *value, int index);
+bool	add_new_env_var(char ***env, char *key, char *value, int size);
+char	*remove_double_point(char *path);
+int	change_to_home(t_minishell *mshell);
+int	change_to_oldpwd(t_minishell *mshell);
+int	change_to_specified(t_minishell *mshell, char *arg);
+bool	change_dir(t_minishell *mshell, char *path);
+char	*get_path(char **env, char *key);
+bool	set_env(char ***env, char *key, char *value);
+int	free_shell(t_minishell *mshell, int status);
+
 
 #endif
