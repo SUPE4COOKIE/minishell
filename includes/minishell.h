@@ -34,6 +34,8 @@
 # define DEBUG true
 # define DEFAULT_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
+extern int g_sig;
+
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;
 
@@ -56,6 +58,7 @@ typedef struct s_minishell
 	char	*line;
 	int		last_exit_status;
 	bool	in_heredoc;
+	int		last_pid;
 	t_cmd	*cmds;
 }				t_minishell;
 

@@ -32,10 +32,22 @@ void	process_list(t_arg **new_args)
 			tmp = tmp->prev;
 			remove_nodes(new_args, to_remove);
 		}
-		if (tmp)
-			tmp = tmp->next;
 		else
-			break ;
+			tmp = tmp->next;
+	}
+}
+
+void print_list(t_arg *new_args)
+{
+	t_arg	*tmp;
+
+	tmp = new_args;
+	if (!tmp)
+		printf("arg = NULL\n");
+	while (tmp)
+	{
+		printf("arg = %s\n", tmp->arg);
+		tmp = tmp->next;
 	}
 }
 
@@ -48,7 +60,10 @@ char	*remove_double_point(char *path)
 	if (!new_args)
 		return (NULL);
 	process_list(&new_args);
-	new_path = lst_to_path(new_args);
+	if (new_args != NULL)
+		new_path = lst_to_path(new_args);
+	else
+		new_path = NULL;
 	free_lst(new_args);
 	return (new_path);
 }
