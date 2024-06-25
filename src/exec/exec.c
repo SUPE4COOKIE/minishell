@@ -12,6 +12,11 @@
 
 #include "minishell.h"
 
+/**
+ * @brief Copy the arguments
+ * @param args
+ * @return The copied arguments
+ */
 char	**copy_args(char **args)
 {
 	int		arg_count;
@@ -42,29 +47,16 @@ char	**copy_args(char **args)
  * @param mshell
  * @param cmd
  */
-void exec_cmd(t_minishell *mshell, t_cmd *cmd)
+void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 {
-	char *program;
-	char **args;
+//	char	*program;
+//	char	**args;
 
 	if (is_builtin(cmd->cmd) == true)
 		exec_builtin(mshell, cmd);
 	else
 	{
-		program = ft_strdup(cmd->cmd);
-		if (program == NULL) {
-			perror("Failed to allocate memory for program path");
-			return ;
-		}
-		args = copy_args(cmd->args);
-		if (args == NULL) {
-			perror("Failed to allocate memory for arguments");
-			free(program);
-			return ;
-		}
-		execve(program, args, mshell->env);
-		free(program);
-		free_tab(args);
+		execve(cmd->cmd, cmd->args, mshell->env);
 	}
 }
 
@@ -75,7 +67,7 @@ void exec_cmd(t_minishell *mshell, t_cmd *cmd)
  * @param old
  * @param new
  */
-void dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
+void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 {
 	if (i != 0)
 	{
@@ -103,20 +95,19 @@ void dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 	}
 }
 
-/*
-** @brief execute the commands
-** @param mshell The minishell structure
-*/
-void	exec(t_minishell *mshell)
+/**
+ * @brief Execute de command ?, pipe
+ * @param mshell
+ * @param old
+ * @param new
+ */
+void	process_commands(t_minishell *mshell, int old[2], int new[2])
 {
 	t_cmd	*cmd;
-	int		old[2];
-	int		new[2];
 	int		i;
 
-	init_exec(old, new, mshell);
-	cmd = mshell->cmds;
 	i = 0;
+	cmd = mshell->cmds;
 	while (cmd)
 	{
 		if (cmd->is_valid_cmd == false)
@@ -125,14 +116,25 @@ void	exec(t_minishell *mshell)
 			continue ;
 		}
 		if (cmd->next)
-		{
 			if (pipe(new) == -1)
 				error_pipe("pipe failed", new, old, cmd);
-		}
 		fork_exec(mshell, old, new, i);
 		i++;
 		cmd = cmd->next;
 	}
+}
+
+/**
+ * @brief Execute the minishell
+ * @param mshell
+ */
+void	exec(t_minishell *mshell)
+{
+	int	old[2];
+	int	new[2];
+
+	init_exec(old, new, mshell);
+	process_commands(mshell, old, new);
 	ft_close(old, new);
 	while (waitpid(-1, NULL, 0) != -1)
 		;
