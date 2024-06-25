@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/24 08:06:27 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/25 03:20:12 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -408,7 +408,9 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 					return (1);
 			}
 			else
+			{
 				*args = ft_strdup((*lex)->value);
+			}
 			args++;
 		}
 		else

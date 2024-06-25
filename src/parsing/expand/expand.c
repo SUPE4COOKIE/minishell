@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/24 08:57:55 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/25 06:06:27 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 #include "minishell.h"
 
-char	*lexer_replacer(t_lexer *lex, char *value, t_lexer **origin)
+t_lexer	*lexer_replacer(t_lexer *lex, char *value, t_lexer **origin)
 {
 	t_lexer	*tmp;
 	t_lexer	*before;
@@ -31,24 +31,27 @@ char	*lexer_replacer(t_lexer *lex, char *value, t_lexer **origin)
 	after = lex->next;
 	if (before)
 		before->next = tmp;
+	tmp->prev = before;
 	last = get_last_lexer(tmp);
 	last->next = after;
+	last->space_after = lex->space_after;
 	if (after)
 		after->prev = last;
-	if (!after && !before)
-	{
+	free(lex);
+	if (!before)
 		*origin = tmp;
-	}
-	return (tmp->value);
+	return (last);
 }
 
 char	*var_replacer(t_lexer *var, char *value, size_t *iter)
 {
 	char *result;
+	char *var_start;
 	size_t i;
 
 	result = malloc(ft_strlen(var->value) + ft_strlen(value) + 1);
 	i = 0;
+	var_start = var->value;
 	while (*(var->value))
 	{
 		if (*(var->value) == '$' && *(var->value + 1))
@@ -89,7 +92,7 @@ char	*var_replacer(t_lexer *var, char *value, size_t *iter)
 		(var->value)++;
 	}
 	result[i] = 0;
-	//free(var->value);
+	free(var_start);
 	return (result);
 }
 
@@ -179,7 +182,7 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 	size_t	i;
 	char	*var;
 	char	*var_name;
-	char	*tmp_value;
+	char	*replaced;
 
 	tmp = *lex;
 	var = NULL;
@@ -203,31 +206,27 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 					if (var)
 					{
 						if (tmp->type == T_WORD && var && contain_spaced_words(var))
-						{//possible memory leak
-							lexer_replacer(tmp, var_replacer(tmp, var, &i), lex);
+						{
+							replaced = var_replacer(tmp, var, &i);
+							tmp = lexer_replacer(tmp, replaced, lex);
+							free(replaced);
 							break;
 						}
 						else
 						{
-							tmp_value = var_replacer(tmp, var, &i);
-							if (tmp->value)
-								free(tmp->value);
-							tmp->value = tmp_value;
+							tmp->value = var_replacer(tmp, var, &i);
 						}
 					}
 					else //humm might delete
 					{
 						if (tmp->type == T_WORD && var && contain_spaced_words(var))
-						{//possible memory leak
-							lexer_replacer(tmp, NULL, lex);
+						{
+							tmp = lexer_replacer(tmp, NULL, lex);
 							break;
 						}
 						else
 						{
-							tmp_value = var_replacer(tmp, var, &i);
-							if (tmp->value)
-								free(tmp->value);
-							tmp->value = tmp_value;
+							tmp->value = var_replacer(tmp, var, &i);
 						}
 					}
 					if (!tmp->value || (tmp->value && !tmp->value[0]))
@@ -241,10 +240,7 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 				{
 					i++;
 					var = ft_itoa(last_exit_status);
-					tmp_value = var_replacer(tmp, var, &i);
-					if (tmp->value)
-						free(tmp->value);
-					tmp->value = tmp_value;
+					tmp->value = var_replacer(tmp, var, &i);
 					i--;
 					free(var);
 					continue;
