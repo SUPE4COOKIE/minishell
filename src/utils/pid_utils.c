@@ -55,11 +55,12 @@ void	init_exec(int old[2], int new[2], t_minishell *mshell)
  */
 void close_old(int i, int old[2])
 {
-	if (i != 0)
-	{
-		if (old[0] != -1)
+	if (i > 0) {
+		if (old[0] != -1) {
 			close(old[0]);
-		if (old[1] != -1)
+		}
+		if (old[1] != -1) {
 			close(old[1]);
+		}
 	}
 }

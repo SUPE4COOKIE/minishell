@@ -45,6 +45,7 @@ void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 	if (is_builtin(cmd->cmd) == false || \
 			(is_builtin(cmd->cmd) == true && cmd->next))
 		id = fork();
+	mshell->last_pid = id;
 	if (id == -1)
 		error_pipe("fork failed", new, old, cmd);
 	if (id == 0)
@@ -56,6 +57,5 @@ void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 				(is_builtin(cmd->cmd) == true && cmd->next))
 			exit(EXIT_FAILURE);
 	}
-	else
-		close_and_cpy(old, new, i);
+	close_and_cpy(old, new, i);
 }
