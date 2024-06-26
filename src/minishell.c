@@ -119,7 +119,7 @@ int main(int argc, char **argv, char **envp)
 		while (42)
 		{
 			signal(SIGINT, signal_new_line);
-
+			signal(SIGQUIT, signal_new_line);
 			g_sig = 0;
 			mshell.line = readline("\033[1;34mminishell\033[0m\033[1;31m$\033[0m ");
 			if (!mshell.line)
@@ -139,6 +139,8 @@ int main(int argc, char **argv, char **envp)
 			if (parse(&mshell))
 				continue ;
 			exec(&mshell);
+			free(mshell.line);
+			free_cmds(mshell.cmds);
 		}
 	}
 	free_mshell(&mshell);

@@ -20,6 +20,7 @@
 void	close_and_cpy(int old[2], int new[2], int i)
 {
 	close_old(i, old);
+	(void)i;
 	old[0] = new[0];
 	old[1] = new[1];
 }

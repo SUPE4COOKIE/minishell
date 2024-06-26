@@ -97,4 +97,5 @@ void	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
 		cmd = cmd->next;
 		i++;
 	}
+	free(tmp_filename);
 }
