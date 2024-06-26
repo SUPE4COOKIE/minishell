@@ -23,10 +23,8 @@ void	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 {
 	while (42)
 	{
-		g_sig = true;
 		ft_putstr_fd("> ", STDOUT_FILENO);
 		line = readline("");
-		g_sig = false;
 		printf("line = %s\n", line);
 		printf("cmd->infile[i] = %s\n", cmd->infile[i]);
 		if (ft_strncmp(line, cmd->infile[i], ft_strlen(cmd->infile[i])) == 0)
@@ -46,28 +44,27 @@ void	read_the_line(char *line, int fd, t_cmd *cmd, int i)
  * @param new The new file descriptors
  * @param tmp_filename The temporary filename
  */
-void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char *tmp_filename)
+void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
 {
 	int		fd;
 	char	*line;
 	int		i;
 
 	line = NULL;
-	fd = open(tmp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
-		error_pipe("open failed", new, old, cmd);
 	i = 0;
-	while (cmd->infile[i])
+	while (tmp_filename && tmp_filename[i] && cmd->infile && cmd->infile[i])
 	{
+		fd = open(tmp_filename[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (fd == -1)
+			error_pipe("open failed", new, old, cmd);
 		read_the_line(line, fd, cmd, i);
+		free(cmd->infile[i]);
+		cmd->infile[i] = ft_strdup(tmp_filename[i]);
+		close(fd);
 		i++;
 	}
-	if (dup2(fd, STDIN_FILENO) == -1)
-		error_pipe("dup2 failed", new, old, cmd);
-	close(fd);
-	cmd->infile[0] = ft_strdup(tmp_filename);
 	if (tmp_filename)
-		free(tmp_filename);
+		free_tab(tmp_filename);
 	cmd->op_type[0] = RED_IN;
 }
 
@@ -79,16 +76,25 @@ void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char *tmp_filename)
  */
 void	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
 {
-	char	*tmp_filename;
+	char	**tmp_filename;
 	size_t	filename_length;
+	int		i;
 
+	i = 0;
 	filename_length = strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
-	tmp_filename = (char *)malloc(sizeof(char) * filename_length);
+	tmp_filename = malloc(sizeof(char) * ft_tablen(cmd->infile) + 1);
 	if (!tmp_filename)
-		return ;
-	generate_unique_filename(tmp_filename, filename_length);
+		error_pipe("malloc failed", new, old, cmd);
+	while (tmp_filename && tmp_filename[i])
+	{
+		tmp_filename[i] = (char *)malloc(sizeof(char) * filename_length + 1);
+		if (!tmp_filename[i])
+			error_pipe("malloc failed", new, old, cmd);
+		generate_unique_filename(tmp_filename[i], filename_length);
+		i++;
+	}
 	if (DEBUG)
-		printf("filename -> %s\n", tmp_filename);
+		print_tab(tmp_filename);
 	while (cmd)
 	{
 		if (cmd->op_type[0] == HDOC)
