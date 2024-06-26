@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/25 12:17:53 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/26 15:13:42 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ int main(int argc, char **argv, char **envp)
 		ft_printf("                 ░░ ░▒                       \n");
 	}
 	allocate_env(&mshell, envp);
+	save_path(&mshell, mshell.env); // TODO: protect
 	mshell.last_exit_status = 0;
 	mshell.last_pid = 0;
 	g_sig = 0;

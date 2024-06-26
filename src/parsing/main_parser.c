@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_parser.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 05:31:43 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/25 11:45:06 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/26 15:13:10 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int	parse(t_minishell *mshell)
 	t_lexer	*lex;
 
 	lex = lexer(mshell->line);
-	save_path(mshell, mshell->env);
 	expand(&lex, mshell->env, mshell->last_exit_status);
 	if (DEBUG)
 		print_lexer(lex);
