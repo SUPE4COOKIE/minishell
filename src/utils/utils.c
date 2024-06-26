@@ -12,6 +12,23 @@
 
 #include "minishell.h"
 
+/**
+** @brief Get the length of a table
+** @param tab The table
+** @return The length of the table
+*/
+int	ft_tablen(char **tab)
+{
+	int	i;
+
+	i = 0;
+	if (!tab)
+		return (0);
+	while (tab[i])
+		i++;
+	return (i);
+}
+
 /*
 ** @brief: Convert a string to a long
 ** @param str The string

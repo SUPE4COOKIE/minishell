@@ -12,76 +12,59 @@
 
 #include "minishell.h"
 
-size_t ft_varlen(char *var, char c)
+size_t	calculate_new_env_size(char **env)
 {
-	size_t	i;
+	size_t	size;
 
-	i = 0;
-	while (var[i] && var[i] != c)
-		i++;
-	return (i);
+	size = 0;
+	while (env[size])
+		size++;
+	return (size);
 }
 
-int	is_in_env(char **env, char *key)
+char	**duplicate_env(t_minishell *mshell, size_t size)
 {
-	size_t	i;
-	size_t	len;
-
-	i = 0;
-	len = ft_varlen(key, '=');
-	while (env[i])
-	{
-		if (!ft_strncmp(env[i], key, len) && env[i][len] == '=')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-void	ft_addenv(t_minishell *mshell, char *key, char *value)
-{
-	size_t	i;
 	char	**new_env;
+	size_t	i;
 
-	i = 0;
-	while (mshell->env[i])
-		i++;
-	new_env = ft_calloc(i + 2, sizeof(char *));
+	new_env = ft_calloc(size + 2, sizeof(char *));
 	if (!new_env)
-		error_cmd(mshell, 1, "malloc failed");
+		return (NULL);
 	i = 0;
 	while (mshell->env[i])
 	{
 		new_env[i] = ft_strdup(mshell->env[i]);
 		if (!new_env[i])
-			error_cmd(mshell, 1, "malloc failed");
+			return (free_tab(new_env), NULL);
 		i++;
 	}
-	new_env[i] = ft_strjoin(key, "=");
-	if (!new_env[i])
-		error_cmd(mshell, 1, "malloc failed");
-	new_env[i] = ft_strjoin(new_env[i], value);
-	if (!new_env[i])
-		error_cmd(mshell, 1, "malloc failed");
-	new_env[i + 1] = NULL;
+	return (new_env);
+}
+
+int	ft_addenv(t_minishell *mshell, char *key, char *value)
+{
+	size_t	size;
+	char	**new_env;
+	char	*temp;
+
+	size = calculate_new_env_size(mshell->env);
+	new_env = duplicate_env(mshell, size);
+	if (!new_env)
+		return (1);
+	temp = ft_strjoin(key, "=");
+	if (!temp)
+		return (free_tab(new_env), error_cmd(mshell, 1, "malloc failed"));
+	new_env[size] = ft_strjoin(temp, value);
+	free(temp);
+	if (!new_env[size])
+		return (free_tab(new_env), error_cmd(mshell, 1, "malloc failed"));
+	new_env[size + 1] = NULL;
 	free_tab(mshell->env);
 	mshell->env = new_env;
+	return (0);
 }
 
-void put_in_env(char **args, size_t i, t_minishell *mshell)
-{
-	char *key;
-	char *value;
-
-	key = ft_substr(args[i], 0, ft_varlen(args[i], '='));
-	value = ft_strdup(args[i] + ft_varlen(args[i], '=') + 1);
-	if (is_in_env(mshell->env, key))
-		set_env(&mshell->env, value, key);
-	else
-		ft_addenv(mshell, key, value);
-}
-
-int check_input(char *args)
+int	check_input(char *args)
 {
 	size_t	i;
 
@@ -105,16 +88,14 @@ int	builtin_export(t_minishell *mshell, char **args)
 	size_t	i;
 
 	if (!args || !args[1])
-	{
-		// print the environment
 		return (1);
-	}
 	i = 1;
 	while (args[i])
 	{
 		if (check_input(args[i]))
 		{
-			printf("minishell: export: `%s': not a valid identifier\n", args[i]);
+			printf("minishell: export: `%s': not a valid identifier\n", \
+				args[i]);
 			break ;
 		}
 		else

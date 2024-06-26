@@ -17,6 +17,7 @@ SRCS = $(addprefix src/, \
 		handle_redir.c \
 		fork_exec.c \
 		handle_hdoc.c \
+		name_file.c \
 	) \
 	$(addprefix parsing/, \
 		$(addprefix lexer/, \
@@ -38,11 +39,15 @@ SRCS = $(addprefix src/, \
 	) \
 	$(addprefix utils/, \
 		error.c \
-		ft_atoi.c \
+		exit_free.c \
+		utils.c \
 		name_file.c \
 		fork.c \
 		pid_utils.c \
-		exit_free.c \
+		env.c \
+		list.c \
+		remove_double_points.c \
+		change_dir.c \
 	) \
 	minishell.c \
 	)
@@ -53,7 +58,7 @@ OBJ = $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
 
 # Compiler and flags
 CC = cc
-FLAGS = -Wall -Wextra -Werror -Iincludes -Ilibft -g3
+CFLAGS = -Wall -Wextra -Werror -Iincludes -Ilibft -g3
 
 # Libraries
 LIB = -Llibft -lft -lreadline
@@ -63,27 +68,34 @@ LIBFT = $(LIBFT_DIR)/libft.a
 # Clean up command
 RM = rm -rf
 
+# Directory structure
+DIRS = $(OBJ_DIR) \
+	$(OBJ_DIR)/parsing \
+	$(OBJ_DIR)/parsing/lexer \
+	$(OBJ_DIR)/parsing/expand \
+	$(OBJ_DIR)/parsing/syntax \
+	$(OBJ_DIR)/builtin \
+	$(OBJ_DIR)/exec \
+	$(OBJ_DIR)/utils
+
+# Header files
+HEADERS = $(wildcard includes/*.h)
+LIBFT_HEADERS = $(wildcard libft/*.h)
+
 # Targets
 all: $(LIBFT) $(NAME)
 
-$(LIBFT):
+$(LIBFT): $(LIBFT_HEADERS) libft/Makefile
 	$(MAKE) -C $(LIBFT_DIR)
 
-$(OBJ_DIR)/%.o: src/%.c | $(OBJ_DIR)
-	$(CC) $(FLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o: src/%.c $(HEADERS) Makefile $(LIBFT) | $(DIRS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
-	mkdir -p $(OBJ_DIR)/parsing
-	mkdir -p $(OBJ_DIR)/parsing/lexer
-	mkdir -p $(OBJ_DIR)/parsing/expand
-	mkdir -p $(OBJ_DIR)/parsing/syntax
-	mkdir -p $(OBJ_DIR)/builtin
-	mkdir -p $(OBJ_DIR)/exec
-	mkdir -p $(OBJ_DIR)/utils
+$(DIRS):
+	mkdir -p $(DIRS)
 
 $(NAME): $(OBJ)
-	$(CC) $(FLAGS) $(OBJ) $(LIB) -o $@
+	$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $@
 
 clean:
 	$(RM) $(OBJ_DIR)
@@ -94,3 +106,5 @@ fclean: clean
 	$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
+
+.PHONY: all clean fclean re

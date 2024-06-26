@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:15:47 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/23 22:28:45 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/25 11:43:19 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,4 +22,10 @@ int free_tab(char **tab);
 void print_tab(char **tab);
 bool	is_redir_before(t_cmd *cmd, char **redir, char **reference);
 void	free_mshell(t_minishell *mshell);
+void	print_tab(char **tab);
+int		ft_tablen(char **tab);
+void	put_in_env(char **args, size_t i, t_minishell *mshell);
+size_t	ft_varlen(char *var, char c);
+int is_n_only_spaces(char *line, size_t size);
+
 #endif
