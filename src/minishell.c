@@ -31,7 +31,10 @@ void signal_new_line(int sig)
 void	signal_here_doc(int signal)
 {
 	g_sig = signal;
-	rl_done = 1;
+	if (g_sig == SIGINT)
+	{
+		rl_done = 1;
+	}
 }
 
 void	signal_exec(int signal)
@@ -117,14 +120,13 @@ int main(int argc, char **argv, char **envp)
 	}
 	else
 	{
-		(void)argv;
 		while (42)
 		{
 			signal(SIGINT, signal_new_line);
 			signal(SIGQUIT, signal_new_line);
 			g_sig = 0;
 
-			mshell.line = readline("minishell ");
+			mshell.line = readline("minishell$> ");
 			if (!mshell.line)
 				break ;
 			if (!is_valid_quotes(mshell.line, &mshell.last_exit_status))
@@ -148,5 +150,5 @@ int main(int argc, char **argv, char **envp)
 		}
 	}
 	free_mshell(&mshell);
-	return 0;
+	return (0);
 }
