@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/24 08:49:13 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/26 17:18:35 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,8 @@ int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 	int		error_code;
 
 	i = 0;
+	while (i < size && ft_iswhitespace(line[i]))
+		i++;
 	while (i < size)
 	{
 		if (ft_iswhitespace(line[i]))
@@ -349,7 +351,7 @@ t_lexer	*lexer(char *line)
 	end = 0;
 	start = 0;
 	lex = NULL;
-	if (lexer_director(&lex, &end, &start, line))
+	if (line[end] && lexer_director(&lex, &end, &start, line))
 	{
 		free_lexer(lex);
 		return (NULL);
