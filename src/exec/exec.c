@@ -56,6 +56,8 @@ void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 	else
 	{
 		sa.sa_handler = SIG_DFL;
+		sa.sa_flags = SA_SIGINFO;
+		sigemptyset(&sa.sa_mask);
 		sigaction(SIGINT, &sa, NULL);
 		sigaction(SIGQUIT, &sa, NULL);
 		execve(cmd->cmd, cmd->args, mshell->env);
@@ -110,6 +112,8 @@ void	process_commands(t_minishell *mshell, int old[2], int new[2])
 
 	i = 0;
 	cmd = mshell->cmds;
+	signal(SIGINT, signal_exec);
+	signal(SIGQUIT, signal_exec);
 	while (cmd)
 	{
 		if (cmd->is_valid_cmd == false)
@@ -152,8 +156,6 @@ void	exec(t_minishell *mshell)
 	int size;
 
 	i = 0;
-	signal(SIGINT, signal_exec);
-	signal(SIGQUIT, signal_exec);
 	size = lst_size(mshell->cmds);
 	status = 0;
 	init_exec(old, new, mshell);
