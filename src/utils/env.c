@@ -23,6 +23,11 @@ void	put_in_env(char **args, size_t i, t_minishell *mshell)
 
 	key = ft_substr(args[i], 0, ft_varlen(args[i], '='));
 	value = ft_strdup(args[i] + ft_varlen(args[i], '=') + 1);
+	if (strncmp(key, "PATH=", 5) == 0)
+	{
+		free_tab(mshell->path);
+		save_path(mshell, args + i);
+	}
 	if (is_in_env(mshell->env, key))
 		set_env(&mshell->env, key, value);
 	else

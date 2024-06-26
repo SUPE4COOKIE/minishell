@@ -22,9 +22,10 @@ void signal_new_line(int sig)
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
+		g_sig = SIGINT;
 	}
 	else if (sig == SIGQUIT)
-		return ;
+		g_sig = SIGQUIT;
 }
 
 void	signal_here_doc(int signal)
@@ -84,7 +85,7 @@ int main(int argc, char **argv, char **envp)
 	if (argc > 1 && strcmp(argv[1], "-c") == 0)
 	{
 		mshell.line = ft_strdup(argv[2]);
-		mshell.line[ft_strlen(mshell.line) - 1] = 0;
+		mshell.line[ft_strlen(mshell.line)] = 0;
 		if (!is_valid_quotes(mshell.line, &mshell.last_exit_status))
 		{
 			free_mshell(&mshell);
@@ -122,7 +123,8 @@ int main(int argc, char **argv, char **envp)
 			signal(SIGINT, signal_new_line);
 			signal(SIGQUIT, signal_new_line);
 			g_sig = 0;
-			mshell.line = readline("\033[1;34mminishell\033[0m\033[1;31m$\033[0m ");
+
+			mshell.line = readline("minishell ");
 			if (!mshell.line)
 				break ;
 			if (!is_valid_quotes(mshell.line, &mshell.last_exit_status))
@@ -141,6 +143,7 @@ int main(int argc, char **argv, char **envp)
 				continue ;
 			exec(&mshell);
 			free(mshell.line);
+			mshell.line = NULL;
 			free_cmds(mshell.cmds);
 		}
 	}

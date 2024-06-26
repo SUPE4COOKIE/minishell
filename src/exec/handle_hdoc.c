@@ -66,7 +66,8 @@ void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char *tmp_filename)
 		error_pipe("dup2 failed", new, old, cmd);
 	close(fd);
 	cmd->infile[0] = ft_strdup(tmp_filename);
-	free(tmp_filename);
+	if (tmp_filename)
+		free(tmp_filename);
 	cmd->op_type[0] = RED_IN;
 }
 
@@ -78,11 +79,9 @@ void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char *tmp_filename)
  */
 void	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
 {
-	int		i;
 	char	*tmp_filename;
 	size_t	filename_length;
 
-	i = 0;
 	filename_length = strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
 	tmp_filename = (char *)malloc(sizeof(char) * filename_length);
 	if (!tmp_filename)
@@ -95,7 +94,5 @@ void	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
 		if (cmd->op_type[0] == HDOC)
 			handle_hdoc(cmd, old, new, tmp_filename);
 		cmd = cmd->next;
-		i++;
 	}
-	free(tmp_filename);
 }
