@@ -31,7 +31,7 @@
 #  define PATH_MAX 4096
 # endif
 # define PRINT_CAT false
-# define DEBUG true
+# define DEBUG false
 # define DEFAULT_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 extern int g_sig;
@@ -65,7 +65,6 @@ typedef struct s_minishell
 typedef enum e_cmd_type
 {
 	CMD,
-	FIL,
 	PIP,
 	RED_IN, // <
 	RED_OUT, // >
