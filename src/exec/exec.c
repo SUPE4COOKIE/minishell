@@ -49,13 +49,17 @@ char	**copy_args(char **args)
  */
 void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 {
-//	char	*program;
-//	char	**args;
+	struct sigaction sa;
 
 	if (is_builtin(cmd->cmd) == true)
 		exec_builtin(mshell, cmd);
 	else
 	{
+		sa.sa_handler = SIG_DFL;
+		sa.sa_flags = SA_SIGINFO;
+		sigemptyset(&sa.sa_mask);
+		sigaction(SIGINT, &sa, NULL);
+		sigaction(SIGQUIT, &sa, NULL);
 		execve(cmd->cmd, cmd->args, mshell->env);
 	}
 }
@@ -108,6 +112,8 @@ void	process_commands(t_minishell *mshell, int old[2], int new[2])
 
 	i = 0;
 	cmd = mshell->cmds;
+	signal(SIGINT, signal_exec);
+	signal(SIGQUIT, signal_exec);
 	while (cmd)
 	{
 		if (cmd->is_valid_cmd == false)
@@ -124,6 +130,19 @@ void	process_commands(t_minishell *mshell, int old[2], int new[2])
 	}
 }
 
+int	lst_size(t_cmd *cmd)
+{
+	int i;
+
+	i = 0;
+	while (cmd)
+	{
+		i++;
+		cmd = cmd->next;
+	}
+	return (i);
+}
+
 /**
  * @brief Execute the minishell
  * @param mshell
@@ -132,10 +151,29 @@ void	exec(t_minishell *mshell)
 {
 	int	old[2];
 	int	new[2];
+	int status;
+	int i;
+	int size;
 
+	i = 0;
+	size = lst_size(mshell->cmds);
+	status = 0;
 	init_exec(old, new, mshell);
 	process_commands(mshell, old, new);
 	ft_close(old, new);
-	while (waitpid(-1, NULL, 0) != -1)
-		;
+	while (i < size)
+	{
+		if (waitpid(-1 , &status, 0) == mshell->last_pid)
+		{
+			if (WIFEXITED(status))
+				mshell->last_exit_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				mshell->last_exit_status = WTERMSIG(status) + 128;
+		}
+		i++;
+	}
+	if (g_sig == SIGINT)
+		printf("\n");
+	else if (g_sig == SIGQUIT)
+		printf("Quit (core dumped)\n");
 }

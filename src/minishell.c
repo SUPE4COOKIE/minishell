@@ -3,21 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/25 12:17:53 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/26 15:13:42 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool g_in_hdoc;
+int g_sig;
 
-static void signal_handler(int sig, siginfo_t *info, void *context)
+void signal_new_line(int sig)
 {
-	(void)info;
-	(void)context;
 	if (sig == SIGINT)
 	{
 		printf("\n");
@@ -29,18 +27,27 @@ static void signal_handler(int sig, siginfo_t *info, void *context)
 		return ;
 }
 
-void readline_event_hook(void)
+void	signal_here_doc(int signal)
 {
-//	if (g_in_hdoc == true)
-//		rl_done = 1;
-//	else
-//		rl_done = 0;
+	g_sig = signal;
+	rl_done = 1;
+}
+
+void	signal_exec(int signal)
+{
+	g_sig = signal;
+}
+
+int readline_event_hook(void)
+{
+	signal(SIGINT, signal_here_doc);
+	rl_done = 1;
+	return (0);
 }
 
 int main(int argc, char **argv, char **envp)
 {
     t_minishell mshell = {0};
-	struct sigaction sa;
 
 	if (PRINT_CAT)
 	{
@@ -69,19 +76,11 @@ int main(int argc, char **argv, char **envp)
 		ft_printf("                 ░░ ░▒                       \n");
 	}
 	allocate_env(&mshell, envp);
+	save_path(&mshell, mshell.env); // TODO: protect
 	mshell.last_exit_status = 0;
-	g_in_hdoc = false;
+	mshell.last_pid = 0;
+	g_sig = 0;
 	mshell.in_heredoc = false;
-	rl_event_hook = (int (*)(void)) readline_event_hook;
-	sa.sa_sigaction = &signal_handler;
-	sa.sa_flags = SA_SIGINFO;
-	sigemptyset(&sa.sa_mask);
-	if (sigaction(SIGINT, &sa, NULL) == -1 ||
-		sigaction(SIGQUIT, &sa, NULL) == -1)
-	{
-		printf("Error: signal\n");
-		return (1);
-	}
 	if (argc > 1 && strcmp(argv[1], "-c") == 0)
 	{
 		mshell.line = ft_strdup(argv[2]);
@@ -120,6 +119,9 @@ int main(int argc, char **argv, char **envp)
 		(void)argv;
 		while (42)
 		{
+			signal(SIGINT, signal_new_line);
+			signal(SIGQUIT, signal_new_line);
+			g_sig = 0;
 			mshell.line = readline("\033[1;34mminishell\033[0m\033[1;31m$\033[0m ");
 			if (!mshell.line)
 				break ;
@@ -138,6 +140,8 @@ int main(int argc, char **argv, char **envp)
 			if (parse(&mshell))
 				continue ;
 			exec(&mshell);
+			free(mshell.line);
+			free_cmds(mshell.cmds);
 		}
 	}
 	free_mshell(&mshell);

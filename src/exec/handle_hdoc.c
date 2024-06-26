@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-extern bool g_in_hdoc;
-
 /**
  * @brief Read the line
  * @param line The line
@@ -25,10 +23,10 @@ void	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 {
 	while (42)
 	{
-		g_in_hdoc = true;
+		g_sig = true;
 		ft_putstr_fd("> ", STDOUT_FILENO);
 		line = readline("");
-		g_in_hdoc = false;
+		g_sig = false;
 		printf("line = %s\n", line);
 		printf("cmd->infile[i] = %s\n", cmd->infile[i]);
 		if (ft_strncmp(line, cmd->infile[i], ft_strlen(cmd->infile[i])) == 0)
@@ -99,4 +97,5 @@ void	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
 		cmd = cmd->next;
 		i++;
 	}
+	free(tmp_filename);
 }

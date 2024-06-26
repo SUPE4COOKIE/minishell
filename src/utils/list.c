@@ -77,21 +77,20 @@ void free_lst(t_arg *new_args)
 
 void remove_nodes(t_arg **head, t_arg *node)
 {
-	if (node == *head) {
+	if (node == *head)
+	{
 		*head = node->next;
-		if (*head) {
+		if (*head)
 			(*head)->prev = NULL;
-		}
-	} else {
-		if (node->prev) {
+	}
+	else
+	{
+		if (node->prev)
 			node->prev->next = node->next;
-		}
-		if (node->next) {
+		if (node->next)
 			node->next->prev = node->prev;
-		}
 	}
-	if (node->arg) {
+	if (node->arg)
 		free(node->arg);
-	}
 	free(node);
 }
