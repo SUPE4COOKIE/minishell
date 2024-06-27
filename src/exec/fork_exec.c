@@ -45,14 +45,16 @@ void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 		cmd = cmd->next;
 	if (is_builtin(cmd->cmd) == false || \
 			(is_builtin(cmd->cmd) == true && cmd->next))
-		id = fork();
+			id = fork();
 	mshell->last_pid = id;
 	if (id == -1)
 		error_pipe("fork failed", new, old, cmd);
 	if (id == 0)
 	{
 		dup_cmd(i, cmd, old, new);
-		handle_file_redirection(cmd, old, new);
+		handle_file_redirection(mshell, cmd, old, new);
+		if (cmd->is_valid_cmd == false)
+			return ;
 		exec_cmd(mshell, cmd);
 		if (is_builtin(cmd->cmd) == false || \
 				(is_builtin(cmd->cmd) == true && cmd->next))

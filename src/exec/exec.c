@@ -119,6 +119,7 @@ void	process_commands(t_minishell *mshell, int old[2], int new[2])
 		if (cmd->is_valid_cmd == false)
 		{
 			cmd = cmd->next;
+			i++;
 			continue ;
 		}
 		if (cmd->next)

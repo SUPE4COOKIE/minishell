@@ -23,10 +23,12 @@ void	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 {
 	while (42)
 	{
-		ft_putstr_fd("> ", STDOUT_FILENO);
-		line = readline("");
-		printf("line = %s\n", line);
-		printf("cmd->infile[i] = %s\n", cmd->infile[i]);
+		line = readline("> ");
+		if (DEBUG)
+		{
+			printf("line = %s\n", line);
+			printf("cmd->infile[i] = %s\n", cmd->infile[i]);
+		}
 		if (ft_strncmp(line, cmd->infile[i], ft_strlen(cmd->infile[i])) == 0)
 		{
 			free(line);
@@ -74,31 +76,34 @@ void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
  * @param old The old file descriptors
  * @param new The new file descriptors
  */
-void	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
-{
-	char	**tmp_filename;
-	size_t	filename_length;
-	int		i;
+	void	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
+	{
+		char	**tmp_filename;
+		size_t	filename_length;
+		int		i;
 
-	i = 0;
-	filename_length = strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
-	tmp_filename = malloc(sizeof(char) * ft_tablen(cmd->infile) + 1);
-	if (!tmp_filename)
-		error_pipe("malloc failed", new, old, cmd);
-	while (tmp_filename && tmp_filename[i])
-	{
-		tmp_filename[i] = (char *)malloc(sizeof(char) * filename_length + 1);
-		if (!tmp_filename[i])
-			error_pipe("malloc failed", new, old, cmd);
-		generate_unique_filename(tmp_filename[i], filename_length);
-		i++;
+		while (cmd && cmd->cmd) {
+			filename_length = strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
+			tmp_filename = (char **)malloc(sizeof(char **) * ft_tablen(cmd->infile) + 1);
+			if (!tmp_filename)
+				error_pipe("malloc failed", new, old, cmd);
+			i = 0;
+			while (tmp_filename && tmp_filename[i] && i < ft_tablen(cmd->infile))
+			{
+				tmp_filename[i] = (char *)malloc(sizeof(char *) * filename_length + 1);
+				if (!tmp_filename[i])
+					error_pipe("malloc failed", new, old, cmd);
+				generate_unique_filename(tmp_filename[i], filename_length);
+				i++;
+			}
+			if (DEBUG)
+				print_tab(tmp_filename);
+
+		}
+		while (cmd)
+		{
+			if (cmd->op_type[0] == HDOC)
+				handle_hdoc(cmd, old, new, tmp_filename);
+			cmd = cmd->next;
+		}
 	}
-	if (DEBUG)
-		print_tab(tmp_filename);
-	while (cmd)
-	{
-		if (cmd->op_type[0] == HDOC)
-			handle_hdoc(cmd, old, new, tmp_filename);
-		cmd = cmd->next;
-	}
-}

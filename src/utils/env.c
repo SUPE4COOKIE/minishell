@@ -76,6 +76,6 @@ bool	set_env(char ***env, char *key, char *value)
 			return (update_existing_env(env, key, value, i));
 		i++;
 	}
-	printf("key: %s\n", key);
+	//printf("key: %s\n", key);
 	return (add_new_env_var(env, key, value, i));
 }

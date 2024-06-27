@@ -43,10 +43,10 @@ void print_list(t_arg *new_args)
 
 	tmp = new_args;
 	if (!tmp)
-		printf("arg = NULL\n");
+		//printf("arg = NULL\n");
 	while (tmp)
 	{
-		printf("arg = %s\n", tmp->arg);
+		//printf("arg = %s\n", tmp->arg);
 		tmp = tmp->next;
 	}
 }
