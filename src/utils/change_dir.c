@@ -49,7 +49,7 @@ int	change_to_specified(t_minishell *mshell, char *arg)
 	path = remove_double_point(arg);
 	if (!path)
 		return (0);
-	printf("path: %s\n", path);
+	//printf("path: %s\n", path);
 	result = change_dir(mshell, path);
 	free(path);
 	return (result);

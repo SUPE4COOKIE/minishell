@@ -21,7 +21,7 @@ bool	is_builtin(char *cmd);
 void	replace_hdoc(t_cmd *cmd, int old[2], int new[2]);
 bool	is_builtin(char *cmd);
 void	exec_builtin(t_minishell *mshell, t_cmd *cmd);
-void	handle_file_redirection(t_cmd *cmd, int old[2], int new[2]);
+void	handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2]);
 void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename);
 void	ft_close(int old[2], int new[2]);
 void	init_exec(int old[2], int new[2], t_minishell *mshell);

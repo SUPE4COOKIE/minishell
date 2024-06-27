@@ -36,15 +36,15 @@ void	ft_close(int old[2], int new[2])
 */
 void	init_exec(int old[2], int new[2], t_minishell *mshell)
 {
-	t_cmd *cmd;
+	//t_cmd *cmd;
 
 	old[0] = -1;
 	old[1] = -1;
 	new[0] = -1;
 	new[1] = -1;
-	cmd = mshell->cmds;
+	//cmd = mshell->cmds;
 	mshell->in_heredoc = true;
-	replace_hdoc(cmd, old, new);
+	//replace_hdoc(cmd, old, new);
 	mshell->in_heredoc = false;
 }
 

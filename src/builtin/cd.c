@@ -34,6 +34,7 @@ bool	add_new_env_var(char ***env, char *key, char *value, int size)
 		new_env_tab[j] = (*env)[j];
 	new_env_tab[size] = tmp;
 	new_env_tab[size + 1] = NULL;
+	free(*env);
 	*env = new_env_tab;
 	return (EXIT_SUCCESS);
 }
