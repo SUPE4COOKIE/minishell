@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/26 17:18:35 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/27 19:01:55 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ t_token_type	get_lexer_type(char *line)
 		return (T_WORD);
 }
 
-void append_new_lexer(t_lexer **lex, t_lexer **new)
+void	append_new_lexer(t_lexer **lex, t_lexer **new)
 {
-	t_lexer *tmp;
+	t_lexer	*tmp;
 
 	if (*lex == NULL)
 	{
@@ -62,15 +62,14 @@ void append_new_lexer(t_lexer **lex, t_lexer **new)
 	}
 }
 
-
-int is_n_only_spaces(char *line, size_t size)
+int	is_n_only_spaces(char *line, size_t size)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (i < size)
 	{
-		if (line[i] != ' ' && line[i] != '\t' && line[i] != '\n' 
+		if (line[i] != ' ' && line[i] != '\t' && line[i] != '\n'
 			&& line[i] != '\v' && line[i] != '\f' && line[i] != '\r')
 			return (0);
 		i++;
@@ -78,7 +77,7 @@ int is_n_only_spaces(char *line, size_t size)
 	return (1);
 }
 
-char *get_token_type(t_token_type type)
+char	*get_token_type(t_token_type type)
 {
 	if (type == T_WORD)
 		return ("T_WORD");
@@ -111,21 +110,32 @@ void	print_lexer(t_lexer *lex)
 	}
 }
 
+int	split_remaining(t_lexer **lex, char *line, size_t size)
+{
+	if (size <= 0)
+		return (0);
+	if (new_lexer(lex, line, size))
+		return (1);
+	if (ft_iswhitespace(line[size - 1]) && *lex)
+		get_last_lexer(*lex)->space_after = true;
+	else if (*lex)
+		get_last_lexer(*lex)->space_after = false;
+	return (0);
+}
+
 int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 {
 	size_t	i;
 	int		error_code;
 
 	i = 0;
-	while (i < size && ft_iswhitespace(line[i]))
-		i++;
 	while (i < size)
 	{
 		if (ft_iswhitespace(line[i]))
 		{
 			if (i > 0)
 			{
-				error_code = new_lexer(lex, line, i); // TODO: check return
+				error_code = new_lexer(lex, line, i);
 				if (error_code)
 					return (error_code);
 				if (!(*lex))
@@ -138,57 +148,57 @@ int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 		}
 		i++;
 	}
-	if (size > 0)
+	return (split_remaining(lex, line, size));
+}
+
+int	handle_new_lexer_value(t_lexer *new, char *line, size_t size)
+{
+	char	*trim;
+
+	if (line[0] == '"' || line[0] == '\'')
+		ft_strlcpy(new->value, line + 1, size);
+	else
 	{
-		new_lexer(lex, line, size);
-		if (ft_iswhitespace(line[size - 1]) && *lex)
-			get_last_lexer(*lex)->space_after = true;
-		else if (*lex)
-			get_last_lexer(*lex)->space_after = false;
+		ft_strlcpy(new->value, line, size + 1);
+		trim = new->value;
+		new->value = ft_strtrim(new->value, " ");
+		free(trim);
+		if (new->value == NULL)
+			return (1);
 	}
 	return (0);
 }
 
 int	new_lexer(t_lexer **lex, char *line, size_t size)
 {
-	//possible upgrade : return a t_lexer instead of int
 	t_lexer	*new;
-	char	*trim;
-	
+
 	if (!line || !line[0])
 		return (0);
 	if (is_n_only_spaces(line, size))
 		return (0);
 	new = malloc(sizeof(t_lexer));
 	if (new == NULL)
-		return (1); //TODO: free exit
+		return (1);
 	new->value = malloc(size + 1);
 	if (new->value == NULL)
-		return (1); //TODO: free exit
-	//printf("%.*s\n", (int)size, line);
-	if (line[0] == '"' || line[0] == '\'')
-		ft_strlcpy(new->value, line + 1, size);
-	else
+		return (free(new), 1);
+	if (handle_new_lexer_value(new, line, size))
 	{
-		ft_strlcpy(new->value, line, size + 1); //TODO: check return
-		trim = new->value;
-		new->value = ft_strtrim(new->value, " "); // TODO: check return
-		free(trim);
+		free(new->value);
+		free(new);
+		return (1);
 	}
 	new->type = get_lexer_type(line);
 	append_new_lexer(lex, &new);
 	new->next = NULL;
 	new->space_after = false;
-	// temp code
-	//printf("value: %s\n", new->value);
-	//printf("type: %s\n", get_token_type(new->type));
 	return (0);
 }
 
-
 void	free_lexer(t_lexer *lex)
 {
-	t_lexer *tmp;
+	t_lexer	*tmp;
 
 	while (lex)
 	{
@@ -199,24 +209,23 @@ void	free_lexer(t_lexer *lex)
 	}
 }
 
-void add_operator(t_lexer **lex, char *line, size_t *end)
+int	add_operator(t_lexer **lex, char *line, size_t *end)
 {
-	size_t len;
+	size_t	len;
 
 	len = 0;
-	while (line[len] && is_operator_char(line[len]) && line[0] == line[len] && len < 2)
+	while (line[len] && is_operator_char(line[len])
+		&& line[0] == line[len] && len < 2)
 	{
 		len++;
 		if (line[0] == '|')
 			break ;
 	}
-	new_lexer(lex, line, len); // TODO: check return
+	if (new_lexer(lex, line, len))
+		return (1);
 	(*end) += len;
-	if (ft_iswhitespace(line[len]))
-		get_last_lexer(*lex)->space_after = true;
-	else
-		get_last_lexer(*lex)->space_after = false;
-	//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
+	get_last_lexer(*lex)->space_after = ft_iswhitespace(line[len]);
+	return (0);
 }
 
 t_lexer	*get_last_lexer(t_lexer *lex)
@@ -226,11 +235,10 @@ t_lexer	*get_last_lexer(t_lexer *lex)
 	return (lex);
 }
 
-//TODO: opti
 t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete)
 {
 	t_lexer	*tmp;
-	
+
 	tmp = *lex;
 	if (tmp == to_delete)
 	{
@@ -252,15 +260,14 @@ t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete)
 		if (tmp->next)
 			tmp->next->prev = tmp->prev;
 		free(tmp->value);
-		free(tmp);
 	}
-	return (*lex);
+	return (free(tmp), *lex);
 }
 
 int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
 {
 	size_t	len;
-	t_lexer *tmp;
+	t_lexer	*tmp;
 	char	quote;
 
 	quote = line[0];
@@ -280,71 +287,99 @@ int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
 	return (0);
 }
 
+int	process_word(t_lexer **lex, char *line, size_t start, size_t end)
+{
+	int	type;
+
+	type = get_lexer_type(line + start);
+	if (type == T_WORD)
+	{
+		if (split_word_lexer(lex, line + start, end - start))
+			return (1);
+	}
+	else
+	{
+		if (new_lexer(lex, line + start, end - start))
+			return (1);
+		get_last_lexer(*lex)->space_after = ft_iswhitespace(line[end]);
+	}
+	return (0);
+}
+
+int	handle_quotes(t_lexer **lex, size_t *start, size_t *end, char *line)
+{
+	if (*end > *start)
+	{
+		if (process_word(lex, line, *start, *end))
+			return (1);
+	}
+	*start = *end;
+	if (add_quoted_word(lex, line + *start, end))
+		return (1);
+	*start = *end;
+	return (0);
+}
+
+int	handle_operator(t_lexer **lex, size_t *start, size_t *end, char *line)
+{
+	if (*end > *start)
+	{
+		if (process_word(lex, line, *start, *end))
+			return (1);
+	}
+	*start = *end;
+	while (line[*end] && is_operator_char(line[*end]))
+	{
+		if (add_operator(lex, line + *start, end))
+			return (1);
+		*start = *end;
+	}
+	return (0);
+}
+
 int	lexer_director(t_lexer **lex, size_t *end, size_t *start, char *line)
 {
 	while (line[*end])
 	{
 		if (line[*end] == '"' || line[*end] == '\'')
 		{
-			if (*end > *start)
-			{
-				if (get_lexer_type(line + *start) == T_WORD)
-				{
-					if (split_word_lexer(lex, line + *start, *end - *start))// TODO: check return
-						return (1);
-				}
-				else
-				{
-					if (new_lexer(lex, line + *start, *end - *start)) // TODO: check return
-						return (1);
-					if (ft_iswhitespace(line[*end]))
-						get_last_lexer(*lex)->space_after = true;
-					else
-						get_last_lexer(*lex)->space_after = false;
-					//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
-				}
-			}
-			*start = *end;
-			add_quoted_word(lex, line + *start, end); // TODO: check return
-			*start = *end;
-			continue; // not retested might cause problems but avoid invalid read
+			if (handle_quotes(lex, start, end, line))
+				return (1);
+			continue ;
 		}
 		if (is_operator_char(line[*end]))
 		{
-			if (*end > *start)
-			{
-				if (get_lexer_type(line + *start) == T_WORD)
-				{
-					if (split_word_lexer(lex, line + *start, *end - *start)) // TODO: check return
-						return (1);
-				}
-				else
-				{
-					if (new_lexer(lex, line + *start, *end - *start))// TODO: check return
-						return (1);
-					if (ft_iswhitespace(line[*end]))
-						get_last_lexer(*lex)->space_after = true;
-					else
-						get_last_lexer(*lex)->space_after = false;
-					//printf("space_after: %d\n\n", get_last_lexer(*lex)->space_after);
-				}
-			}
-			*start = *end;
-			while (line[*end] && is_operator_char(line[*end]))
-			{
-				add_operator(lex, line + *start, end); // TODO: check return
-				*start = *end;
-			}
-			continue;
+			if (handle_operator(lex, start, end, line))
+				return (1);
+			continue ;
 		}
 		(*end)++;
 	}
 	return (0);
 }
 
+int	finalize_lexer(t_lexer **lex, char *line, size_t start, size_t end)
+{
+	if (end > start)
+	{
+		if (get_lexer_type(line + start) == T_WORD)
+		{
+			if (split_word_lexer(lex, line + start, end - start))
+				return (1);
+		}
+		else
+		{
+			if (new_lexer(lex, line + start, end - start))
+				return (1);
+			get_last_lexer(*lex)->space_after = false;
+		}
+	}
+	return (0);
+}
+
 t_lexer	*lexer(char *line)
 {
-	t_lexer *lex;
+	t_lexer	*lex;
 	size_t	end;
 	size_t	start;
 
@@ -356,16 +391,10 @@ t_lexer	*lexer(char *line)
 		free_lexer(lex);
 		return (NULL);
 	}
-	if (end > start)
+	if (finalize_lexer(&lex, line, start, end))
 	{
-		if (get_lexer_type(line + start) == T_WORD)
-			split_word_lexer(&lex, line + start, end - start); // TODO: check return
-		else
-		{
-			new_lexer(&lex, line + start, end - start); // TODO: check return
-			get_last_lexer(lex)->space_after = false;
-			//printf("space_after: %d\n\n", get_last_lexer(lex)->space_after);
-		}
+		free_lexer(lex);
+		return (NULL);
 	}
 	return (lex);
 }

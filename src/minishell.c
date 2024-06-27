@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/26 17:02:03 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/06/27 16:59:55 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int main(int argc, char **argv, char **envp)
 			free_mshell(&mshell);
 			return (1);
 		}
-		exec(&mshell);
+		//exec(&mshell);
 		mshell.last_exit_status = 0;
 	}
 	else if (argc > 1)
@@ -111,7 +111,7 @@ int main(int argc, char **argv, char **envp)
 			free_mshell(&mshell);
 			return (1);
 		}
-		exec(&mshell);
+		//exec(&mshell);
 		mshell.last_exit_status = 0;
 	}
 	else
@@ -139,7 +139,7 @@ int main(int argc, char **argv, char **envp)
 				add_history(mshell.line);
 			if (parse(&mshell))
 				continue ;
-			exec(&mshell);
+			//exec(&mshell);
 			free(mshell.line);
 			free_cmds(mshell.cmds);
 		}

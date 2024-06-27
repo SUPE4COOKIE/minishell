@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_hdoc.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/14 14:39:52 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/27 15:05:09 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,11 @@ void	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 		ft_putstr_fd("> ", STDOUT_FILENO);
 		line = readline("");
 		g_sig = false;
-		printf("line = %s\n", line);
-		printf("cmd->infile[i] = %s\n", cmd->infile[i]);
+		if (DEBUG)
+		{
+			printf("line = %s\n", line);
+			printf("cmd->infile[i] = %s\n", cmd->infile[i]);
+		}
 		if (ft_strncmp(line, cmd->infile[i], ft_strlen(cmd->infile[i])) == 0)
 		{
 			free(line);
