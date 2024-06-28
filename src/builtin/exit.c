@@ -50,9 +50,8 @@ int	builtin_exit(t_minishell *mshell, char **args)
 	uint8_t	status;
 	bool	is_between;
 
-	if (!mshell || !args)
-		ft_putstr_fd("exit\n", 2);
-	else
+	ft_putstr_fd("exit\n", 2);
+	if (args)
 	{
 		status = mshell->last_exit_status;
 		is_between = get_is_between_cmd(mshell);

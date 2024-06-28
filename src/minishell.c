@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int g_sig;
+volatile sig_atomic_t g_sig;
 
 void signal_new_line(int sig)
 {
@@ -84,6 +84,7 @@ int main(int argc, char **argv, char **envp)
 	mshell.last_exit_status = 0;
 	mshell.last_pid = 0;
 	g_sig = 0;
+	rl_done = 0;
 	mshell.in_heredoc = false;
 	if (argc > 1 && strcmp(argv[1], "-c") == 0)
 	{

@@ -34,7 +34,7 @@
 # define DEBUG false
 # define DEFAULT_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-extern int g_sig;
+extern volatile sig_atomic_t g_sig;
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_lexer	t_lexer;

@@ -157,7 +157,7 @@ void	handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int ne
 		{
 			if (cmd->outfile && cmd->outfile[i])
 			{
-				while (cmd->outfile[i + 1]) {
+				while (cmd->outfile[i]) {
 					fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 					if (fd == -1)
 						error_pipe("open failed", new, old, cmd);
