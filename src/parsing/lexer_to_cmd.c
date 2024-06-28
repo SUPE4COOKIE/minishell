@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_to_cmd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/25 11:45:02 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/06/28 15:31:05 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,7 +247,7 @@ void	print_types(t_cmd_type *type)
 	printf("\n");
 }
 
-void	print_cmd(t_cmd *cmd)
+void	print_cmd(t_cmd *cmd) // will be deleted later
 {
 	printf("cmd: %s\n", cmd->cmd);
 	printf("args: ");
@@ -316,36 +316,46 @@ void	append_type(t_cmd_type **type_chain, t_cmd_type type)
 	*type_chain = new;
 }
 
-int	append_redir(t_cmd *cmd, t_lexer **lex)
+int handle_redir_in(t_cmd *cmd, t_lexer **lex)
+{
+	(*lex) = (*lex)->next;
+	cmd->op_type[0] = RED_IN;
+	if (ft_append_str(&(cmd->infile), (*lex)->value) == -1)
+		return (-1);
+	append_type(&(cmd->type_chain), RED_IN);
+	return (0);
+}
+
+int handle_redir_out(t_cmd *cmd, t_lexer **lex, int type)
+{
+	(*lex) = (*lex)->next;
+	cmd->op_type[1] = type;
+	if (ft_append_str(&(cmd->outfile), (*lex)->value) == -1)
+		return (-1);
+	append_type(&(cmd->type_chain), type);
+	return (0);
+}
+
+int handle_here_doc(t_cmd *cmd, t_lexer **lex)
+{
+	(*lex) = (*lex)->next;
+	cmd->op_type[0] = HDOC;
+	if (ft_append_str(&(cmd->infile), (*lex)->value) == -1)
+		return (-1);
+	append_type(&(cmd->type_chain), HDOC);
+	return (0);
+}
+
+int append_redir(t_cmd *cmd, t_lexer **lex)
 {
 	if ((*lex)->type == T_REDIR_IN)
-	{
-		(*lex) = (*lex)->next;
-		cmd->op_type[0] = RED_IN;
-		ft_append_str(&(cmd->infile), (*lex)->value);// TODO: check return
-		append_type(&(cmd->type_chain), RED_IN);
-	}
+		return (handle_redir_in(cmd, lex));
 	else if ((*lex)->type == T_REDIR_OUT)
-	{
-		(*lex) = (*lex)->next;
-		cmd->op_type[1] = RED_OUT;
-		ft_append_str(&(cmd->outfile), (*lex)->value);
-		append_type(&(cmd->type_chain), RED_OUT);
-	}
+		return (handle_redir_out(cmd, lex, RED_OUT));
 	else if ((*lex)->type == T_APPEND_OUT)
-	{
-		(*lex) = (*lex)->next;
-		cmd->op_type[1] = APP_OUT;
-		ft_append_str(&(cmd->outfile), (*lex)->value);
-		append_type(&(cmd->type_chain), APP_OUT);
-	}
+		return (handle_redir_out(cmd, lex, APP_OUT));
 	else if ((*lex)->type == T_HERE_DOC)
-	{
-		(*lex) = (*lex)->next;
-		cmd->op_type[0] = HDOC;
-		ft_append_str(&(cmd->infile), (*lex)->value);
-		append_type(&(cmd->type_chain), HDOC);
-	}
+		return (handle_here_doc(cmd, lex));
 	return (0);
 }
 
@@ -384,7 +394,6 @@ int	nospace_add(char **args, t_lexer **lex)
 
 int	append_cmds(t_cmd **cmd, t_lexer **lex)
 {
-	// need to add system to not add paths for redirections
 	char	**args;
 	char	**args_start;
 	t_cmd	*last_cmd;
@@ -399,7 +408,7 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 	{
 		if ((*lex)->type == T_REDIR_IN || (*lex)->type == T_REDIR_OUT
 			|| (*lex)->type == T_APPEND_OUT || (*lex)->type == T_HERE_DOC)
-			append_redir(last_cmd, lex);
+			append_redir(last_cmd, lex); // TODO: check return
 		else if ((*lex)->value && is_nospace_addable((*lex)->type))
 		{
 			if (!(*lex)->space_after && (*lex)->next && is_nospace_addable((*lex)->next->type))
@@ -408,9 +417,7 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 					return (1);
 			}
 			else
-			{
-				*args = ft_strdup((*lex)->value);
-			}
+				*args = ft_strdup((*lex)->value); // TODO: check return
 			args++;
 		}
 		else
@@ -420,7 +427,7 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 	}
 	last_cmd->args = args_start;
 	if (*args_start)
-		last_cmd->cmd = ft_strdup(args_start[0]);
+		last_cmd->cmd = ft_strdup(args_start[0]); // TODO: check return
 	else
 	{
 		last_cmd->cmd = NULL;

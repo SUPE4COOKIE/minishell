@@ -31,7 +31,6 @@ SRCS = $(addprefix src/, \
 		) \
 		cmd_finder.c \
 		env_parse.c \
-		files_validator.c \
 		ft_split_args_utils.c \
 		ft_split_args.c \
 		lexer_to_cmd.c \
