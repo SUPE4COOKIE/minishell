@@ -18,18 +18,20 @@
 
 void	exec(t_minishell *mshell);
 bool	is_builtin(char *cmd);
-void	replace_hdoc(t_cmd *cmd, int old[2], int new[2]);
-bool	is_builtin(char *cmd);
+int		replace_hdoc(t_cmd *cmd, int old[2], int new[2]);
 void	exec_builtin(t_minishell *mshell, t_cmd *cmd);
 void	handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], int new[2]);
-void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename);
+int		handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename);
 void	ft_close(int old[2], int new[2]);
-void	init_exec(int old[2], int new[2], t_minishell *mshell);
+int	init_exec(int old[2], int new[2], t_minishell *mshell);
 void	close_old(int i, int old[2]);
 void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i);
 void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2]);
 void	exec_cmd(t_minishell *mshell, t_cmd *cmd);
 void	generate_unique_filename(char *buffer, size_t length);
 void	signal_exec(int signal);
+void	signal_here_doc(int signal);
+int		readline_event_hook(void);
+void	signal_new_line(int sig);
 
 #endif

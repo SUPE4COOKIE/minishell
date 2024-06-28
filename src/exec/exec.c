@@ -159,7 +159,8 @@ void	exec(t_minishell *mshell)
 	i = 0;
 	size = lst_size(mshell->cmds);
 	status = 0;
-	init_exec(old, new, mshell);
+	if (init_exec(old, new, mshell) == 1)
+		return ;
 	process_commands(mshell, old, new);
 	ft_close(old, new);
 	while (i < size)

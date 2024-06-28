@@ -34,18 +34,17 @@ void	ft_close(int old[2], int new[2])
 ** @param old The old file descriptors
 ** @param new The new file descriptors
 */
-void	init_exec(int old[2], int new[2], t_minishell *mshell)
+int	init_exec(int old[2], int new[2], t_minishell *mshell)
 {
-	//t_cmd *cmd;
-
 	old[0] = -1;
 	old[1] = -1;
 	new[0] = -1;
 	new[1] = -1;
-	//cmd = mshell->cmds;
 	mshell->in_heredoc = true;
-	//replace_hdoc(cmd, old, new);
+	if (replace_hdoc(mshell->cmds, old, new))
+		return (1);
 	mshell->in_heredoc = false;
+	return (0);
 }
 
 /**

@@ -19,17 +19,36 @@
  * @param cmd The command
  * @param i The index
  */
-void	read_the_line(char *line, int fd, t_cmd *cmd, int i)
+int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 {
-	while (42)
+	int initial_sig;
+
+	initial_sig = g_sig;
+	signal(SIGINT, signal_here_doc);
+	while (g_sig == initial_sig)
 	{
 		line = readline("> ");
+		if (!line)
+		{
+			if (g_sig != initial_sig)
+				break ;
+			continue ;
+		}
+		if (g_sig != initial_sig)
+		{
+			free(line);
+			printf("\n");
+			rl_on_new_line();
+			rl_replace_line("", 0);
+			g_sig = initial_sig;
+			return (1);
+		}
 		if (DEBUG)
 		{
 			printf("line = %s\n", line);
 			printf("cmd->infile[i] = %s\n", cmd->infile[i]);
 		}
-		if (ft_strncmp(line, cmd->infile[i], ft_strlen(cmd->infile[i])) == 0)
+		if (ft_strncmp(line, cmd->infile[i], ft_strlen(cmd->infile[i]) + 1) == 0)
 		{
 			free(line);
 			break ;
@@ -37,6 +56,9 @@ void	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 		ft_putendl_fd(line, fd);
 		free(line);
 	}
+	signal(SIGINT, signal_new_line);
+	g_sig = initial_sig;
+	return (0);
 }
 
 /**
@@ -46,7 +68,7 @@ void	read_the_line(char *line, int fd, t_cmd *cmd, int i)
  * @param new The new file descriptors
  * @param tmp_filename The temporary filename
  */
-void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
+int	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
 {
 	int		fd;
 	char	*line;
@@ -59,7 +81,8 @@ void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
 		fd = open(tmp_filename[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd == -1)
 			error_pipe("open failed", new, old, cmd);
-		read_the_line(line, fd, cmd, i);
+		if (read_the_line(line, fd, cmd, i) == 1)
+			return (1);
 		free(cmd->infile[i]);
 		cmd->infile[i] = ft_strdup(tmp_filename[i]);
 		close(fd);
@@ -68,6 +91,7 @@ void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
 	if (tmp_filename)
 		free_tab(tmp_filename);
 	cmd->op_type[0] = RED_IN;
+	return (0);
 }
 
 /**
@@ -76,34 +100,45 @@ void	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
  * @param old The old file descriptors
  * @param new The new file descriptors
  */
-	void	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
+int	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
+{
+	char	**tmp_filename;
+	size_t	filename_length;
+	int		i;
+	t_cmd	*tmp;
+
+	tmp = cmd;
+	while (tmp)
 	{
-		char	**tmp_filename;
-		size_t	filename_length;
-		int		i;
-
-		while (cmd && cmd->cmd) {
-			filename_length = strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
-			tmp_filename = (char **)malloc(sizeof(char **) * ft_tablen(cmd->infile) + 1);
-			if (!tmp_filename)
-				error_pipe("malloc failed", new, old, cmd);
-			i = 0;
-			while (tmp_filename && tmp_filename[i] && i < ft_tablen(cmd->infile))
-			{
-				tmp_filename[i] = (char *)malloc(sizeof(char *) * filename_length + 1);
-				if (!tmp_filename[i])
-					error_pipe("malloc failed", new, old, cmd);
-				generate_unique_filename(tmp_filename[i], filename_length);
-				i++;
-			}
-			if (DEBUG)
-				print_tab(tmp_filename);
-
-		}
-		while (cmd)
+		if (tmp->op_type[0] != HDOC)
 		{
-			if (cmd->op_type[0] == HDOC)
-				handle_hdoc(cmd, old, new, tmp_filename);
-			cmd = cmd->next;
+			tmp = tmp->next;
+			continue ;
 		}
+		filename_length = strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
+		tmp_filename = (char **)ft_calloc(ft_tablen(tmp->infile) + 1, sizeof(char *));
+		if (!tmp_filename)
+			error_pipe("malloc failed", new, old, tmp);
+		i = 0;
+		while (tmp_filename && i < ft_tablen(tmp->infile))
+		{
+			tmp_filename[i] = (char *)ft_calloc(filename_length, sizeof(char));
+			if (!tmp_filename[i])
+				error_pipe("malloc failed", new, old, tmp);
+			generate_unique_filename(tmp_filename[i], filename_length);
+			i++;
+		}
+		if (DEBUG && tmp_filename)
+			print_tab(tmp_filename);
+		tmp = tmp->next;
 	}
+	tmp = cmd;
+	while (tmp)
+	{
+		if (tmp->op_type[0] == HDOC)
+			if (handle_hdoc(tmp, old, new, tmp_filename) == 1)
+				return (1);
+		tmp = tmp->next;
+	}
+	return (0);
+}

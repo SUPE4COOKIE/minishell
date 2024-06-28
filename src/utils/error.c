@@ -91,7 +91,7 @@ void print_tab(char **tab)
 	i = 0;
 	if (!tab)
 		return ;
-	while (tab[i])
+	while (*tab && tab[i])
 	{
 		printf("tab[%d]: %s\n", i, tab[i]);
 		i++;
