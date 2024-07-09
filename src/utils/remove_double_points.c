@@ -55,13 +55,18 @@ char	*remove_double_point(char *path)
 {
 	t_arg	*new_args;
 	char	*new_path;
+	bool	is_absolute;
 
+	if (path[0] == '/')
+		is_absolute = true;
+	else
+		is_absolute = false;
 	new_args = path_to_list(path);
 	if (!new_args)
 		return (NULL);
 	process_list(&new_args);
 	if (new_args != NULL)
-		new_path = lst_to_path(new_args);
+		new_path = lst_to_path(new_args, is_absolute);
 	else
 		new_path = NULL;
 	free_lst(new_args);

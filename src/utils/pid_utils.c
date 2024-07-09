@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:14:41 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/14 14:39:37 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/09 10:57:52 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	init_exec(int old[2], int new[2], t_minishell *mshell)
 	new[0] = -1;
 	new[1] = -1;
 	mshell->in_heredoc = true;
-	if (replace_hdoc(mshell->cmds, old, new))
+	if (replace_hdoc(mshell->cmds, old, new) == 1)
 		return (1);
 	mshell->in_heredoc = false;
 	return (0);

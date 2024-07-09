@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:30:33 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/30 15:07:56 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/09 11:59:16 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	builtin_export(t_minishell *mshell, char **args);
 int	ft_addenv(t_minishell *mshell, char *key, char *value);
 void remove_nodes(t_arg **head, t_arg *node);
 void free_lst(t_arg *new_args);
-char *lst_to_path(t_arg *new_args);
+char *lst_to_path(t_arg *new_args, bool is_absolute);
 void tab_to_lst(t_arg **new_args, char **tab);
 bool	update_existing_env(char ***env, char *key, char *value, int index);
 bool	add_new_env_var(char ***env, char *key, char *value, int size);

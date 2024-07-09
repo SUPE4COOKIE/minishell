@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atol.c                                          :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 11:53:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/28 16:59:54 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/09 12:57:44 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,22 @@ long	ft_atoi(const char *str)
 	if (nb > INT_MAX)
 		return (2147483649);
 	return (nb * sign);
+}
+
+bool	isnumber(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i] == '+' || str[i] == '-')
+		i++;
+	if (!str[i])
+		return (false);
+	while (str[i])
+	{
+		if (!isdigit(str[i]))
+			return (false);
+		i++;
+	}
+	return (true);
 }

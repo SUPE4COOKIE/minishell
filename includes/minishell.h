@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/25 11:42:19 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/09 13:03:50 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 #  define PATH_MAX 4096
 # endif
 # define PRINT_CAT false
-# define DEBUG false
+# define DEBUG true
 # define DEFAULT_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 extern volatile sig_atomic_t g_sig;
@@ -86,6 +86,8 @@ struct s_cmd
 	t_cmd			*next;
 };
 
+void print_cat(void);
+int handle_dash_c(t_minishell *mshell, int argc, char **argv);
 # include "parsing.h"
 # include "utils.h"
 # include "exec.h"
