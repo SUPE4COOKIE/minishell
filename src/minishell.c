@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/26 15:13:42 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/09 12:46:51 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ void signal_new_line(int sig)
 	if (sig == SIGINT)
 	{
 		printf("\n");
-		rl_on_new_line();
 		rl_replace_line("", 0);
+		rl_on_new_line();
 		rl_redisplay();
 		g_sig = SIGINT;
 	}
@@ -45,7 +45,6 @@ void	signal_exec(int signal)
 int readline_event_hook(void)
 {
 	signal(SIGINT, signal_here_doc);
-	rl_done = 1;
 	return (0);
 }
 
@@ -55,29 +54,7 @@ int main(int argc, char **argv, char **envp)
 
 	if (PRINT_CAT)
 	{
-		ft_printf("    ░▒▒▒▓▒▒░▒██▓ ▓▓██▒▒▒░▓▒▒░░░ ░░▒▒▓▓▓▒░    \n");
-		ft_printf("    ▓▓▓▒▒▒▒░░░▒▒▒████▒▒▒▒▒▒░░   ░▒▒▒▒▒░      \n");
-		ft_printf("     ██▓▒▒░░▒▒▓██████▒░░░░░▒▒░ ░░░▒▒         \n");
-		ft_printf("        ░░░░▒░░▒██████▒░░░   ░▒░░░░          \n");
-		ft_printf("        ▒░░░░   ▒██████▒▒  ░ ▒▒░░░░          \n");
-		ft_printf("         ░░▒░    ██████▒░░   ▓░░░░           \n");
-		ft_printf("         ▒░░▒▒▒▒▒███████▒▒▓▒▒░  ░            \n");
-		ft_printf("         ▒░░░▓████████████▓▓░  ░░            \n");
-		ft_printf("          ▒▒▓████████████████▒ ░             \n");
-		ft_printf("          ███████████████████▓▓░             \n");
-		ft_printf("        ██▓▒▒██████▓▓█▓██████████            \n");
-		ft_printf("        ▓▒▒▓▓████████▓████████████           \n");
-		ft_printf("       ▒▒▒▒▒▒███████▓▒▓██████████            \n");
-		ft_printf("       ▒▒░▒░▒▓██████████████████             \n");
-		ft_printf("      ░ ░░░░░▓██████████████████             \n");
-		ft_printf("     ░░   ░░░░▓█████████████████             \n");
-		ft_printf("      ░    ░░░▒████████████████              \n");
-		ft_printf("      ░░░░   ░▒███████████████               \n");
-		ft_printf("              ░▓██████████████               \n");
-		ft_printf("               ▒██████████████               \n");
-		ft_printf("               ░░░▒██      █████             \n");
-		ft_printf("                ░ ░▒▒       ██████           \n");
-		ft_printf("                 ░░ ░▒                       \n");
+		print_cat();
 	}
 	allocate_env(&mshell, envp);
 	save_path(&mshell, mshell.env); // TODO: protect
@@ -88,45 +65,16 @@ int main(int argc, char **argv, char **envp)
 	mshell.in_heredoc = false;
 	if (argc > 1 && strcmp(argv[1], "-c") == 0)
 	{
-		mshell.line = ft_strdup(argv[2]);
-		mshell.line[ft_strlen(mshell.line)] = 0;
-		if (!is_valid_quotes(mshell.line, &mshell.last_exit_status))
-		{
-			free_mshell(&mshell);
-			return (1);
-		}
-		if (parse(&mshell))
-		{
-			free_mshell(&mshell);
-			return (1);
-		}
-		exec(&mshell);
-		mshell.last_exit_status = 0;
-	}
-	else if (argc > 1)
-	{
-		mshell.line = ft_strdup(argv[1]);
-		if (!is_valid_quotes(mshell.line, &mshell.last_exit_status))
-		{
-			free_mshell(&mshell);
-			return (1);
-		}
-		if (parse(&mshell))
-		{
-			free_mshell(&mshell);
-			return (1);
-		}
-		exec(&mshell);
-		mshell.last_exit_status = 0;
+		handle_dash_c(&mshell, argc, argv);
+		return (1);
 	}
 	else
 	{
-		while (42)
+		while (g_sig != SIGQUIT)
 		{
 			signal(SIGINT, signal_new_line);
 			signal(SIGQUIT, signal_new_line);
-			g_sig = 0;
-
+			
 			mshell.line = readline("minishell$> ");
 			if (!mshell.line)
 				break ;
@@ -144,8 +92,10 @@ int main(int argc, char **argv, char **envp)
 				add_history(mshell.line);
 			if (parse(&mshell))
 				continue ;
-			exec(&mshell);
+			if (exec(&mshell) != 0)
+				continue ;
 			free(mshell.line);
+			g_sig = 0;
 			mshell.line = NULL;
 			free_cmds(mshell.cmds);
 		}

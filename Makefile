@@ -2,6 +2,7 @@ NAME = minishell
 
 # Source files
 SRCS = $(addprefix src/, \
+	print_cat.c handle-c.c \
 	$(addprefix builtin/, \
 		cd.c \
 		echo.c \

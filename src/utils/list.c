@@ -34,7 +34,7 @@ void tab_to_lst(t_arg **new_args, char **tab)
 	}
 }
 
-char *lst_to_path(t_arg *new_args)
+char *lst_to_path(t_arg *new_args, bool is_absolute)
 {
 	t_arg *tmp;
 	char *path;
@@ -42,7 +42,7 @@ char *lst_to_path(t_arg *new_args)
 
 	path = NULL;
 	tmp = new_args;
-	if (!tmp)
+	if (!tmp || is_absolute == true)
 		path = ft_strdup("/");
 	while (tmp)
 	{

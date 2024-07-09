@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/14 14:30:33 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/09 11:36:47 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,17 +49,10 @@ char	**copy_args(char **args)
  */
 void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 {
-	struct sigaction sa;
-
 	if (is_builtin(cmd->cmd) == true)
 		exec_builtin(mshell, cmd);
 	else
 	{
-		sa.sa_handler = SIG_DFL;
-		sa.sa_flags = SA_SIGINFO;
-		sigemptyset(&sa.sa_mask);
-		sigaction(SIGINT, &sa, NULL);
-		sigaction(SIGQUIT, &sa, NULL);
 		execve(cmd->cmd, cmd->args, mshell->env);
 	}
 }
@@ -148,7 +141,7 @@ int	lst_size(t_cmd *cmd)
  * @brief Execute the minishell
  * @param mshell
  */
-void	exec(t_minishell *mshell)
+int	exec(t_minishell *mshell)
 {
 	int	old[2];
 	int	new[2];
@@ -160,7 +153,7 @@ void	exec(t_minishell *mshell)
 	size = lst_size(mshell->cmds);
 	status = 0;
 	if (init_exec(old, new, mshell) == 1)
-		return ;
+		return (1);
 	process_commands(mshell, old, new);
 	ft_close(old, new);
 	while (i < size)
@@ -177,5 +170,6 @@ void	exec(t_minishell *mshell)
 	if (g_sig == SIGINT)
 		printf("\n");
 	else if (g_sig == SIGQUIT)
-		printf("Quit (core dumped)\n");
+		builtin_exit(mshell, NULL);
+	return (0);
 }

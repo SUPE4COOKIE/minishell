@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 10:23:57 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/05/30 15:08:22 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/09 11:52:42 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,22 +64,29 @@ int	ft_addenv(t_minishell *mshell, char *key, char *value)
 	return (0);
 }
 
-int	check_input(char *args)
+int	check_input(t_minishell *mshell, char *args)
 {
 	size_t	i;
 
 	i = 0;
 	if (!ft_isalpha(args[i]) && args[i] != '_')
+	{
+		mshell->last_exit_status = 1;
 		return (1);
+	}
 	i++;
 	while (args[i])
 	{
 		if (args[i] == '=')
 			return (0);
 		else if (!ft_isalnum(args[i]) && args[i] != '_')
+		{
+			mshell->last_exit_status = 1;
 			return (1);
+		}
 		i++;
 	}
+	mshell->last_exit_status = 0;
 	return (1);
 }
 
@@ -92,10 +99,10 @@ int	builtin_export(t_minishell *mshell, char **args)
 	i = 1;
 	while (args[i])
 	{
-		if (check_input(args[i]))
+		if (check_input(mshell, args[i]))
 		{
-			printf("minishell: export: `%s': not a valid identifier\n", \
-				args[i]);
+			//printf("minishell: export: `%s': not a valid identifier\n", \
+				//args[i]);
 			break ;
 		}
 		else

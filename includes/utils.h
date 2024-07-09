@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:15:47 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/25 11:43:19 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/09 12:09:00 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,6 @@ int		ft_tablen(char **tab);
 void	put_in_env(char **args, size_t i, t_minishell *mshell);
 size_t	ft_varlen(char *var, char c);
 int is_n_only_spaces(char *line, size_t size);
+bool	isnumber(char *str);
 
 #endif
