@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/09 11:01:03 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/10 03:38:51 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,21 +21,25 @@
  */
 int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 {
-	signal(SIGINT, signal_here_doc);
+	int initial_sig;
+
+	initial_sig = g_sig;
 	while (g_sig == 0)
 	{
+		signal(SIGINT, signal_here_doc);
+		rl_event_hook = event;
 		line = readline("> ");
 		if (!line)
 		{
-			if (g_sig != 0)
-				break ;
-			continue ;
+			if (g_sig == 0)
+				continue ;
 		}
 		if (g_sig != 0)
 		{
-			free(line);
-			printf("\n");
-			return (1);
+			if (line)
+				free(line);
+			ft_printf("\n");
+			break ;
 		}
 		if (DEBUG)
 		{
@@ -50,6 +54,7 @@ int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 		ft_putendl_fd(line, fd);
 		free(line);
 	}
+	g_sig = initial_sig;
 	return (0);
 }
 
@@ -74,7 +79,7 @@ int	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
 		if (fd == -1)
 			error_pipe("open failed", new, old, cmd);
 		if (read_the_line(line, fd, cmd, i) == 1)
-			return (1);
+			return (free_tab(tmp_filename), 1);
 		free(cmd->infile[i]);
 		cmd->infile[i] = ft_strdup(tmp_filename[i]);
 		close(fd);
@@ -107,7 +112,7 @@ int	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
 			tmp = tmp->next;
 			continue ;
 		}
-		filename_length = strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
+		filename_length = ft_strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
 		tmp_filename = (char **)ft_calloc(ft_tablen(tmp->infile) + 1, sizeof(char *));
 		if (!tmp_filename)
 			error_pipe("malloc failed", new, old, tmp);

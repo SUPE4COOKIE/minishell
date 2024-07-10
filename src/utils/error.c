@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:11:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/14 14:18:00 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/10 02:03:28 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,8 @@ int free_tab(char **tab)
 	int i;
 
 	i = 0;
-	if (!tab) {
+	if (!tab)
 		return (EXIT_FAILURE);
-	}
 	while (tab[i])
 	{
 		free(tab[i]);

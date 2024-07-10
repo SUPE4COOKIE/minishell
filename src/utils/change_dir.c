@@ -11,10 +11,10 @@ bool	change_dir(t_minishell *mshell, char *path)
 	getcwd(cwd, PATH_MAX);
 	if (cwd[0] == '\0')
 		return (error_cmd(mshell, 1, "cd: getcwd failed"));
-	if (set_env(&mshell->env, get_path(mshell->env, "PWD"), \
-			"OLDPWD") == EXIT_FAILURE)
+	if (set_env(&mshell->env, "OLDPWD", \
+			get_path(mshell->env, "PWD")) == EXIT_FAILURE)
 		return (error_cmd(mshell, 1, "cd: setenv failed"));
-	if (set_env(&mshell->env, cwd, "PWD") == EXIT_FAILURE)
+	if (set_env(&mshell->env, "PWD", cwd) == EXIT_FAILURE)
 		return (error_cmd(mshell, 1, "cd: setenv failed"));
 	if (DEBUG == true)
 		printf("return_path: %s\n", cwd);

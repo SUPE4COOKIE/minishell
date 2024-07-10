@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/09 11:36:47 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/10 03:15:05 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,8 @@ void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 		exec_builtin(mshell, cmd);
 	else
 	{
-		execve(cmd->cmd, cmd->args, mshell->env);
+		if (cmd->cmd)
+			execve(cmd->cmd, cmd->args, mshell->env);
 	}
 }
 
@@ -105,10 +106,10 @@ void	process_commands(t_minishell *mshell, int old[2], int new[2])
 
 	i = 0;
 	cmd = mshell->cmds;
-	signal(SIGINT, signal_exec);
-	signal(SIGQUIT, signal_exec);
 	while (cmd)
 	{
+		signal(SIGINT, signal_exec);
+		signal(SIGQUIT, signal_exec);
 		if (cmd->is_valid_cmd == false)
 		{
 			cmd = cmd->next;
@@ -170,6 +171,8 @@ int	exec(t_minishell *mshell)
 	if (g_sig == SIGINT)
 		printf("\n");
 	else if (g_sig == SIGQUIT)
+	{
 		builtin_exit(mshell, NULL);
+	}
 	return (0);
 }
