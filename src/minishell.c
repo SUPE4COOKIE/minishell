@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/10 03:27:16 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/10 03:45:51 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,7 @@ int main(int argc, char **argv, char **envp)
 			if (parse(&mshell))
 				continue ;
 			if (exec(&mshell) != 0)
-			{
 				continue ;
-			}
 			free(mshell.line);
 			mshell.line = NULL;
 			free_cmds(mshell.cmds);

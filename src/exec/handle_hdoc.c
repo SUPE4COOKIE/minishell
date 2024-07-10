@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/10 03:38:51 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/10 04:11:50 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,40 +21,27 @@
  */
 int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 {
-	int initial_sig;
-
-	initial_sig = g_sig;
 	while (g_sig == 0)
 	{
 		signal(SIGINT, signal_here_doc);
 		rl_event_hook = event;
 		line = readline("> ");
 		if (!line)
-		{
 			if (g_sig == 0)
 				continue ;
-		}
 		if (g_sig != 0)
 		{
-			if (line)
-				free(line);
 			ft_printf("\n");
 			break ;
 		}
-		if (DEBUG)
-		{
-			printf("line = %s\n", line);
-			printf("cmd->infile[i] = %s\n", cmd->infile[i]);
-		}
 		if (ft_strncmp(line, cmd->infile[i], ft_strlen(cmd->infile[i]) + 1) == 0)
-		{
-			free(line);
 			break ;
-		}
 		ft_putendl_fd(line, fd);
 		free(line);
 	}
-	g_sig = initial_sig;
+	if (line)
+		free(line);
+	g_sig = 0;
 	return (0);
 }
 
