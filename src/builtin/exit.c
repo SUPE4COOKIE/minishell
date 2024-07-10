@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:04:04 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/09 22:57:36 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/10 05:48:54 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ int	builtin_exit(t_minishell *mshell, char **args)
 	{
 		status = mshell->last_exit_status;
 		is_between = get_is_between_cmd(mshell);
-		if (is_between)
-			ft_putstr_fd("exit\n", 2);
 		if (args[1] && isnumber(args[1]) == false)
 			status = 2;
 		else if (args[1])
