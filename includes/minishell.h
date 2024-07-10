@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/09 13:03:50 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/10 03:28:31 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ struct s_cmd
 };
 
 void print_cat(void);
+int event(void);
 int handle_dash_c(t_minishell *mshell, int argc, char **argv);
 # include "parsing.h"
 # include "utils.h"

@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/09 12:46:51 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/10 03:27:16 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ void signal_new_line(int sig)
 {
 	if (sig == SIGINT)
 	{
-		printf("\n");
-		rl_replace_line("", 0);
+		ft_printf("\n");
 		rl_on_new_line();
+		rl_replace_line("", 0);
 		rl_redisplay();
 		g_sig = SIGINT;
 	}
@@ -39,12 +39,12 @@ void	signal_here_doc(int signal)
 
 void	signal_exec(int signal)
 {
+	write(1, "\n", 1);
 	g_sig = signal;
 }
 
-int readline_event_hook(void)
+int event(void)
 {
-	signal(SIGINT, signal_here_doc);
 	return (0);
 }
 
@@ -74,8 +74,9 @@ int main(int argc, char **argv, char **envp)
 		{
 			signal(SIGINT, signal_new_line);
 			signal(SIGQUIT, signal_new_line);
-			
+			rl_event_hook = event;
 			mshell.line = readline("minishell$> ");
+			signal(SIGINT, signal_exec);
 			if (!mshell.line)
 				break ;
 			if (!is_valid_quotes(mshell.line, &mshell.last_exit_status))
@@ -93,9 +94,10 @@ int main(int argc, char **argv, char **envp)
 			if (parse(&mshell))
 				continue ;
 			if (exec(&mshell) != 0)
+			{
 				continue ;
+			}
 			free(mshell.line);
-			g_sig = 0;
 			mshell.line = NULL;
 			free_cmds(mshell.cmds);
 		}
