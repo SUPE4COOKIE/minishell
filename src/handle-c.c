@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 10:18:54 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/09 12:49:47 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 16:14:52 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int handle_dash_c(t_minishell *mshell, int argc, char **argv)
 {
-    if (argc > 1 && strcmp(argv[1], "-c") == 0)
+    if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
     {
         mshell->line = ft_strdup(argv[2]);
         //mshell->line[ft_strlen(mshell->line - 1)] = 0;
