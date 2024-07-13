@@ -57,6 +57,10 @@ int	change_to_specified(t_minishell *mshell, char *arg, bool is_slash)
 			path[0] = '/';
 			path[1] = '\0';
 		}
+		else
+		{
+			path = ft_strjoin("/", path);
+		}
 	}
 	if (!path)
 		return (0);
