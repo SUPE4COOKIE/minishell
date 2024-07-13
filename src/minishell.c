@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/13 15:58:50 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 16:14:58 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int main(int argc, char **argv, char **envp)
 	allocate_env(&mshell, envp);
 	save_path(&mshell, mshell.env); // TODO: protect
 	init(&mshell);
-	if (argc > 1 && strcmp(argv[1], "-c") == 0)
+	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
 	{
 		handle_dash_c(&mshell, argc, argv);
 		return (1);
