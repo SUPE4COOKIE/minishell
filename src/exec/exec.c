@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/10 04:12:37 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 13:14:39 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,7 @@ int	exec(t_minishell *mshell)
 		printf("\n");
 	else if (g_sig == SIGQUIT)
 	{
-		builtin_exit(mshell, NULL);
+		exit(1);
 	}
 	return (0);
 }

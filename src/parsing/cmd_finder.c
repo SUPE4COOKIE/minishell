@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_finder.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 20:55:03 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/24 08:21:12 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/13 12:52:15 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int is_full_path(t_cmd **cmd, int *exit_status)
 			if (!tmp)
 				exit(1); // TODO: add a proper exit struct
 			write(2, tmp, ft_strlen(tmp));
-			free(tmp);
+			free_null(tmp);
 			return (1);
 		}
 		if (access((*cmd)->cmd, F_OK) == 0 && access((*cmd)->cmd, X_OK) == 0)
@@ -55,7 +55,7 @@ static int is_full_path(t_cmd **cmd, int *exit_status)
 				exit(1); // TODO: add a proper exit struct
 			write(2, tmp, ft_strlen(tmp));
 			(*cmd)->is_valid_cmd = false;
-			free(tmp);
+			free_null(tmp);
 			return (2);
 		}
 		else
@@ -66,7 +66,7 @@ static int is_full_path(t_cmd **cmd, int *exit_status)
 				exit(1); // TODO: add a proper exit struct
 			write(2, tmp, ft_strlen(tmp));
 			(*cmd)->is_valid_cmd = false;
-			free(tmp);
+			free_null(tmp);
 			return (2);
 		}
 	}
@@ -86,7 +86,7 @@ static void cmd_no_path(t_cmd **cmd, char **path, int *exit_status)
 			if (!tmp)
 				exit(1); // TODO: add a proper exit struct
 			write(2, tmp, ft_strlen(tmp));
-			free(tmp);
+			free_null(tmp);
 			(*cmd)->is_valid_cmd = false;
 		}
 	}
@@ -105,8 +105,8 @@ static	void	cmd_not_found(t_cmd **cmd, int *exit_status)
 			if (!tmp)
 				exit(1); // TODO: add a proper exit struct
 			write(2, tmp, ft_strlen(tmp));
-			free(tmp);
-			free((*cmd)->cmd);
+			free_null(tmp);
+			free_null((*cmd)->cmd);
 			(*cmd)->is_valid_cmd = false;
 			(*cmd)->cmd = NULL;
 	}
@@ -123,13 +123,13 @@ static	int	cmd_for_path(t_cmd **cmd, char *path, int *exit_status)
 	ex_path = ft_strjoin(tmp, (*cmd)->cmd);
 	if (!ex_path)
 	{
-		free(tmp);
+		free_null(tmp);
 		exit(1); // TODO: add a proper exit struct
 	}
-	free(tmp);
+	free_null(tmp);
 	if (access(ex_path, F_OK) == 0 && access(ex_path, X_OK) == 0)
 	{
-		free((*cmd)->cmd);
+		free_null((*cmd)->cmd);
 		(*cmd)->cmd = ex_path;
 		(*cmd)->is_valid_cmd = true;
 		return (1);
@@ -142,12 +142,12 @@ static	int	cmd_for_path(t_cmd **cmd, char *path, int *exit_status)
 			exit(1); // TODO: add a proper exit struct
 		write(2, tmp, ft_strlen(tmp));
 		(*cmd)->is_valid_cmd = false;
-		free((*cmd)->cmd);
-		free(tmp);
+		free_null((*cmd)->cmd);
+		free_null(tmp);
 		(*cmd)->cmd = NULL;
 		return (1);
 	}
-	free(ex_path);
+	free_null(ex_path);
 	return (0);
 }
 

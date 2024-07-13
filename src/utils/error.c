@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:11:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/10 02:03:28 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 12:52:19 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,11 @@ int	error_msg_free(char *msg, void *ptr, void *ptr2, void *ptr3)
 		ft_putstr_fd("\n", STDERR_FILENO);
 	}
 	if (ptr)
-		free(ptr);
+		free_null(ptr);
 	if (ptr2)
-		free(ptr2);
+		free_null(ptr2);
 	if (ptr3)
-		free(ptr3);
+		free_null(ptr3);
 	return (EXIT_FAILURE);
 }
 
@@ -107,10 +107,10 @@ int free_tab(char **tab)
 		return (EXIT_FAILURE);
 	while (tab[i])
 	{
-		free(tab[i]);
+		free_null(tab[i]);
 		tab[i] = NULL;
 		i++;
 	}
-	free(tab);
+	free_null(tab);
 	return (EXIT_SUCCESS);
 }

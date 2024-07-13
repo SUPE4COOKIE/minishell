@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/25 12:04:43 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 12:52:17 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ t_lexer	*lexer_replacer(t_lexer *lex, char *value, t_lexer **origin)
 	last->space_after = lex->space_after;
 	if (after)
 		after->prev = last;
-	free(lex);
+	free_null(lex);
 	if (!before)
 		*origin = tmp;
 	return (last);
@@ -92,7 +92,7 @@ char	*var_replacer(t_lexer *var, char *value, size_t *iter)
 		(var->value)++;
 	}
 	result[i] = 0;
-	free(var_start);
+	free_null(var_start);
 	return (result);
 }
 
@@ -201,7 +201,7 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 					if (!var_name)
 						exit(1); // TODO: add a proper exit struct
 					var = var_finder(var_name, envp);
-					free(var_name);
+					free_null(var_name);
 					i--;
 					if (var)
 					{
@@ -209,7 +209,7 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 						{
 							replaced = var_replacer(tmp, var, &i);
 							tmp = lexer_replacer(tmp, replaced, lex);
-							free(replaced);
+							free_null(replaced);
 							break;
 						}
 						else
@@ -242,7 +242,7 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 					var = ft_itoa(last_exit_status);
 					tmp->value = var_replacer(tmp, var, &i);
 					i--;
-					free(var);
+					free_null(var);
 					continue;
 				}
 				//else if (tmp->value[i] == '$' && tmp->value[i + 1])

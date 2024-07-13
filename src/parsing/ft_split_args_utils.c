@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_args_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 17:50:34 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/05/10 03:58:02 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/13 12:52:16 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ void	free_str(char **split)
 		return ;
 	while (split[i])
 	{
-		free(split[i]);
+		free_null(split[i]);
 		i++;
 	}
-	free(split);
+	free_null(split);
 }
 
 int	is_in_quote(char c, char *in_quote)

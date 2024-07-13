@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 15:01:08 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/14 14:32:19 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 12:52:10 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int check_infiles(t_cmd *cmd)
 			if (!tmp)
 				exit(1); // TODO: add a proper exit struct
 			write(2, tmp, ft_strlen(tmp));
-			free(tmp);
+			free_null(tmp);
 			return (1);
 		}
 		access_status = access(cmd->infile[i], R_OK);
@@ -116,7 +116,7 @@ int	check_outfiles(t_cmd *cmd)
 			if (!tmp)
 				exit(1); // TODO: add a proper exit struct
 			write(2, tmp, ft_strlen(tmp));
-			free(tmp);
+			free_null(tmp);
 			return (1);
 		}
 		access_status = access(cmd->outfile[i], W_OK);

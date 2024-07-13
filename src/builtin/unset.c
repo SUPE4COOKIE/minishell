@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 15:08:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/05/30 15:11:18 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 12:52:09 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@ void	free_new_env(char **new_env, int count)
 {
 	while (count > 0)
 	{
-		free(new_env[count]);
+		free_null(new_env[count]);
 		count--;
 	}
-	free(new_env);
+	free_null(new_env);
 }
 
 char	**allocate_and_copy_env(char **env, int index)
@@ -60,8 +60,8 @@ char	**remove_env_var(char **env, int index)
 	if (!new_env)
 		return (NULL);
 	while (env[i])
-		free(env[i++]);
-	free(env);
+		free_null(env[i++]);
+	free_null(env);
 	return (new_env);
 }
 
@@ -88,12 +88,12 @@ int	get_index_env(char **env, char *var)
 	{
 		if (ft_strncmp(tmp, env[i], ft_strlen(tmp)) == 0)
 		{
-			free(tmp);
+			free_null(tmp);
 			return (i);
 		}
 		i++;
 	}
-	free(tmp);
+	free_null(tmp);
 	return (-1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 10:23:57 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/07/09 11:52:42 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 12:52:08 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	ft_addenv(t_minishell *mshell, char *key, char *value)
 	if (!temp)
 		return (free_tab(new_env), error_cmd(mshell, 1, "malloc failed"));
 	new_env[size] = ft_strjoin(temp, value);
-	free(temp);
+	free_null(temp);
 	if (!new_env[size])
 		return (free_tab(new_env), error_cmd(mshell, 1, "malloc failed"));
 	new_env[size + 1] = NULL;

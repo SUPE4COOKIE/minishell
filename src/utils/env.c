@@ -57,10 +57,11 @@ bool	update_existing_env(char ***env, char *key, char *value, int index)
 	tmp = ft_strjoin(new_env, value);
 	if (!tmp)
 	{
-		free(new_env);
+		free_null(new_env);
 		return (EXIT_FAILURE);
 	}
-	free(new_env);
+	free_null(new_env);
+	free_null((*env)[index]);
 	(*env)[index] = tmp;
 	return (EXIT_SUCCESS);
 }
@@ -76,6 +77,5 @@ bool	set_env(char ***env, char *key, char *value)
 			return (update_existing_env(env, key, value, i));
 		i++;
 	}
-	//printf("key: %s\n", key);
 	return (add_new_env_var(env, key, value, i));
 }
