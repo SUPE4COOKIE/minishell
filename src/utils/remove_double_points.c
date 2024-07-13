@@ -63,7 +63,10 @@ char	*remove_double_point(char *path)
 	if (new_args != NULL)
 		new_path = lst_to_path(new_args);
 	else
+	{
+		free(path);
 		new_path = NULL;
+	}
 	free_lst(new_args);
 	return (new_path);
 }

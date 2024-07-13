@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:04:04 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/13 13:47:59 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 18:34:25 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	builtin_exit(t_minishell *mshell, char **args)
 		else if (args[1])
 			status = ft_atoi(args[1]);
 		if (args[1] && args[2])
-			return (error_cmd(mshell, 1, "exit: too many arguments"));
+			return (error_cmd(mshell, 2, "exit: too many arguments"));
 		exit(free_shell(mshell, status));
 	}
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 20:55:03 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/13 12:52:15 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 17:27:52 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ static int is_full_path(t_cmd **cmd, int *exit_status)
 		{
 			(*cmd)->is_valid_cmd = false;
 			perror((*cmd)->cmd);
+			*exit_status = 127;
 			return (1);
 		}
 		if (((buf.st_mode) & 0170000) == (0040000))

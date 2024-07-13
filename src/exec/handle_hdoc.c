@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/13 13:25:51 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 17:16:41 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,10 @@ int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 	{
 		signal(SIGINT, signal_here_doc);
 		rl_event_hook = event;
-		line = readline("> ");
+		if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO) && isatty(STDERR_FILENO))
+			line = readline("> ");
+		else
+			line = get_next_line(STDIN_FILENO);
 		if (!line)
 			if (g_sig == 0)
 				break ;
