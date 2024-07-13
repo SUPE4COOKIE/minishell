@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/25 11:45:02 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 14:26:17 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,33 +46,34 @@ char	*cmd_type_to_str(t_cmd_type type)
 	return ("UNDEFINED");
 }
 
+
 void	free_cmd(t_cmd *cmd)
 {
 	if (!cmd)
 		return ;
 	if (cmd->cmd)
-		free(cmd->cmd);
+		free_null(cmd->cmd);
 	if (cmd->args)
 	{
 		for (int i = 0; cmd->args[i]; i++)
-			free(cmd->args[i]);
-		free(cmd->args);
+			free_null(cmd->args[i]);
+		free_null(cmd->args);
 	}
 	if (cmd->op_type[0] != UNDEFINED && cmd->infile)
 	{
 		for (int i = 0; cmd->infile[i]; i++)
-			free(cmd->infile[i]);
-		free(cmd->infile);
+			free_null(cmd->infile[i]);
+		free_null(cmd->infile);
 	}
 	if (cmd->op_type[1] != UNDEFINED && cmd->outfile)
 	{
 		for (int i = 0; cmd->outfile[i]; i++)
-			free(cmd->outfile[i]);
-		free(cmd->outfile);
+			free_null(cmd->outfile[i]);
+		free_null(cmd->outfile);
 	}
 	if (cmd->type_chain)
-		free(cmd->type_chain);
-	free(cmd);
+		free_null(cmd->type_chain);
+	free_null(cmd);
 }
 
 void	free_cmds(t_cmd *cmd)
@@ -312,7 +313,7 @@ void	append_type(t_cmd_type **type_chain, t_cmd_type type)
 	}
 	new[i] = type;
 	new[i + 1] = UNDEFINED;
-	free(*type_chain);
+	free_null(*type_chain);
 	*type_chain = new;
 }
 

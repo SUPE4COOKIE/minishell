@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/10 05:21:30 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 15:58:50 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,23 +72,23 @@ int main(int argc, char **argv, char **envp)
 	}
 	else
 	{
-		while (g_sig != SIGQUIT)
+		while (42)
 		{
 			signal(SIGINT, signal_new_line);
 			signal(SIGQUIT, signal_new_line);
 			rl_event_hook = event;
 			mshell.line = readline("minishell$> ");
 			signal(SIGINT, signal_exec);
-			if (!mshell.line)
-				break ;
+			if (!mshell.line || g_sig == SIGQUIT)
+				return (free_env_path(&mshell), printf("exit\n"), mshell.last_exit_status);
 			if (!is_valid_quotes(mshell.line, &mshell.last_exit_status))
 			{
-				free(mshell.line);
-				continue;
+				free_null(mshell.line);
+				continue ;
 			}
 			if (is_n_only_spaces(mshell.line, ft_strlen(mshell.line)) == 1)
 			{
-				free(mshell.line);
+				free_null(mshell.line);
 				continue ;
 			}
 			if (*mshell.line)
@@ -97,11 +97,10 @@ int main(int argc, char **argv, char **envp)
 				continue ;
 			if (exec(&mshell) != 0)
 				continue ;
-			free(mshell.line);
+			free_null(mshell.line);
 			mshell.line = NULL;
 			free_cmds(mshell.cmds);
 		}
 	}
-	free_mshell(&mshell);
 	return (0);
 }

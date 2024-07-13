@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit_free.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/23 22:16:55 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/23 22:22:15 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/13 13:07:28 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,5 +16,5 @@ void	free_mshell(t_minishell *mshell)
 {
 	free_env_path(mshell);
 	free_cmds(mshell->cmds);
-	free(mshell->line);
+	free_null(mshell->line);
 }

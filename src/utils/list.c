@@ -15,7 +15,7 @@ void tab_to_lst(t_arg **new_args, char **tab)
 		new_arg->arg = ft_strdup(tab[i]);
 		if (!new_arg->arg)
 		{
-			free(new_arg);
+			free_null(new_arg);
 			return ;
 		}
 		new_arg->next = NULL;
@@ -34,7 +34,7 @@ void tab_to_lst(t_arg **new_args, char **tab)
 	}
 }
 
-char *lst_to_path(t_arg *new_args, bool is_absolute)
+char *lst_to_path(t_arg *new_args)
 {
 	t_arg *tmp;
 	char *path;
@@ -42,8 +42,6 @@ char *lst_to_path(t_arg *new_args, bool is_absolute)
 
 	path = NULL;
 	tmp = new_args;
-	if (!tmp || is_absolute == true)
-		path = ft_strdup("/");
 	while (tmp)
 	{
 		if (!path)
@@ -53,9 +51,9 @@ char *lst_to_path(t_arg *new_args, bool is_absolute)
 		else
 		{
 			tmp_path = ft_strjoin(path, "/");
-			free(path);
+			free_null(path);
 			path = ft_strjoin(tmp_path, tmp->arg);
-			free(tmp_path);
+			free_null(tmp_path);
 		}
 		tmp = tmp->next;
 	}
@@ -70,8 +68,8 @@ void free_lst(t_arg *new_args)
 	{
 		tmp = new_args;
 		new_args = new_args->next;
-		free(tmp->arg);
-		free(tmp);
+		free_null(tmp->arg);
+		free_null(tmp);
 	}
 }
 
@@ -91,6 +89,6 @@ void remove_nodes(t_arg **head, t_arg *node)
 			node->next->prev = node->prev;
 	}
 	if (node->arg)
-		free(node->arg);
-	free(node);
+		free_null(node->arg);
+	free_null(node);
 }

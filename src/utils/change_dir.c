@@ -41,15 +41,26 @@ int	change_to_oldpwd(t_minishell *mshell)
 	return (change_dir(mshell, path));
 }
 
-int	change_to_specified(t_minishell *mshell, char *arg)
+int	change_to_specified(t_minishell *mshell, char *arg, bool is_slash)
 {
 	char	*path;
 	int		result;
 
 	path = remove_double_point(arg);
+	if (is_slash == true)
+	{
+		if (!path)
+		{
+			path = malloc(2 * sizeof(char));
+			if (!path)
+				return (error_cmd(mshell, 1, "cd: malloc failed"));
+			path[0] = '/';
+			path[1] = '\0';
+		}
+	}
 	if (!path)
 		return (0);
 	result = change_dir(mshell, path);
-	free(path);
+	free_null(path);
 	return (result);
 }

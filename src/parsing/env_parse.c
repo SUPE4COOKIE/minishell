@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_parse.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 16:40:14 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/26 15:12:23 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/13 12:52:16 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,20 +45,20 @@ void	free_env_path(t_minishell *mshell)
 	{
 		while (mshell->env[i])
 		{
-			free(mshell->env[i]);
+			free_null(mshell->env[i]);
 			i++;
 		}
-		free(mshell->env);
+		free_null(mshell->env);
 	}
 	i = 0;
 	if (mshell->path)
 	{
 		while (mshell->path[i])
 		{
-			free(mshell->path[i]);
+			free_null(mshell->path[i]);
 			i++;
 		}
-		free(mshell->path);
+		free_null(mshell->path);
 	}
 }
 
@@ -70,7 +70,7 @@ static int	parse_path(t_minishell *mshell, char *env)
 	if (!path)
 		return (1); // TODO: add a free struct
 	mshell->path = ft_split(path, ':');
-	free(path);
+	free_null(path);
 	if (!mshell->path)
 		return (1); // TODO: add a free struct
 	return (0);

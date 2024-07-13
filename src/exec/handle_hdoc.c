@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/10 04:11:50 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/13 13:25:51 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 		line = readline("> ");
 		if (!line)
 			if (g_sig == 0)
-				continue ;
+				break ;
 		if (g_sig != 0)
 		{
 			ft_printf("\n");
@@ -37,10 +37,10 @@ int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 		if (ft_strncmp(line, cmd->infile[i], ft_strlen(cmd->infile[i]) + 1) == 0)
 			break ;
 		ft_putendl_fd(line, fd);
-		free(line);
+		free_null(line);
 	}
 	if (line)
-		free(line);
+		free_null(line);
 	g_sig = 0;
 	return (0);
 }
@@ -67,7 +67,7 @@ int	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
 			error_pipe("open failed", new, old, cmd);
 		if (read_the_line(line, fd, cmd, i) == 1)
 			return (free_tab(tmp_filename), 1);
-		free(cmd->infile[i]);
+		free_null(cmd->infile[i]);
 		cmd->infile[i] = ft_strdup(tmp_filename[i]);
 		close(fd);
 		i++;

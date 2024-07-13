@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/24 08:49:13 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/13 12:52:18 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ int	new_lexer(t_lexer **lex, char *line, size_t size)
 		ft_strlcpy(new->value, line, size + 1); //TODO: check return
 		trim = new->value;
 		new->value = ft_strtrim(new->value, " "); // TODO: check return
-		free(trim);
+		free_null(trim);
 	}
 	new->type = get_lexer_type(line);
 	append_new_lexer(lex, &new);
@@ -192,8 +192,8 @@ void	free_lexer(t_lexer *lex)
 	{
 		tmp = lex;
 		lex = lex->next;
-		free(tmp->value);
-		free(tmp);
+		free_null(tmp->value);
+		free_null(tmp);
 	}
 }
 
@@ -233,8 +233,8 @@ t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete)
 	if (tmp == to_delete)
 	{
 		*lex = tmp->next;
-		free(tmp->value);
-		free(tmp);
+		free_null(tmp->value);
+		free_null(tmp);
 		return (NULL);
 	}
 	while (tmp && tmp != to_delete)
@@ -249,8 +249,8 @@ t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete)
 		}
 		if (tmp->next)
 			tmp->next->prev = tmp->prev;
-		free(tmp->value);
-		free(tmp);
+		free_null(tmp->value);
+		free_null(tmp);
 	}
 	return (*lex);
 }
