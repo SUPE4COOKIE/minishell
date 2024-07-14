@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/27 19:01:55 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/14 11:46:27 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,12 +123,22 @@ int	split_remaining(t_lexer **lex, char *line, size_t size)
 	return (0);
 }
 
+size_t	skip_whitespaces(char *line, size_t size)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < size && ft_iswhitespace(line[i]))
+		i++;
+	return (i);
+}
+
 int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 {
 	size_t	i;
 	int		error_code;
 
-	i = 0;
+	i = skip_whitespaces(line, size);
 	while (i < size)
 	{
 		if (ft_iswhitespace(line[i]))

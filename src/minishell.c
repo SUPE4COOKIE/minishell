@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/27 16:59:55 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/14 11:22:39 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ int main(int argc, char **argv, char **envp)
 			g_sig = 0;
 			mshell.line = readline("minishell$ ");
 			if (!mshell.line)
-				break ;
+				return (free_env_path(&mshell), mshell.last_exit_status);
 			if (!is_valid_quotes(mshell.line, &mshell.last_exit_status))
 			{
 				free(mshell.line);
@@ -144,6 +144,5 @@ int main(int argc, char **argv, char **envp)
 			free_cmds(mshell.cmds);
 		}
 	}
-	free_mshell(&mshell);
 	return 0;
 }

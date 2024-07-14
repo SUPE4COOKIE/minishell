@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 21:26:52 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/26 16:11:22 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/14 11:20:57 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,12 @@
 
 static inline bool syntax_error(char *message, int *status_code)
 {
-	printf("minishell: syntax error near unexpected token `%s'\n", message);
+	size_t	size;
+
+	size = 49 + ft_strlen(message);
+	write(2, "minishell: syntax error near unexpected token `", 47);
+	write(2, message, ft_strlen(message));
+	write(2, "'\n", 2);
 	*status_code = 2;
 	return (false);
 }
