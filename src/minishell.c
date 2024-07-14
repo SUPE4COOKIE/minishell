@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/13 17:15:20 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/14 17:24:45 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,10 @@ int main(int argc, char **argv, char **envp)
 			signal(SIGINT, signal_new_line);
 			signal(SIGQUIT, signal_new_line);
 			rl_event_hook = event;
-			if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO) && isatty(STDERR_FILENO))
+			//if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO) && isatty(STDERR_FILENO))
 				mshell.line = readline("minishell$> ");
-			else
-				mshell.line = get_next_line(STDIN_FILENO);
+			//else
+			//	mshell.line = get_next_line(STDIN_FILENO);
 			signal(SIGINT, signal_exec);
 			if (!mshell.line || g_sig == SIGQUIT)
 				return (free_env_path(&mshell), printf("exit\n"), mshell.last_exit_status);

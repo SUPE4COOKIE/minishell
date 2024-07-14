@@ -8,8 +8,7 @@ bool	change_dir(t_minishell *mshell, char *path)
 		printf("path: %s\n", path);
 	if (chdir(path) != 0)
 		return (error_cmd(mshell, 1, "cd: no such file or directory"));
-	getcwd(cwd, PATH_MAX);
-	if (cwd[0] == '\0')
+	if (!getcwd(cwd, PATH_MAX))
 		return (error_cmd(mshell, 1, "cd: getcwd failed"));
 	if (set_env(&mshell->env, "OLDPWD", \
 			get_path(mshell->env, "PWD")) == EXIT_FAILURE)
