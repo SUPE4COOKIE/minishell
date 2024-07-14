@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/13 13:14:39 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/14 17:28:47 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 	{
 		if (dup2(new[1], STDOUT_FILENO) == -1)
 		{
-			perror("dup2(2) failed");
+			perror("dup2 failed");
 			exit(EXIT_FAILURE);
 		}
 		if (new[0] != -1)
@@ -156,7 +156,6 @@ int	exec(t_minishell *mshell)
 	if (init_exec(old, new, mshell) == 1)
 		return (1);
 	process_commands(mshell, old, new);
-	ft_close(old, new);
 	while (i < size)
 	{
 		if (waitpid(-1 , &status, 0) == mshell->last_pid)
@@ -170,9 +169,6 @@ int	exec(t_minishell *mshell)
 	}
 	if (g_sig == SIGINT)
 		printf("\n");
-	else if (g_sig == SIGQUIT)
-	{
-		exit(1);
-	}
+	ft_close(old, new);
 	return (0);
 }
