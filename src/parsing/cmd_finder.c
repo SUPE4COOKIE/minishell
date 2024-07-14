@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 20:55:03 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/28 14:42:54 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/14 13:26:46 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,11 @@ int	dir_error(t_cmd **cmd, int *exit_status)
 		return (1);
 	}
 	return (0);
+}
+
+bool	is_point(t_cmd **cmd)
+{
+	return (!ft_strncmp((*cmd)->cmd, ".", 2) || !ft_strncmp((*cmd)->cmd, "..", 3));
 }
 
 int	error_permissions(t_cmd **cmd, int *exit_status)
@@ -107,7 +112,7 @@ static	void	cmd_not_found(t_cmd **cmd, int *exit_status)
 {
 	if (!(*cmd)->cmd || is_builtin((*cmd)->cmd))
 		return ;
-	if (!ft_strnstr((*cmd)->cmd, "/", ft_strlen((*cmd)->cmd)))
+	if (!ft_strnstr((*cmd)->cmd, "/", ft_strlen((*cmd)->cmd)) || is_point(cmd))
 			error_command_not_found(cmd, exit_status);
 }
 
@@ -143,7 +148,7 @@ int get_cmd_path(t_cmd **cmd, char **path, int *exit_status)
 {
 	*exit_status = 0;
 	cmd_no_path(cmd, path, exit_status);
-	if ((*cmd)->cmd && !is_full_path(cmd, exit_status))
+	if ((*cmd)->cmd && !is_full_path(cmd, exit_status) && !is_point(cmd))
 	{
 		while (path && *path)
 		{
