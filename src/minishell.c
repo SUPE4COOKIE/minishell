@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/14 14:27:40 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/14 16:06:09 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,5 +144,6 @@ int main(int argc, char **argv, char **envp)
 			free_cmds(mshell.cmds);
 		}
 	}
+	free_mshell(&mshell);
 	return 0;
 }

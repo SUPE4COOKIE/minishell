@@ -215,7 +215,7 @@ FILE DESCRIPTORS: 3 open (3 std) at exit.
 
 HEAP SUMMARY:
     in use at exit: 0 bytes in 0 blocks
-  total heap usage: 332 allocs, 332 frees, 12,823 bytes allocated
+  total heap usage: 335 allocs, 335 frees, 12,983 bytes allocated
 
 All heap blocks were freed -- no leaks are possible
 
