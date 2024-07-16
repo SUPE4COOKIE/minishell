@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/14 14:15:36 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/16 16:04:09 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,9 @@ typedef struct s_minishell
 	int		last_exit_status;
 	bool	in_heredoc;
 	int		last_pid;
+	int		original_stdout;
+	int		original_stdin;
+	char	*invalid_redir;
 	t_cmd	*cmds;
 }				t_minishell;
 
