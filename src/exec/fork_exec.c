@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:19:44 by scrumier          #+#    #+#             */
-/*   Updated: 2024/06/14 14:35:10 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/16 14:51:26 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
  */
 void	close_and_cpy(int old[2], int new[2], int i)
 {
-	close_old(i, old);
 	(void)i;
+	close_old(i, old);
 	old[0] = new[0];
 	old[1] = new[1];
 }
@@ -46,7 +46,8 @@ void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 	if (is_builtin(cmd->cmd) == false || \
 			(is_builtin(cmd->cmd) == true && cmd->next))
 			id = fork();
-	mshell->last_pid = id;
+	if (id != 0)
+		mshell->last_pid = id;
 	if (id == -1)
 		error_pipe("fork failed", new, old, cmd);
 	if (id == 0)
