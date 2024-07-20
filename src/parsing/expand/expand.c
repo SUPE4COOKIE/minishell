@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/06/25 12:04:43 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/20 22:03:21 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_lexer	*lexer_replacer(t_lexer *lex, char *value, t_lexer **origin)
 
 	tmp = lexer(value);
 	if (!tmp)
-		exit(1); // TODO: add a proper exit struct
+		return (NULL);
 	before = lex->prev;
 	after = lex->next;
 	if (before)
@@ -43,6 +43,44 @@ t_lexer	*lexer_replacer(t_lexer *lex, char *value, t_lexer **origin)
 	return (last);
 }
 
+void	skip_var(char **var_value)
+{
+	while (**var_value && **var_value == '$')
+		(*var_value)++;
+	if (**var_value && **var_value != '?')
+	{
+		while (ft_isalpha(**var_value) || **var_value == '_' || ft_isdigit(**var_value))
+		{
+			(*var_value)++;
+			if (ft_isdigit(*((*var_value) - 1)) && *((*var_value) - 2) == '$')
+				break;
+		}
+	}
+	else if (**var_value == '?')
+		(*var_value)++;
+}
+
+void	copy_value(char **result, char **value, size_t *iter, size_t *i)
+{
+	while (*value && **value)
+	{
+		(*result)[*i] = **value;
+		(*iter)++;
+		(*i)++;
+		(*value)++;
+	}
+}
+
+void	copy_var(char **result, char **var_value, size_t *i)
+{
+	while (**var_value)
+	{
+		(*result)[*i] = **var_value;
+		(*i)++;
+		(*var_value)++;
+	}
+}
+
 char	*var_replacer(t_lexer *var, char *value, size_t *iter)
 {
 	char *result;
@@ -50,47 +88,23 @@ char	*var_replacer(t_lexer *var, char *value, size_t *iter)
 	size_t i;
 
 	result = malloc(ft_strlen(var->value) + ft_strlen(value) + 1);
+	if (!result)
+		return (NULL);
 	i = 0;
 	var_start = var->value;
 	while (*(var->value))
 	{
 		if (*(var->value) == '$' && *(var->value + 1))
 		{
-			while (*(var->value) && *(var->value) == '$')
-				(var->value)++;
-			if (*(var->value) && *(var->value) != '?')
-			{
-				while ((ft_isalpha(*(var->value)) || *(var->value) == '_' || ft_isdigit(*(var->value))))
-				{				
-					(var->value)++;
-					if (ft_isdigit(*((var->value) - 1)) && *((var->value) - 2) == '$')
-						break;
-				}
-			}
-			else if (*(var->value) == '?')
-				(var->value)++;
-			while (value && *value)
-			{
-				result[i] = *value;
-				(*iter)++;
-				i++;
-				value++;
-			}
+			skip_var(&(var->value));
+			copy_value(&result, &value, iter, &i);
 			break;
 		}
-		else
-		{
-			result[i] = *(var->value);
-			i++;
-			(var->value)++;
-		}
-	}
-	while (*(var->value))
-	{
 		result[i] = *(var->value);
 		i++;
 		(var->value)++;
 	}
+	copy_var(&result, &(var->value), &i);
 	result[i] = 0;
 	free(var_start);
 	return (result);
@@ -124,7 +138,7 @@ char	*get_name(char *str)
 		i++;
 	name = ft_substr(str, 0, i);
 	if (!name)
-		exit(1); // TODO: add a proper exit struct
+		return (NULL);
 	return (name);
 }
 
@@ -176,7 +190,9 @@ bool	is_other_cmd(t_lexer *lex)
 	return (false);
 }
 
-int expand(t_lexer **lex, char **envp, int last_exit_status)
+
+
+int expoud(t_lexer **lex, char **envp, int last_exit_status)
 {
 	t_lexer	*tmp;
 	size_t	i;
@@ -199,7 +215,7 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 					i++;
 					var_name = get_name(tmp->value + i);
 					if (!var_name)
-						exit(1); // TODO: add a proper exit struct
+						return (-1);
 					var = var_finder(var_name, envp);
 					free(var_name);
 					i--;
@@ -208,25 +224,35 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 						if (tmp->type == T_WORD && var && contain_spaced_words(var))
 						{
 							replaced = var_replacer(tmp, var, &i);
+							if (!replaced)
+								return (free(var), -1);
 							tmp = lexer_replacer(tmp, replaced, lex);
+							if (!tmp)
+								return (free(var), free(replaced), -1);
 							free(replaced);
 							break;
 						}
 						else
 						{
 							tmp->value = var_replacer(tmp, var, &i);
+							if (!tmp->value)
+								return (free(var), -1);
 						}
 					}
-					else //humm might delete
+					else
 					{
 						if (tmp->type == T_WORD && var && contain_spaced_words(var))
 						{
 							tmp = lexer_replacer(tmp, NULL, lex);
+							if (!tmp)
+								return (free(var), -1);
 							break;
 						}
 						else
 						{
 							tmp->value = var_replacer(tmp, var, &i);
+							if (!tmp->value)
+								return (free(var), -1);
 						}
 					}
 					if (!tmp->value || (tmp->value && !tmp->value[0]))
@@ -240,13 +266,15 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 				{
 					i++;
 					var = ft_itoa(last_exit_status);
+					if (!var)
+						return (-1);
 					tmp->value = var_replacer(tmp, var, &i);
+					if (!tmp->value)
+						return (free(var), -1);
 					i--;
 					free(var);
 					continue;
 				}
-				//else if (tmp->value[i] == '$' && tmp->value[i + 1])
-				//	tmp->value = var_replacer(tmp, NULL, &i);
 				i++;
 			}
 		}
@@ -254,4 +282,109 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 			tmp = tmp->next;
 	}
 	return (0);
+}
+
+int	get_var_value(t_lexer **lex, char **var, size_t *i, char **envp)
+{
+	char	*var_name;
+	t_lexer	*tmp;
+
+	if (tmp->value[*i] == '$' && tmp->value[*i + 1] && 
+			(ft_isalpha(tmp->value[*i + 1]) || tmp->value[*i + 1] == '_'))
+	{
+		tmp = *lex;
+		(*i)++;
+		var_name = get_name(tmp->value + *i);
+		if (!var_name)
+			return (-1);
+		*var = var_finder(var_name, envp);
+		free(var_name);
+		(*i)--;
+	}
+	return (0);
+}
+
+int	existing_var(t_lexer **lex, size_t *i, char **var)
+{
+	if (*var)
+	{
+		if ((*lex)->type == T_WORD && *var && contain_spaced_words(*var))
+		{
+			
+			break ;
+		}
+		else
+				
+	}
+	else
+	{
+		if (tmp->type == T_WORD && var && contain_spaced_words(var))
+		{
+			
+			break;
+		}
+		else
+			
+	}
+	if (!tmp->value || (tmp->value && !tmp->value[0]))
+	{
+		tmp = delete_lexer(lex, tmp);
+		break;
+	}
+	return (2);
+}
+
+int var_manager(t_lexer **lex, size_t *i, char **var, char **envp) // int last_exit_status
+{
+	t_lexer *tmp;
+
+	tmp = *lex;
+	if (tmp->value[*i] == '$' && tmp->value[*i + 1] && 
+			(ft_isalpha(tmp->value[*i + 1]) || tmp->value[*i + 1] == '_'))
+	{
+		
+	}
+	return (0);
+}
+// var found
+//var not found
+// $?
+int	lexer_iter(t_lexer **lex, size_t *i, char **envp)
+{
+	t_lexer	*tmp;
+	char	*var;
+	int		var_return;
+
+	tmp = *lex;
+	while (tmp && (tmp->value && ft_strlen(tmp->value) > i))
+	{
+			if (!get_var_value(lex, &var, i, envp))
+				return (-1);
+			var_return = var_manager(lex, i, &var, envp);
+			if (var_return == 1)
+				break ;
+			else if (var_return == 2)
+				continue ;
+			else if (var_return == -1)
+				return (-1);
+	}
+	return (0);
+}
+
+int expand(t_lexer **lex, char **envp, int last_exit_status)
+{
+	t_lexer	*tmp;
+	size_t	i;
+
+	tmp = *lex;
+	while (tmp)
+	{
+		i = 0;
+		if (tmp && (tmp->type == T_WORD || tmp->type == T_D_QUOTED_WORD))
+		{
+			lexer_iter(lex, &i, envp);
+		}
+		if (tmp)
+			tmp = tmp->next;
+	}
 }
