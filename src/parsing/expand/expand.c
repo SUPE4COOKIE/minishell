@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/20 22:03:21 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/21 18:04:27 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,6 +289,8 @@ int	get_var_value(t_lexer **lex, char **var, size_t *i, char **envp)
 	char	*var_name;
 	t_lexer	*tmp;
 
+	tmp = *lex;
+	printf("tmp->value[*i] = %c\n", tmp->value[*i]);
 	if (tmp->value[*i] == '$' && tmp->value[*i + 1] && 
 			(ft_isalpha(tmp->value[*i + 1]) || tmp->value[*i + 1] == '_'))
 	{
@@ -304,37 +306,69 @@ int	get_var_value(t_lexer **lex, char **var, size_t *i, char **envp)
 	return (0);
 }
 
-int	existing_var(t_lexer **lex, size_t *i, char **var)
+int existing_var(t_lexer **lex, size_t *i, char **var)
 {
-	if (*var)
+	t_lexer	*tmp = *lex;
+	char	*replaced;
+
+	if (tmp->type == T_WORD && *var && contain_spaced_words(*var))
 	{
-		if ((*lex)->type == T_WORD && *var && contain_spaced_words(*var))
-		{
-			
-			break ;
-		}
-		else
-				
+		replaced = var_replacer(tmp, *var, i);
+		if (!replaced)
+			return (free(*var), -1);
+		tmp = lexer_replacer(tmp, replaced, lex);
+		if (!tmp)
+			return (free(*var), free(replaced), -1);
+		free(replaced);
+		return (1);
 	}
 	else
 	{
-		if (tmp->type == T_WORD && var && contain_spaced_words(var))
-		{
-			
-			break;
-		}
-		else
-			
+		tmp->value = var_replacer(tmp, *var, i);
+		if (!tmp->value)
+			return (free(*var), -1);
 	}
+	return (0);
+}
+
+int inexistant_var(t_lexer **lex, size_t *i, char **var)
+{
+	t_lexer	*tmp = *lex;
+
+	if (tmp->type == T_WORD && *var && contain_spaced_words(*var))
+	{
+		tmp = lexer_replacer(tmp, NULL, lex);
+		if (!tmp)
+			return (free(*var), -1);
+		return (1);
+	}
+	else
+	{
+		tmp->value = var_replacer(tmp, *var, i);
+		if (!tmp->value)
+			return (free(*var), -1);
+	}
+	return (0);
+}
+
+int	var_replace_manager(t_lexer **lex, size_t *i, char **var)
+{
+	t_lexer	*tmp;
+
+	tmp = *lex;
+	if (*var)
+		return (existing_var(lex, i, var));
+	else
+		return (inexistant_var(lex, i, var));
 	if (!tmp->value || (tmp->value && !tmp->value[0]))
 	{
 		tmp = delete_lexer(lex, tmp);
-		break;
+		return (1);
 	}
 	return (2);
 }
 
-int var_manager(t_lexer **lex, size_t *i, char **var, char **envp) // int last_exit_status
+int var_manager(t_lexer **lex, size_t *i, char **var, int last_exit_status)
 {
 	t_lexer *tmp;
 
@@ -342,25 +376,37 @@ int var_manager(t_lexer **lex, size_t *i, char **var, char **envp) // int last_e
 	if (tmp->value[*i] == '$' && tmp->value[*i + 1] && 
 			(ft_isalpha(tmp->value[*i + 1]) || tmp->value[*i + 1] == '_'))
 	{
-		
+		return (var_replace_manager(lex, i, var));
 	}
+	else if (tmp->value[*i] == '$' && tmp->value[*i + 1] == '?')
+	{
+		(*i)++;
+		*var = ft_itoa(last_exit_status);
+		if (!(*var))
+			return (-1);
+		tmp->value = var_replacer(tmp, *var, i);
+		if (!tmp->value)
+			return (free(var), -1);
+		(*i)--;
+		free(*var);
+		return (2);
+	}
+	(*i)++;
 	return (0);
 }
-// var found
-//var not found
-// $?
-int	lexer_iter(t_lexer **lex, size_t *i, char **envp)
+
+int	lexer_iter(t_lexer **lex, size_t *i, char **envp, int last_exit_status)
 {
 	t_lexer	*tmp;
 	char	*var;
 	int		var_return;
 
 	tmp = *lex;
-	while (tmp && (tmp->value && ft_strlen(tmp->value) > i))
+	while (tmp && (tmp->value && ft_strlen(tmp->value) > (*i)))
 	{
-			if (!get_var_value(lex, &var, i, envp))
+			if (get_var_value(lex, &var, i, envp) == -1)
 				return (-1);
-			var_return = var_manager(lex, i, &var, envp);
+			var_return = var_manager(lex, i, &var, last_exit_status);
 			if (var_return == 1)
 				break ;
 			else if (var_return == 2)
@@ -375,16 +421,17 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 {
 	t_lexer	*tmp;
 	size_t	i;
+	int		return_value;
 
 	tmp = *lex;
+	return_value = 0;
 	while (tmp)
 	{
 		i = 0;
 		if (tmp && (tmp->type == T_WORD || tmp->type == T_D_QUOTED_WORD))
-		{
-			lexer_iter(lex, &i, envp);
-		}
+			return_value = lexer_iter(lex, &i, envp, last_exit_status);
 		if (tmp)
 			tmp = tmp->next;
 	}
+	return (return_value);
 }

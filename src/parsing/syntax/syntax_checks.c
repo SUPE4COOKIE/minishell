@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_checks.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 21:26:52 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/14 11:20:57 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/21 17:43:02 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,6 @@
 
 static inline bool syntax_error(char *message, int *status_code)
 {
-	size_t	size;
-
-	size = 49 + ft_strlen(message);
 	write(2, "minishell: syntax error near unexpected token `", 47);
 	write(2, message, ft_strlen(message));
 	write(2, "'\n", 2);
