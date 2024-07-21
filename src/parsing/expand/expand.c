@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/21 18:04:27 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/07/21 19:04:12 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,7 +290,6 @@ int	get_var_value(t_lexer **lex, char **var, size_t *i, char **envp)
 	t_lexer	*tmp;
 
 	tmp = *lex;
-	printf("tmp->value[*i] = %c\n", tmp->value[*i]);
 	if (tmp->value[*i] == '$' && tmp->value[*i + 1] && 
 			(ft_isalpha(tmp->value[*i + 1]) || tmp->value[*i + 1] == '_'))
 	{
@@ -429,9 +428,13 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 	{
 		i = 0;
 		if (tmp && (tmp->type == T_WORD || tmp->type == T_D_QUOTED_WORD))
-			return_value = lexer_iter(lex, &i, envp, last_exit_status);
+		{
+			return_value = lexer_iter(&tmp, &i, envp, last_exit_status);
+		}
 		if (tmp)
 			tmp = tmp->next;
 	}
 	return (return_value);
 }
+
+
