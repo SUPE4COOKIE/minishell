@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 15:48:43 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 16:46:53 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,8 +125,15 @@ int	handle_heredoc_operations(t_cmd *cmd, int old[2], int new[2], \
 int	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
 {
 	char	**tmp_filename;
+	t_cmd	*tmp;
 
-	generate_unique_filenames(cmd, &tmp_filename, old, new);
+	tmp = cmd;
+	while (tmp)
+	{
+		if (tmp->op_type[0] == HDOC)
+			generate_unique_filenames(cmd, &tmp_filename, old, new);
+		tmp = tmp->next;
+	}
 	if (handle_heredoc_operations(cmd, old, new, tmp_filename))
 		return (1);
 	return (0);
