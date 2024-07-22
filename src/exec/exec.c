@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/16 17:53:40 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 14:06:54 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,15 +55,15 @@ void exec_cmd(t_minishell *mshell, t_cmd *cmd) {
 			execve(cmd->cmd, cmd->args, mshell->env);
 		}
 	}
-	if (dup2(STDOUT_FILENO, mshell->original_stdout) == -1) {
+	if (dup2(mshell->original_stdout, STDOUT_FILENO) == -1) {
 		perror("dup2 failed1");
 		exit(EXIT_FAILURE);
 	}
+	close(mshell->original_stdout);
 	if (dup2(mshell->original_stdin, STDIN_FILENO) == -1) {
 		perror("dup2 failed2");
 		exit(EXIT_FAILURE);
 	}
-	close(mshell->original_stdout);
 	close(mshell->original_stdin);
 }
 
@@ -102,48 +102,65 @@ void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 	}
 }
 
+void	reset_fds(t_minishell *mshell, int old[2], int new[2])
+{
+	if (old[0])
+		close(old[0]);
+	if (old[1])
+		close(old[1]);
+	if (new[0])
+		close(new[0]);
+	if (new[1])
+		close(new[1]);
+	if (dup2(mshell->original_stdout, STDOUT_FILENO) == -1)
+		return ;
+	close(mshell->original_stdout);
+	if (dup2(mshell->original_stdin, STDIN_FILENO) == -1)
+		return ;
+	close(mshell->original_stdin);
+}
+
 /**
  * @brief Execute de command ?, pipe
  * @param mshell
  * @param old
  * @param new
  */
-void process_commands(t_minishell *mshell, int old[2], int new[2]) {
-    t_cmd *cmd;
-    int i;
+void process_commands(t_minishell *mshell, int old[2], int new[2])
+{
+	t_cmd *cmd;
+	int i;
 
-    mshell->original_stdout = dup(STDOUT_FILENO);
-    mshell->original_stdin = dup(STDIN_FILENO);
+	mshell->original_stdout = dup(STDOUT_FILENO);
+	mshell->original_stdin = dup(STDIN_FILENO);
 
-    if (mshell->original_stdout == -1 || mshell->original_stdin == -1) {
-        perror("dup failed");
-        exit(EXIT_FAILURE); //TODO : add a proper exit
-    }
+	if (mshell->original_stdout == -1 || mshell->original_stdin == -1)
+	{
+		perror("dup failed");
+		exit(EXIT_FAILURE); //TODO : add a proper exit
+	}
 
-    i = 0;
-    cmd = mshell->cmds;
-    while (cmd) {
-        signal(SIGINT, signal_exec);
-        signal(SIGQUIT, signal_exec);
-        if (cmd->is_valid_cmd == false) {
-            cmd = cmd->next;
-            i++;
-            continue;
-        }
-        if (cmd->next)
-            if (pipe(new) == -1)
-                error_pipe("pipe failed", new, old, cmd);
-        fork_exec(mshell, old, new, i);
-        i++;
-        cmd = cmd->next;
-    }
-
-    if (dup2(mshell->original_stdout, STDOUT_FILENO) == -1)
-		return ;
-	if (dup2(mshell->original_stdin, STDIN_FILENO) == -1)
-		return ;
-    close(mshell->original_stdout);
-    close(mshell->original_stdin);
+	i = 0;
+	cmd = mshell->cmds;
+	while (cmd)
+	{
+		signal(SIGINT, signal_exec);
+		signal(SIGQUIT, signal_exec);
+		if (cmd->is_valid_cmd == false)
+		{
+			cmd = cmd->next;
+			i++;
+			reset_fds(mshell, old, new);
+			continue ;
+		}
+		if (cmd->next)
+			if (pipe(new) == -1)
+				error_pipe("pipe failed", new, old, cmd);
+		fork_exec(mshell, old, new, i);
+		i++;
+		cmd = cmd->next;
+	}
+	reset_fds(mshell, old, new);
 }
 
 int	lst_size(t_cmd *cmd)

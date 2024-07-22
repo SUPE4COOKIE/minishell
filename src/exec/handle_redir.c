@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 15:01:08 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/16 17:58:23 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 13:48:35 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,24 @@
 
 void handle_red_out(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
 {
-    int fd;
-    int i;
+	int fd;
+	int i;
 
 	i = 0;
-    while (cmd->outfile[i] && cmd->outfile[i + 1])
-        i++;
-    if (mshell->invalid_redir != NULL && is_redir_before(cmd, &mshell->invalid_redir, &cmd->outfile[i]) == true)
+	while (cmd->outfile[i] && cmd->outfile[i + 1])
+		i++;
+	if (mshell->invalid_redir != NULL && is_redir_before(cmd, &mshell->invalid_redir, &cmd->outfile[i]) == true)
 	{
-        fd = open("/dev/null", O_WRONLY, 0644);
-        if (dup2(fd, STDOUT_FILENO) == -1)
-            error_pipe("dup2 failed", new, old, cmd);
-    }
-    fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (fd == -1)
-        error_pipe("open failed", new, old, cmd);
-    if (dup2(fd, STDOUT_FILENO) == -1)
-        error_pipe("dup2 failed", new, old, cmd);
-    close(fd);
-    if (dup2(STDOUT_FILENO, mshell->original_stdout) == -1) {
-        perror("dup2 failed");
-        exit(EXIT_FAILURE);
-    }
-    close(mshell->original_stdout);
+		fd = open("/dev/null", O_WRONLY, 0644);
+		if (dup2(fd, STDOUT_FILENO) == -1)
+			error_pipe("dup2 failed", new, old, cmd);
+	}
+	fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd == -1)
+		error_pipe("open failed", new, old, cmd);
+	if (dup2(fd, STDOUT_FILENO) == -1)
+		error_pipe("dup2 failed", new, old, cmd);
+	close(fd);
 }
 
 void handle_append_out(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
