@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:14:41 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/16 14:13:14 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 16:56:03 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	init_exec(int old[2], int new[2], t_minishell *mshell)
  * @param i The index
  * @param old The old file descriptors
  */
-void close_old(int i, int old[2])
+void	close_old(int i, int old[2])
 {
 	if (i > 0)
 	{

@@ -20,6 +20,7 @@ SRCS = $(addprefix src/, \
 		handle_hdoc.c \
 		name_file.c \
 		redir.c \
+		check_files.c \
 	) \
 	$(addprefix parsing/, \
 		$(addprefix lexer/, \
@@ -44,7 +45,6 @@ SRCS = $(addprefix src/, \
 		exit_free.c \
 		utils.c \
 		name_file.c \
-		fork.c \
 		pid_utils.c \
 		env.c \
 		list.c \
