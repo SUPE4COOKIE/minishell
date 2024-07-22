@@ -6,13 +6,13 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 13:01:02 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/13 13:08:48 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 14:21:11 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-void free_null(void *ptr)
+void	free_null(void *ptr)
 {
 	if (ptr)
 	{

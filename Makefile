@@ -19,6 +19,7 @@ SRCS = $(addprefix src/, \
 		fork_exec.c \
 		handle_hdoc.c \
 		name_file.c \
+		redir.c \
 	) \
 	$(addprefix parsing/, \
 		$(addprefix lexer/, \
@@ -49,6 +50,7 @@ SRCS = $(addprefix src/, \
 		list.c \
 		remove_double_points.c \
 		change_dir.c \
+		fds.c \
 	) \
 	minishell.c \
 	)
@@ -80,8 +82,19 @@ DIRS = $(OBJ_DIR) \
 	$(OBJ_DIR)/utils
 
 # Header files
-HEADERS = $(wildcard includes/*.h)
-LIBFT_HEADERS = $(wildcard libft/*.h)
+HEADERS = $(addprefix includes/, \
+		builtins.h \
+		exec.h \
+		minishell.h \
+		parsing.h \
+		struct.h \
+		utils.h \
+		)
+LIBFT_HEADERS = $(addprefix libft/, \
+		ft_printf.h \
+		get_next_line.h \
+		libft.h \
+		)
 
 # Targets
 all: $(LIBFT) $(NAME)

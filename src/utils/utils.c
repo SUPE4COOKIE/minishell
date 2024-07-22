@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 11:53:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/09 12:57:44 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 14:27:20 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,17 @@ bool	isnumber(char *str)
 		i++;
 	}
 	return (true);
+}
+
+int	lst_size(t_cmd *cmd)
+{
+	int i;
+
+	i = 0;
+	while (cmd)
+	{
+		i++;
+		cmd = cmd->next;
+	}
+	return (i);
 }

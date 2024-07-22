@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 11:57:22 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 14:12:10 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 16:22:46 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,15 @@
 # define TMP_FILE_PREFIX "/tmp/minishell_hdoc_"
 # define URANDOM_PATH "/dev/urandom"
 # define RANDOM_BYTES 8
+
+typedef struct	s_redir_args
+{
+	t_cmd	*cmd;
+	t_minishell	*mshell;
+	int	old[2];
+	int	new[2];
+	int	i;
+}				t_redir_args;
 
 int		exec(t_minishell *mshell);
 bool	is_builtin(char *cmd);
@@ -27,12 +36,23 @@ void	ft_close(int old[2], int new[2]);
 int		init_exec(int old[2], int new[2], t_minishell *mshell);
 void	close_old(int i, int old[2]);
 void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i);
-void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2]);
+int		dup_cmd(int i, t_cmd *cmd, int old[2], int new[2]);
 void	exec_cmd(t_minishell *mshell, t_cmd *cmd);
-void	generate_unique_filename(char *buffer, size_t length);
+int		generate_unique_filename(char *buffer, size_t length);
 void	signal_exec(int signal);
 void	signal_here_doc(int signal);
-int		readline_event_hook(void);
 void	signal_new_line(int sig);
+void	handle_red_out(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell);
+void	handle_append_out(t_cmd *cmd, int old[2], int new[2], \
+		t_minishell *mshell);
+void	handle_red_in(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell);
+int		check_infiles(t_cmd *cmd, t_minishell *mshell);
+int		process_infile(t_cmd *cmd, t_minishell *mshell, int i);
+int		check_outfiles(t_cmd *cmd, t_minishell *mshell);
+int		process_outfile(t_cmd *cmd, t_minishell *mshell, int i);
+void	handle_file_redirection(t_minishell *mshell, t_cmd *cmd, \
+		int old[2], int new[2]);
+void	handle_outfiles(t_redir_args *args);
+void	handle_redirections(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell);
 
 #endif
