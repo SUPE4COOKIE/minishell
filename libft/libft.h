@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:33:33 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/13 13:02:48 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 14:20:36 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,6 @@ char	*ft_strdup(const char *s1);
 void	*ft_calloc(size_t number, size_t size);
 int		ft_iswhitespace(char c);
 int		ft_append_str(char ***str, char *add);
-void    free_null(void *ptr);
+void	free_null(void *ptr);
 
 #endif

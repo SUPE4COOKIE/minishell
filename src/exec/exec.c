@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 14:06:54 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 15:31:10 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,22 +47,23 @@ char	**copy_args(char **args)
  * @param mshell
  * @param cmd
  */
-void exec_cmd(t_minishell *mshell, t_cmd *cmd) {
-	if (is_builtin(cmd->cmd) == true) {
+void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
+{
+	if (is_builtin(cmd->cmd) == true)
 		exec_builtin(mshell, cmd);
-	} else {
-		if (cmd->cmd) {
+	else
+		if (cmd->cmd)
 			execve(cmd->cmd, cmd->args, mshell->env);
-		}
-	}
-	if (dup2(mshell->original_stdout, STDOUT_FILENO) == -1) {
-		perror("dup2 failed1");
-		exit(EXIT_FAILURE);
+	if (dup2(mshell->original_stdout, STDOUT_FILENO) == -1)
+	{
+		perror("dup2 failed");
+		exit(free_shell(mshell, errno));
 	}
 	close(mshell->original_stdout);
-	if (dup2(mshell->original_stdin, STDIN_FILENO) == -1) {
-		perror("dup2 failed2");
-		exit(EXIT_FAILURE);
+	if (dup2(mshell->original_stdin, STDIN_FILENO) == -1)
+	{
+		perror("dup2 failed");
+		exit(free_shell(mshell, errno));
 	}
 	close(mshell->original_stdin);
 }
@@ -74,14 +75,14 @@ void exec_cmd(t_minishell *mshell, t_cmd *cmd) {
  * @param old
  * @param new
  */
-void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
+int	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 {
 	if (i != 0)
 	{
 		if (dup2(old[0], STDIN_FILENO) == -1)
 		{
 			perror("dup2 failed");
-			exit(EXIT_FAILURE);
+			return (1);
 		}
 		if (old[0] != -1)
 			close(old[0]);
@@ -93,53 +94,28 @@ void	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 		if (dup2(new[1], STDOUT_FILENO) == -1)
 		{
 			perror("dup2 failed");
-			exit(EXIT_FAILURE);
+			return (1);
 		}
 		if (new[0] != -1)
 			close(new[0]);
 		if (new[1] != -1)
 			close(new[1]);
 	}
-}
-
-void	reset_fds(t_minishell *mshell, int old[2], int new[2])
-{
-	if (old[0])
-		close(old[0]);
-	if (old[1])
-		close(old[1]);
-	if (new[0])
-		close(new[0]);
-	if (new[1])
-		close(new[1]);
-	if (dup2(mshell->original_stdout, STDOUT_FILENO) == -1)
-		return ;
-	close(mshell->original_stdout);
-	if (dup2(mshell->original_stdin, STDIN_FILENO) == -1)
-		return ;
-	close(mshell->original_stdin);
+	return (0);
 }
 
 /**
- * @brief Execute de command ?, pipe
+ * @brief Execute de command / pipe
  * @param mshell
  * @param old
  * @param new
  */
-void process_commands(t_minishell *mshell, int old[2], int new[2])
+void	process_commands(t_minishell *mshell, int old[2], int new[2])
 {
-	t_cmd *cmd;
-	int i;
+	t_cmd	*cmd;
+	int		i;
 
-	mshell->original_stdout = dup(STDOUT_FILENO);
-	mshell->original_stdin = dup(STDIN_FILENO);
-
-	if (mshell->original_stdout == -1 || mshell->original_stdin == -1)
-	{
-		perror("dup failed");
-		exit(EXIT_FAILURE); //TODO : add a proper exit
-	}
-
+	set_default_fd(mshell, old, new);
 	i = 0;
 	cmd = mshell->cmds;
 	while (cmd)
@@ -150,7 +126,7 @@ void process_commands(t_minishell *mshell, int old[2], int new[2])
 		{
 			cmd = cmd->next;
 			i++;
-			reset_fds(mshell, old, new);
+			set_default_fd(mshell, old, new);
 			continue ;
 		}
 		if (cmd->next)
@@ -160,20 +136,6 @@ void process_commands(t_minishell *mshell, int old[2], int new[2])
 		i++;
 		cmd = cmd->next;
 	}
-	reset_fds(mshell, old, new);
-}
-
-int	lst_size(t_cmd *cmd)
-{
-	int i;
-
-	i = 0;
-	while (cmd)
-	{
-		i++;
-		cmd = cmd->next;
-	}
-	return (i);
 }
 
 /**
@@ -184,29 +146,27 @@ int	exec(t_minishell *mshell)
 {
 	int	old[2];
 	int	new[2];
-	int status;
-	int i;
-	int size;
+	int	status;
+	int	i;
+	int	size;
 
-	i = 0;
+	i = -1;
 	size = lst_size(mshell->cmds);
 	status = 0;
 	if (init_exec(old, new, mshell) == 1)
 		return (1);
 	process_commands(mshell, old, new);
-	while (i < size)
+	while (++i < size)
 	{
-		if (waitpid(-1 , &status, 0) == mshell->last_pid)
+		if (waitpid(-1, &status, 0) == mshell->last_pid)
 		{
 			if (WIFEXITED(status))
 				mshell->last_exit_status = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status))
 				mshell->last_exit_status = WTERMSIG(status) + 128;
 		}
-		i++;
 	}
 	if (g_sig == SIGINT)
-		printf("\n");
-	ft_close(old, new);
-	return (0);
+		rl_done = 1;
+	return (ft_close(old, new), 0);
 }

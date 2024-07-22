@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/16 13:42:28 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 15:48:43 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,7 @@ int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 	{
 		signal(SIGINT, signal_here_doc);
 		rl_event_hook = event;
-		//if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO) && isatty(STDERR_FILENO))
 		line = readline("> ");
-		//else
-		//	line = get_next_line(STDIN_FILENO);
 		if (!line)
 			if (g_sig == 0)
 				break ;
@@ -37,7 +34,8 @@ int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 			ft_printf("\n");
 			break ;
 		}
-		if (ft_strncmp(line, cmd->infile[i], ft_strlen(cmd->infile[i]) + 1) == 0)
+		if (ft_strncmp(line, cmd->infile[i], \
+				ft_strlen(cmd->infile[i]) + 1) == 0)
 			break ;
 		ft_putendl_fd(line, fd);
 		free_null(line);
@@ -81,51 +79,55 @@ int	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
 	return (0);
 }
 
-/**
- * @brief Replace the here document
- * @param cmd The command
- * @param old The old file descriptors
- * @param new The new file descriptors
- */
-int	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
+void	generate_unique_filenames(t_cmd *cmd, char ***tmp_filename, \
+		int old[2], int new[2])
 {
-	char	**tmp_filename;
 	size_t	filename_length;
 	int		i;
 	t_cmd	*tmp;
 
 	tmp = cmd;
-	while (tmp)
+	filename_length = ft_strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
+	*tmp_filename = ft_calloc(ft_tablen(tmp->infile) + 1, sizeof(char *));
+	if (!(*tmp_filename))
+		error_pipe("malloc failed", new, old, tmp);
+	i = 0;
+	while ((*tmp_filename) && i < ft_tablen(tmp->infile))
 	{
-		if (tmp->op_type[0] != HDOC)
-		{
-			tmp = tmp->next;
-			continue ;
-		}
-		filename_length = ft_strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
-		tmp_filename = (char **)ft_calloc(ft_tablen(tmp->infile) + 1, sizeof(char *));
-		if (!tmp_filename)
+		(*tmp_filename)[i] = (char *)ft_calloc(filename_length, sizeof(char));
+		if (!(*tmp_filename)[i])
 			error_pipe("malloc failed", new, old, tmp);
-		i = 0;
-		while (tmp_filename && i < ft_tablen(tmp->infile))
-		{
-			tmp_filename[i] = (char *)ft_calloc(filename_length, sizeof(char));
-			if (!tmp_filename[i])
-				error_pipe("malloc failed", new, old, tmp);
-			generate_unique_filename(tmp_filename[i], filename_length);
-			i++;
-		}
-		if (DEBUG && tmp_filename)
-			print_tab(tmp_filename);
-		tmp = tmp->next;
+		generate_unique_filename((*tmp_filename)[i], filename_length);
+		i++;
 	}
+	if (DEBUG && (*tmp_filename))
+		print_tab(*tmp_filename);
+}
+
+int	handle_heredoc_operations(t_cmd *cmd, int old[2], int new[2], \
+		char **tmp_filename)
+{
+	t_cmd	*tmp;
+
 	tmp = cmd;
 	while (tmp)
 	{
 		if (tmp->op_type[0] == HDOC)
+		{
 			if (handle_hdoc(tmp, old, new, tmp_filename) == 1)
 				return (1);
+		}
 		tmp = tmp->next;
 	}
+	return (0);
+}
+
+int	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
+{
+	char	**tmp_filename;
+
+	generate_unique_filenames(cmd, &tmp_filename, old, new);
+	if (handle_heredoc_operations(cmd, old, new, tmp_filename))
+		return (1);
 	return (0);
 }
