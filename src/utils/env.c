@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/22 16:51:54 by scrumier          #+#    #+#             */
+/*   Updated: 2024/07/22 16:52:05 by scrumier         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	is_in_env(char **env, char *key)
@@ -73,7 +85,8 @@ bool	set_env(char ***env, char *key, char *value)
 	i = 0;
 	while ((*env)[i])
 	{
-		if (ft_strncmp((*env)[i], key, ft_strlen(key)) == 0 && (*env)[i][ft_strlen(key)] == '=')
+		if (ft_strncmp((*env)[i], key, ft_strlen(key)) == 0 && \
+				(*env)[i][ft_strlen(key)] == '=')
 			return (update_existing_env(env, key, value, i));
 		i++;
 	}

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   remove_double_points.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/22 16:56:17 by scrumier          #+#    #+#             */
+/*   Updated: 2024/07/22 16:56:53 by scrumier         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 t_arg	*path_to_list(char *path)
@@ -34,20 +46,6 @@ void	process_list(t_arg **new_args)
 		}
 		else
 			tmp = tmp->next;
-	}
-}
-
-void print_list(t_arg *new_args)
-{
-	t_arg	*tmp;
-
-	tmp = new_args;
-	if (!tmp)
-		//printf("arg = NULL\n");
-	while (tmp)
-	{
-		//printf("arg = %s\n", tmp->arg);
-		tmp = tmp->next;
 	}
 }
 
