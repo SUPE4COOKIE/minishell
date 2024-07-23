@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 16:50:30 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 19:30:08 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/23 14:34:38 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,15 +58,12 @@ long long	ft_atol_overflow(const char *str, bool *is_overflow)
 	return (result * sign);
 }
 
-uint8_t	atoutint8(const char *str)
+uint8_t	atoutint8(const char *str, bool *is_overflow)
 {
 	uint8_t		result;
-	bool		is_overflow;
 
 	result = 0;
-	is_overflow = false;
-	result += ft_atol_overflow(str, &is_overflow);
-	if (is_overflow == true)
-		ft_putendl_fd("Exit : Numeric argument required", 2);
+	*is_overflow = false;
+	result += ft_atol_overflow(str, is_overflow);
 	return (result);
 }

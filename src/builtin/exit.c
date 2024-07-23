@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:04:04 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/23 14:03:55 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/23 14:39:21 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,19 +47,25 @@ static bool	get_is_between_cmd(t_minishell *mshell)
 */
 int	builtin_exit(t_minishell *mshell, char **args)
 {
-	if (get_is_between_cmd(mshell) == false)
-		ft_putstr_fd("exit\n", 2);
+	bool is_overflow;
+
+	is_overflow = false;
 	if (args)
 	{
 		if (args[1] && isnumber(args[1]) == false)
 		{
-			mshell->last_exit_status = 2;
-			ft_putendl_fd("Exit : numeric argument required", 2);
+			return (error_cmd(mshell, 2, "exit: numeric argument required"));
 		}
-		else if (args[1])
-			mshell->last_exit_status = atoutint8(args[1]);
-		if (args[1] && args[2])
+		else if (args[1] && args[2])
 			return (error_cmd(mshell, 1, "exit: too many arguments"));
+		else if (args[1])
+		{
+			mshell->last_exit_status = atoutint8(args[1], &is_overflow);
+			if (is_overflow == true)
+				return (error_cmd(mshell, 2, "exit: numeric argument required"));
+			if (get_is_between_cmd(mshell) == false)
+				ft_putstr_fd("exit\n", 2);
+		}
 		exit(free_shell(mshell, mshell->last_exit_status));
 	}
 	return (0);

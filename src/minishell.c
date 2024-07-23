@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/16 13:25:39 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/23 17:09:22 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,12 @@ void signal_new_line(int sig)
 		g_sig = SIGINT;
 	}
 	else if (sig == SIGQUIT)
-		g_sig = SIGQUIT;
+	{
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+		g_sig = 0;
+	}
 }
 
 void	signal_here_doc(int signal)
@@ -39,8 +44,8 @@ void	signal_here_doc(int signal)
 
 void	signal_exec(int signal)
 {
-	write(1, "\n", 1);
-	g_sig = signal;
+	g_sig = 0;
+	(void)signal;
 }
 
 int event(void)
@@ -77,10 +82,7 @@ int main(int argc, char **argv, char **envp)
 			signal(SIGINT, signal_new_line);
 			signal(SIGQUIT, signal_new_line);
 			rl_event_hook = event;
-			//if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO) && isatty(STDERR_FILENO))
-				mshell.line = readline("minishell$> ");
-			//else
-			//	mshell.line = get_next_line(STDIN_FILENO);
+			mshell.line = readline("minishell$> ");
 			signal(SIGINT, signal_exec);
 			if (!mshell.line || g_sig == SIGQUIT)
 				return (free_env_path(&mshell), printf("exit\n"), mshell.last_exit_status);
