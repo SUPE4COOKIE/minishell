@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 15:01:08 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/23 13:59:57 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/23 14:07:13 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,8 @@ void	handle_outfiles(t_redir_args *args)
 			}
 			fd = open(args->cmd->outfile[args->i], O_WRONLY | O_CREAT, 0644);
 			if (fd == -1)
-				error_pipe("No such file or directory", args->new, args->old, args->cmd);
+				error_pipe("No such file or directory", args->new, \
+					args->old, args->cmd);
 			close(fd);
 			args->i++;
 		}
