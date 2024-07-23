@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 11:53:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 19:31:27 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/23 14:07:40 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ bool	isnumber(char *str)
 	while (str[i])
 	{
 		if (!isdigit(str[i]))
-			break;
+			break ;
 		i++;
 	}
 	while ((str[i] >= 9 && str[i] <= 13) || str[i] == ' ')
