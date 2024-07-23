@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 15:55:11 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 16:24:54 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/23 14:00:02 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	handle_red_out(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
 	}
 	fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
-		error_pipe("open failed", new, old, cmd);
+		error_pipe("No such file or directory", new, old, cmd);
 	if (dup2(fd, STDOUT_FILENO) == -1)
 		error_pipe("dup2 failed", new, old, cmd);
 	close(fd);
@@ -53,7 +53,7 @@ void	handle_append_out(t_cmd *cmd, int old[2], int new[2], \
 	}
 	fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd == -1)
-		error_pipe("open failed", new, old, cmd);
+		error_pipe("No such file or directory", new, old, cmd);
 	if (dup2(fd, STDOUT_FILENO) == -1)
 		error_pipe("dup2 failed", new, old, cmd);
 	close(fd);
@@ -83,7 +83,7 @@ void	handle_red_in(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
 	}
 	fd = open(cmd->infile[i], O_RDONLY);
 	if (fd == -1)
-		error_pipe("open failed", new, old, cmd);
+		error_pipe("No such file or directory", new, old, cmd);
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
 		error_pipe("dup2 failed", new, old, cmd);

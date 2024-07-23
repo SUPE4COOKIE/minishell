@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 16:46:53 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/23 13:59:56 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
 	{
 		fd = open(tmp_filename[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd == -1)
-			error_pipe("open failed", new, old, cmd);
+			error_pipe("No such file or directory", new, old, cmd);
 		if (read_the_line(line, fd, cmd, i) == 1)
 			return (free_tab(tmp_filename), 1);
 		free_null(cmd->infile[i]);

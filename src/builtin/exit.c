@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:04:04 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 16:51:37 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/23 14:03:55 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,6 @@ int	builtin_exit(t_minishell *mshell, char **args)
 {
 	if (get_is_between_cmd(mshell) == false)
 		ft_putstr_fd("exit\n", 2);
-	else
-		return (0);
 	if (args)
 	{
 		if (args[1] && isnumber(args[1]) == false)
