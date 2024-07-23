@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:15:47 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 17:08:46 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/23 14:36:09 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void		reset_fds(t_minishell *mshell, int old[2], int new[2]);
 void		reset_default_fd(t_minishell *mshell);
 void		set_default_fd(t_minishell *mshell, int old[2], int new[2]);
 void		reset_fds(t_minishell *mshell, int old[2], int new[2]);
-uint8_t		atoutint8(const char *str);
+uint8_t		atoutint8(const char *str, bool *is_overflow);
 long long	ft_atol_overflow(const char *str, bool *is_overflow);
 
 #endif
