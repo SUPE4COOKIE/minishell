@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:19:44 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 15:41:03 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 19:43:59 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 
 	cmd = init_before_fork(&y, mshell, &id, i);
 	if (is_builtin(cmd->cmd) == false || \
-			(is_builtin(cmd->cmd) == true && cmd->next))
-		id = fork();
+			(is_builtin(cmd->cmd) == true && mshell->cmds->next != NULL))
+			id = fork();
 	if (id != 0)
 		mshell->last_pid = id;
 	if (id == -1)

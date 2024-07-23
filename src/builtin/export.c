@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 10:23:57 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/07/14 12:11:34 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 17:16:50 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int	check_input(t_minishell *mshell, char *args)
 		i++;
 	}
 	mshell->last_exit_status = 0;
-	return (1);
+	return (0);
 }
 
 int	builtin_export(t_minishell *mshell, char **args)
