@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:04:04 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/23 14:39:21 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/03 11:01:38 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static bool	get_is_between_cmd(t_minishell *mshell)
 */
 int	builtin_exit(t_minishell *mshell, char **args)
 {
-	bool is_overflow;
+	bool	is_overflow;
 
 	is_overflow = false;
 	if (args)
@@ -62,7 +62,8 @@ int	builtin_exit(t_minishell *mshell, char **args)
 		{
 			mshell->last_exit_status = atoutint8(args[1], &is_overflow);
 			if (is_overflow == true)
-				return (error_cmd(mshell, 2, "exit: numeric argument required"));
+				return (error_cmd(mshell, 2, "exit: numeric argument \
+					required"));
 			if (get_is_between_cmd(mshell) == false)
 				ft_putstr_fd("exit\n", 2);
 		}
