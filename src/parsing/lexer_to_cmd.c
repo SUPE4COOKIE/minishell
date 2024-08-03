@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/14 14:33:28 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/03 20:34:27 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,20 @@ void	free_cmds(t_cmd *cmd)
 	}
 }
 
+void redir_before_init(size_t *i, size_t *redir_in, size_t *redir_out, bool *reference_found)
+{
+	*i = 0;
+	*redir_in = 0;
+	*redir_out = 0;
+	*reference_found = false;
+}
+
+void	is_redir_reference(char *redir, char *reference, bool *reference_found)
+{
+	if (redir == reference)
+		*reference_found = true;
+}
+
 bool	is_redir_before(t_cmd *cmd, char **redir, char **reference)
 {
 	size_t	i;
@@ -94,24 +108,19 @@ bool	is_redir_before(t_cmd *cmd, char **redir, char **reference)
 	size_t	redir_out;
 	bool	reference_found;
 	
-	i = 0;
-	redir_in = 0;
-	redir_out = 0;
-	reference_found = false;
+	redir_before_init(&i, &redir_in, &redir_out, &reference_found);
 	while (cmd->type_chain[i] != UNDEFINED)
 	{
 		if (cmd->type_chain[i] == RED_IN || cmd->type_chain[i] == HDOC)
 		{
-			if (cmd->infile[redir_in] == *reference)
-				reference_found = true;
+			is_redir_reference(cmd->infile[redir_in], *reference, &reference_found);
 			if (cmd->infile[redir_in] == *redir && !reference_found)
 				return (true);
 			redir_in++;
 		}
 		else
 		{
-			if (cmd->outfile[redir_out] == *reference)
-				reference_found = true;
+			is_redir_reference(cmd->outfile[redir_out], *reference, &reference_found);
 			if (cmd->outfile[redir_out] == *redir && !reference_found)
 				return (true);
 			redir_out++;
@@ -284,26 +293,29 @@ void	print_cmd(t_cmd *cmd) // will be deleted later
 	(void)cmd;
 }
 
-void	append_type(t_cmd_type **type_chain, t_cmd_type type)
+int append_new_typechain(t_cmd_type **type_chain, t_cmd_type type)
+{
+	*type_chain = malloc(sizeof(t_cmd_type) * 2);
+	if (!*type_chain)
+		return (-1);
+	(*type_chain)[0] = type;
+	(*type_chain)[1] = UNDEFINED;
+	return (0);
+}
+
+int	append_type(t_cmd_type **type_chain, t_cmd_type type)
 {
 	t_cmd_type	*new;
 	int			i;
 
 	i = 0;
 	if (!type_chain || !*type_chain)
-	{
-		*type_chain = malloc(sizeof(t_cmd_type) * 2);
-		if (!*type_chain)
-			return ;
-		(*type_chain)[0] = type;
-		(*type_chain)[1] = UNDEFINED;
-		return ;
-	}
+		return (append_new_typechain(type_chain, type));
 	while ((*type_chain)[i] != UNDEFINED)
 		i++;
 	new = malloc(sizeof(t_cmd_type) * (i + 2));
 	if (!new)
-		return ;
+		return (-1);
 	i = 0;
 	while ((*type_chain)[i] != UNDEFINED)
 	{
@@ -314,6 +326,7 @@ void	append_type(t_cmd_type **type_chain, t_cmd_type type)
 	new[i + 1] = UNDEFINED;
 	free(*type_chain);
 	*type_chain = new;
+	return (0);
 }
 
 int handle_redir_in(t_cmd *cmd, t_lexer **lex)
@@ -322,8 +335,7 @@ int handle_redir_in(t_cmd *cmd, t_lexer **lex)
 	cmd->op_type[0] = RED_IN;
 	if (ft_append_str(&(cmd->infile), (*lex)->value) == -1)
 		return (-1);
-	append_type(&(cmd->type_chain), RED_IN);
-	return (0);
+	return (append_type(&(cmd->type_chain), RED_IN));
 }
 
 int handle_redir_out(t_cmd *cmd, t_lexer **lex, int type)
@@ -332,8 +344,7 @@ int handle_redir_out(t_cmd *cmd, t_lexer **lex, int type)
 	cmd->op_type[1] = type;
 	if (ft_append_str(&(cmd->outfile), (*lex)->value) == -1)
 		return (-1);
-	append_type(&(cmd->type_chain), type);
-	return (0);
+	return (append_type(&(cmd->type_chain), type));
 }
 
 int handle_here_doc(t_cmd *cmd, t_lexer **lex)
@@ -342,8 +353,7 @@ int handle_here_doc(t_cmd *cmd, t_lexer **lex)
 	cmd->op_type[0] = HDOC;
 	if (ft_append_str(&(cmd->infile), (*lex)->value) == -1)
 		return (-1);
-	append_type(&(cmd->type_chain), HDOC);
-	return (0);
+	return (append_type(&(cmd->type_chain), HDOC));
 }
 
 int append_redir(t_cmd *cmd, t_lexer **lex)
@@ -381,7 +391,7 @@ int	nospace_add(char **args, t_lexer **lex)
 	*lex = start;
 	*args = ft_calloc(size + 1, sizeof(char));
 	if (!*args)
-		return (1);
+		return (-1);
 	while (*lex && (*lex)->value && !(*lex)->space_after && is_nospace_addable((*lex)->type))
 	{
 		ft_strlcat(*args, (*lex)->value, size + 1);
@@ -392,7 +402,7 @@ int	nospace_add(char **args, t_lexer **lex)
 	return (0);
 }
 
-int	append_cmds(t_cmd **cmd, t_lexer **lex)
+int	appendd_dcmds(t_cmd **cmd, t_lexer **lex)
 {
 	char	**args;
 	char	**args_start;
@@ -437,6 +447,98 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 	}
 	return (0);
 }
+int	allocate_args(t_lexer *lex, char ***args, char ***args_start)
+{
+	int	word_num;
+
+	word_num = get_word_num(lex);
+	*args = ft_calloc(word_num + 1, sizeof(char *));
+	*args_start = *args;
+	if (!*args)
+		return (-1);
+	return (0);
+}
+
+bool is_redir(t_token_type type)
+{
+	return (type == T_REDIR_IN || type == T_REDIR_OUT
+		|| type == T_APPEND_OUT || type == T_HERE_DOC);
+}
+
+int	handle_redirections(t_cmd *last_cmd, t_lexer **lex)
+{
+	if (is_redir((*lex)->type))
+	{
+		if (append_redir(last_cmd, lex) == -1)
+			return (-1);
+	}
+	return (0);
+}
+
+int	handle_args(char ***args, t_lexer **lex)
+{
+	if (!(*lex)->space_after && (*lex)->next &&
+		is_nospace_addable((*lex)->next->type))
+	{
+		if (nospace_add(*args, lex))
+			return (-1);
+	}
+	else
+	{
+		**args = ft_strdup((*lex)->value);
+		if (!**args)
+			return (-1);
+	}
+	(*args)++;
+	return (0);
+}
+
+int	set_last_cmd(t_cmd *last_cmd, char **args_start)
+{
+	if (*args_start)
+	{
+		last_cmd->cmd = ft_strdup(args_start[0]);
+		if (!last_cmd->cmd)
+			return (-1);
+	}
+	else
+	{
+		last_cmd->cmd = NULL;
+		free_tab(args_start);
+		last_cmd->args = NULL;
+		last_cmd->is_valid_cmd = true;
+	}
+	return (0);
+}
+
+int	append_cmds(t_cmd **cmd, t_lexer **lex)
+{
+	char	**args;
+	char	**args_start;
+	t_cmd	*last_cmd;
+
+	if (allocate_args(*lex, &args, &args_start) == -1)
+		return (-1);
+	last_cmd = new_cmd(NULL);
+	if (!last_cmd || append_cmd(cmd, last_cmd) == -1)
+		return (-1);
+	while (*lex)
+	{
+		if (is_redir((*lex)->type))
+			append_redir(last_cmd, lex); //TODO: need to protect (return value -1)
+		else if ((*lex)->value && is_nospace_addable((*lex)->type))
+		{
+			if (handle_args(&args, lex) == -1)
+				return (-1);
+		}
+		else
+			break ;
+		if (*lex)
+			*lex = (*lex)->next;
+	}
+	last_cmd->args = args_start;
+	return (set_last_cmd(last_cmd, args_start) == -1);
+}
 
 t_cmd	*delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 {
@@ -466,6 +568,7 @@ t_cmd	*delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 	}
 	return (NULL);
 }
+
 
 int	resolve_cmd_path(t_cmd **cmd, char **path, int *exit_status)
 {
