@@ -27,12 +27,15 @@ void	handle_red_out(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
 		if (dup2(fd, STDOUT_FILENO) == -1)
 			error_pipe("dup2 failed", new, old, cmd);
 	}
-	fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
-		error_pipe("No such file or directory", new, old, cmd);
-	if (dup2(fd, STDOUT_FILENO) == -1)
-		error_pipe("dup2 failed", new, old, cmd);
-	close(fd);
+	else
+	{
+		fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (fd == -1)
+			error_pipe("No such file or directory", new, old, cmd);
+		if (dup2(fd, STDOUT_FILENO) == -1)
+			error_pipe("dup2 failed", new, old, cmd);
+		close(fd);
+	}
 }
 
 void	handle_append_out(t_cmd *cmd, int old[2], int new[2], \

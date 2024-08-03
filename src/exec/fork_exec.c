@@ -44,7 +44,7 @@ t_cmd	*init_before_fork(int *y, t_minishell *mshell, pid_t *id, int i)
  * @param new
  * @param i
  */
-void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
+int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 {
 	pid_t	id;
 	t_cmd	*cmd;
@@ -54,20 +54,22 @@ void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 	if (is_builtin(cmd->cmd) == false || \
 			(is_builtin(cmd->cmd) == true && mshell->cmds->next != NULL))
 		id = fork();
-	if (id != 0)
-		mshell->last_pid = id;
 	if (id == -1)
-		error_pipe("fork failed", new, old, cmd);
-	if (id == 0)
+		return (error_msg("fork failed"));
+	else if (id != 0)
+		mshell->last_pid = id;
+	else if (id == 0)
 	{
 		dup_cmd(i, cmd, old, new);
 		handle_file_redirection(mshell, cmd, old, new);
 		if (cmd->is_valid_cmd == false)
-			return ;
-		exec_cmd(mshell, cmd);
+			return (0);
+		if (exec_cmd(mshell, cmd))
+			return (1);
 		if (is_builtin(cmd->cmd) == false || \
 				(is_builtin(cmd->cmd) == true && cmd->next))
-			exit(EXIT_FAILURE);
+			exit(0);
 	}
 	close_and_cpy(old, new, i);
+	return (0);
 }

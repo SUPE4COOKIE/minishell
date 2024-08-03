@@ -102,14 +102,14 @@ int	get_index_env(char **env, char *var)
 ** @param mshell The minishell structure
 ** @param args The arguments of the command
 */
-void	builtin_unset(t_minishell *mshell, char **args)
+int	builtin_unset(t_minishell *mshell, char **args)
 {
 	int		i;
 	int		index;
 	char	**new_env;
 
 	if (!args || !args[1] || !mshell->env || !mshell->env[0])
-		return ;
+		return (0);
 	i = 1;
 	while (args[i])
 	{
@@ -118,9 +118,10 @@ void	builtin_unset(t_minishell *mshell, char **args)
 		{
 			new_env = remove_env_var(mshell->env, index);
 			if (!new_env)
-				return ;
+				return (1);
 			mshell->env = new_env;
 		}
 		i++;
 	}
+	return (0);
 }

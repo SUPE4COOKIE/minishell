@@ -73,12 +73,12 @@ int	builtin_echo(t_minishell *mshell, char **args)
 	i = 1;
 	n = false;
 	if (!args)
-		return (EXIT_FAILURE);
+		return (1);
 	while (args[i] && is_n(args[i]))
 	{
 		n = true;
 		i++;
 	}
 	print_args(args, i, n);
-	return (EXIT_SUCCESS);
+	return (0);
 }

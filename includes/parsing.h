@@ -46,4 +46,6 @@ void	print_cmds(t_cmd *cmd);
 void	free_lexer(t_lexer *lex);
 bool	is_valid_quotes(char *line, int *status_code);
 void	free_cmds(t_cmd *cmd);
+int		parse_path(t_minishell *mshell, char *env);
+
 #endif

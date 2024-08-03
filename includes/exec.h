@@ -28,16 +28,16 @@ typedef struct	s_redir_args
 int		exec(t_minishell *mshell);
 bool	is_builtin(char *cmd);
 int		replace_hdoc(t_cmd *cmd, int old[2], int new[2]);
-void	exec_builtin(t_minishell *mshell, t_cmd *cmd);
+int		exec_builtin(t_minishell *mshell, t_cmd *cmd);
 void	handle_file_redirection(t_minishell *mshell, t_cmd *cmd, int old[2], \
 		int new[2]);
 int		handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename);
 void	ft_close(int old[2], int new[2]);
 int		init_exec(int old[2], int new[2], t_minishell *mshell);
 void	close_old(int i, int old[2]);
-void	fork_exec(t_minishell *mshell, int old[2], int new[2], int i);
+int		fork_exec(t_minishell *mshell, int old[2], int new[2], int i);
 int		dup_cmd(int i, t_cmd *cmd, int old[2], int new[2]);
-void	exec_cmd(t_minishell *mshell, t_cmd *cmd);
+int		exec_cmd(t_minishell *mshell, t_cmd *cmd);
 int		generate_unique_filename(char *buffer, size_t length);
 void	signal_exec(int signal);
 void	signal_here_doc(int signal);
@@ -48,7 +48,7 @@ void	handle_append_out(t_cmd *cmd, int old[2], int new[2], \
 void	handle_red_in(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell);
 int		check_infiles(t_cmd *cmd, t_minishell *mshell);
 int		process_infile(t_cmd *cmd, t_minishell *mshell, int i);
-int		check_outfiles(t_cmd *cmd, t_minishell *mshell);
+int		check_outfiles(t_cmd *cmd, t_minishell *mshell, int i);
 int		process_outfile(t_cmd *cmd, t_minishell *mshell, int i);
 void	handle_file_redirection(t_minishell *mshell, t_cmd *cmd, \
 		int old[2], int new[2]);

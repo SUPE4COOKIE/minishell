@@ -41,20 +41,28 @@ bool	is_builtin(char *cmd)
  * @param mshell
  * @param cmd
  */
-void	exec_builtin(t_minishell *mshell, t_cmd *cmd)
+int	exec_builtin(t_minishell *mshell, t_cmd *cmd)
 {
 	if (ft_strncmp(cmd->cmd, "echo", 5) == 0)
-		builtin_echo(mshell, cmd->args);
+		if (builtin_echo(mshell, cmd->args))
+			return (error_msg("echo failed"));
 	if (ft_strncmp(cmd->cmd, "cd", 3) == 0)
-		builtin_cd(mshell, cmd->args);
+		if (builtin_cd(mshell, cmd->args))
+			return (error_msg("cd failed"));
 	if (ft_strncmp(cmd->cmd, "pwd", 4) == 0)
-		builtin_pwd(mshell);
+		if (builtin_pwd(mshell))
+			return (error_msg("pwd failed"));
 	if (ft_strncmp(cmd->cmd, "export", 7) == 0)
-		builtin_export(mshell, cmd->args);
+		if (builtin_export(mshell, cmd->args))
+			return (error_msg("export failed"));
 	if (ft_strncmp(cmd->cmd, "unset", 6) == 0)
-		builtin_unset(mshell, cmd->args);
+		if (builtin_unset(mshell, cmd->args))
+			return (error_msg("unset failed"));
 	if (ft_strncmp(cmd->cmd, "env", 4) == 0)
-		builtin_env(mshell, cmd->args);
+		if (builtin_env(mshell, cmd->args))
+			return (error_msg("env failed"));
 	if (ft_strncmp(cmd->cmd, "exit", 6) == 0)
-		builtin_exit(mshell, cmd->args);
+		if (builtin_exit(mshell, cmd->args))
+			return (error_msg("exit failed"));
+	return (0);
 }

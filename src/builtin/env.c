@@ -51,10 +51,14 @@ int	builtin_env(t_minishell *mshell, char **args)
 		while (args[i])
 		{
 			if (ft_contain(args[i], '/', 1) == 0)
-				return (error_cmd(mshell, 127, "env: invalid option"));
+				return (error_cmd(mshell, 127, ": invalid option"));
 			else
 				i++;
 		}
+	}
+	else if (args)
+	{
+		return (EXIT_SUCCESS);
 	}
 	i = 0;
 	if (!mshell->env)

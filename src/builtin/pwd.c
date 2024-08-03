@@ -23,7 +23,7 @@ int	builtin_pwd(t_minishell *mshell)
 	char	buffer[PATH_MAX];
 
 	(void)mshell;
-	if (!getcwd(buffer, PATH_MAX))
+	if (getcwd(buffer, PATH_MAX) == NULL)
 		return (perror("getcwd"), EXIT_FAILURE);
 	ft_putendl_fd(buffer, STDOUT_FILENO);
 	return (EXIT_SUCCESS);

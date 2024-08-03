@@ -27,7 +27,7 @@ int	process_infile(t_cmd *cmd, t_minishell *mshell, int i)
 	{
 		mshell->invalid_redir = cmd->infile[i];
 		tmp = ft_strjoin(cmd->infile[i], ": is a directory\n");
-		if (!tmp)
+		if (!*tmp)
 			exit(free_shell(mshell, 1));
 		write(2, tmp, ft_strlen(tmp));
 		free_null(tmp);
@@ -49,22 +49,26 @@ int	process_outfile(t_cmd *cmd, t_minishell *mshell, int i)
 		return (0);
 	if (stat(cmd->outfile[i], &buf) == -1)
 		return (perror(cmd->outfile[i]), 1);
-	if (((buf.st_mode) & 0170000) == (0040000))
+	if (((buf.st_mode) & S_IFMT) == S_IFDIR)
 	{
 		tmp = ft_strjoin(cmd->outfile[i], ": is a directory\n");
 		if (!tmp)
 			exit(free_shell(mshell, 1));
 		write(2, tmp, ft_strlen(tmp));
-		if (mshell->invalid_redir == NULL || is_redir_before(cmd, \
-				&mshell->invalid_redir, &cmd->outfile[i]))
+		if (mshell->invalid_redir == NULL || is_redir_before(cmd, &mshell->invalid_redir, &cmd->outfile[i]))
 			mshell->invalid_redir = cmd->outfile[i];
-		free_null(tmp);
+		free(tmp);
 		return (1);
 	}
 	if (access(cmd->outfile[i], W_OK) == -1)
+	{
+		if (mshell->invalid_redir == NULL || is_redir_before(cmd, &mshell->invalid_redir, &cmd->outfile[i]))
+			mshell->invalid_redir = cmd->outfile[i];
 		return (perror(cmd->outfile[i]), 1);
+	}
 	return (0);
 }
+
 
 void	handle_file_redirection(t_minishell *mshell, t_cmd *cmd, \
 		int old[2], int new[2])
@@ -102,7 +106,7 @@ void	handle_outfiles(t_redir_args *args)
 	{
 		while (args->cmd->outfile[args->i])
 		{
-			if (check_outfiles(args->cmd, args->mshell) == 1)
+			if (check_outfiles(args->cmd, args->mshell, args->i) == 1)
 			{
 				args->mshell->last_exit_status = 1;
 				return ;

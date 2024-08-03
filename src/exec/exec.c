@@ -47,13 +47,18 @@ char	**copy_args(char **args)
  * @param mshell
  * @param cmd
  */
-void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
+int	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 {
 	if (is_builtin(cmd->cmd) == true)
-		exec_builtin(mshell, cmd);
+	{
+		if (exec_builtin(mshell, cmd))
+			return (1);
+	}
 	else
 		if (cmd->cmd)
-			execve(cmd->cmd, cmd->args, mshell->env);
+			if (execve(cmd->cmd, cmd->args, mshell->env))
+				return (error_msg("execve failed"));
+
 	if (dup2(mshell->original_stdout, STDOUT_FILENO) == -1)
 	{
 		perror("dup2 failed");
@@ -66,6 +71,7 @@ void	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 		exit(free_shell(mshell, errno));
 	}
 	close(mshell->original_stdin);
+	return (0);
 }
 
 /**
@@ -110,12 +116,13 @@ int	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
  * @param old
  * @param new
  */
-void	process_commands(t_minishell *mshell, int old[2], int new[2])
+int	process_commands(t_minishell *mshell, int old[2], int new[2])
 {
 	t_cmd	*cmd;
 	int		i;
 
-	set_default_fd(mshell, old, new);
+	if (set_default_fd(mshell, old, new) == 1)
+		return (1);
 	i = 0;
 	cmd = mshell->cmds;
 	while (cmd)
@@ -126,16 +133,19 @@ void	process_commands(t_minishell *mshell, int old[2], int new[2])
 		{
 			cmd = cmd->next;
 			i++;
-			set_default_fd(mshell, old, new);
+			if (set_default_fd(mshell, old, new))
+				return (1);
 			continue ;
 		}
 		if (cmd->next)
 			if (pipe(new) == -1)
 				error_pipe("pipe failed", new, old, cmd);
-		fork_exec(mshell, old, new, i);
+		if (fork_exec(mshell, old, new, i))
+			return (1);
 		i++;
 		cmd = cmd->next;
 	}
+	return (0);
 }
 
 /**

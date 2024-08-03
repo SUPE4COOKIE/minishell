@@ -17,8 +17,6 @@ int	check_infiles(t_cmd *cmd, t_minishell *mshell)
 	int	i;
 
 	i = 0;
-	if (mshell->invalid_redir)
-		mshell->invalid_redir = NULL;
 	while (cmd->infile && cmd->infile[i])
 	{
 		if (process_infile(cmd, mshell, i) == 1)
@@ -28,12 +26,9 @@ int	check_infiles(t_cmd *cmd, t_minishell *mshell)
 	return (0);
 }
 
-int	check_outfiles(t_cmd *cmd, t_minishell *mshell)
+int	check_outfiles(t_cmd *cmd, t_minishell *mshell, int i)
 {
-	int	i;
-
-	i = 0;
-	while (cmd->outfile[i])
+	if (cmd->outfile[i])
 	{
 		if (process_outfile(cmd, mshell, i) == 1)
 			return (1);

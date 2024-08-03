@@ -114,3 +114,14 @@ int	free_tab(char **tab)
 	free_null(tab);
 	return (EXIT_SUCCESS);
 }
+
+int	error_msg(char *msg)
+{
+	if (msg)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(msg, STDERR_FILENO);
+		ft_putstr_fd("\n", STDERR_FILENO);
+	}
+	return (EXIT_FAILURE);
+}
