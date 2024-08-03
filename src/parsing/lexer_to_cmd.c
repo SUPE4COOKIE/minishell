@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 00:16:29 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/04 01:10:08 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -450,7 +450,7 @@ int	appendd_dcmds(t_cmd **cmd, t_lexer **lex)
 	}
 	return (0);
 }
-int	allocate_args(t_lexer *lex, char ***args, char ***args_start)
+int	allocate_args_cmd(t_lexer *lex, char ***args, char ***args_start, t_cmd **last_cmd)
 {
 	int	word_num;
 
@@ -459,6 +459,9 @@ int	allocate_args(t_lexer *lex, char ***args, char ***args_start)
 	*args_start = *args;
 	if (!*args)
 		return (-1);
+	*last_cmd = new_cmd(NULL);
+    if (!*last_cmd)
+        return (free(*args), -1);
 	return (0);
 }
 
@@ -498,6 +501,7 @@ int	handle_args(char ***args, t_lexer **lex)
 
 int	set_last_cmd(t_cmd *last_cmd, char **args_start)
 {
+	last_cmd->args = args_start;
 	if (*args_start)
 	{
 		last_cmd->cmd = ft_strdup(args_start[0]);
@@ -520,15 +524,16 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 	char	**args_start;
 	t_cmd	*last_cmd;
 
-	if (allocate_args(*lex, &args, &args_start) == -1)
+	if (allocate_args_cmd(*lex, &args, &args_start, &last_cmd) == -1)
 		return (-1);
-	last_cmd = new_cmd(NULL);
-	if (!last_cmd || append_cmd(cmd, last_cmd) == -1)
-		return (-1);
+	append_cmd(cmd, last_cmd);
 	while (*lex)
 	{
 		if (is_redir((*lex)->type))
-			append_redir(last_cmd, lex); //TODO: need to protect (return value -1)
+		{
+			if (append_redir(last_cmd, lex) == -1)
+				return (-1);
+		}
 		else if ((*lex)->value && is_nospace_addable((*lex)->type))
 		{
 			if (handle_args(&args, lex) == -1)
@@ -539,9 +544,9 @@ int	append_cmds(t_cmd **cmd, t_lexer **lex)
 		if (*lex)
 			*lex = (*lex)->next;
 	}
-	last_cmd->args = args_start;
 	return (set_last_cmd(last_cmd, args_start) == -1);
 }
+
 
 t_cmd	*delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 {

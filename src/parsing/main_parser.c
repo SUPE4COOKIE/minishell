@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 05:31:43 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 00:16:19 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/04 00:23:05 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	parse(t_minishell *mshell)
 
 	lex = lexer(mshell->line);
 	mshell->lex = lex;
-	if (expand(&lex, mshell->env, mshell->last_exit_status, mshell) == -1)
+	if (expand(&lex, mshell->env, mshell->last_exit_status) == -1)
 		return (free_lexer(lex), -1);
 	if (DEBUG)
 		print_lexer(lex);
