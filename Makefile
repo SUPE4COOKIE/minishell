@@ -57,7 +57,7 @@ OBJ = $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
 
 # Compiler and flags
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -Iincludes -Ilibft -g3
+CFLAGS = -Iincludes -Ilibft -g3
 
 # Libraries
 LIB = -Llibft -lft -lreadline

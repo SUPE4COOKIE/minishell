@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_to_cmd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/14 14:33:28 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/02 11:59:34 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,21 @@ char	*cmd_type_to_str(t_cmd_type type)
 	return ("UNDEFINED");
 }
 
+void free_str_array(char **array)
+{
+	size_t i;
+
+	if (!array)
+		return;
+	i = 0;
+	while (array[i])
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+}
+
 void	free_cmd(t_cmd *cmd)
 {
 	if (!cmd)
@@ -53,23 +68,11 @@ void	free_cmd(t_cmd *cmd)
 	if (cmd->cmd)
 		free(cmd->cmd);
 	if (cmd->args)
-	{
-		for (int i = 0; cmd->args[i]; i++)
-			free(cmd->args[i]);
-		free(cmd->args);
-	}
+		free_str_array(cmd->args);
 	if (cmd->op_type[0] != UNDEFINED && cmd->infile)
-	{
-		for (int i = 0; cmd->infile[i]; i++)
-			free(cmd->infile[i]);
-		free(cmd->infile);
-	}
+		free_str_array(cmd->infile);
 	if (cmd->op_type[1] != UNDEFINED && cmd->outfile)
-	{
-		for (int i = 0; cmd->outfile[i]; i++)
-			free(cmd->outfile[i]);
-		free(cmd->outfile);
-	}
+		free_str_array(cmd->outfile);
 	if (cmd->type_chain)
 		free(cmd->type_chain);
 	free(cmd);
@@ -482,8 +485,8 @@ int	resolve_cmd_path(t_cmd **cmd, char **path, int *exit_status)
 		get_cmd_path(&tmp, path, exit_status);
 		if (!tmp->is_valid_cmd)
 		{
-			tmp = delete_cmd(cmd, tmp);
-			continue ;
+			free(tmp->cmd);
+			tmp->cmd = NULL;
 		}
 		tmp = tmp->next;
 	}

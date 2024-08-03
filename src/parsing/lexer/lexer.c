@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/14 11:46:27 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/02 12:08:50 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,8 +214,10 @@ void	free_lexer(t_lexer *lex)
 	{
 		tmp = lex;
 		lex = lex->next;
-		free(tmp->value);
-		free(tmp);
+		if (tmp->value)
+			free(tmp->value);
+		if (tmp)
+			free(tmp);
 	}
 }
 
