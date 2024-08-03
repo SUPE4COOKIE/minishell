@@ -62,7 +62,7 @@ void	free_env_path(t_minishell *mshell)
 	}
 }
 
-static int	parse_path(t_minishell *mshell, char *env)
+int	parse_path(t_minishell *mshell, char *env)
 {
 	char	*path;
 

@@ -101,14 +101,15 @@ int	builtin_export(t_minishell *mshell, char **args)
 	{
 		if (check_input(mshell, args[i]))
 		{
-			ft_putendl_fd("minishell: export: ", 2);
+			ft_putendl_fd(": ", 2);
 			ft_putendl_fd(args[i], 2);
 			ft_putendl_fd("not a valid identifier\n", 2);
 			mshell->last_exit_status = 1;
 		}
 		else
 		{
-			put_in_env(args, i, mshell);
+			if (put_in_env(args, i, mshell))
+				return (1);
 			mshell->last_exit_status = 0;
 		}
 		i++;

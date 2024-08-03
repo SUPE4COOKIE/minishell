@@ -24,7 +24,7 @@ void	reset_default_fd(t_minishell *mshell)
 	close(mshell->original_stdin);
 }
 
-void	set_default_fd(t_minishell *mshell, int old[2], int new[2])
+int	set_default_fd(t_minishell *mshell, int old[2], int new[2])
 {
 	mshell->original_stdout = dup(STDOUT_FILENO);
 	mshell->original_stdin = dup(STDIN_FILENO);
@@ -39,8 +39,9 @@ void	set_default_fd(t_minishell *mshell, int old[2], int new[2])
 		if (new[1])
 			close(new[1]);
 		perror("dup failed");
-		exit(free_shell(mshell, errno));
+		return (1);
 	}
+	return (0);
 }
 
 void	reset_fds(t_minishell *mshell, int old[2], int new[2])

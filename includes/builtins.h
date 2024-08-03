@@ -30,7 +30,7 @@ int		builtin_echo(t_minishell *mshell, char **args);
 int		builtin_env(t_minishell *mshell, char **args);
 int		builtin_exit(t_minishell *mshell, char **args);
 int		builtin_pwd(t_minishell *mshell);
-void	builtin_unset(t_minishell *mshell, char **args);
+int		builtin_unset(t_minishell *mshell, char **args);
 int		builtin_export(t_minishell *mshell, char **args);
 int		ft_addenv(t_minishell *mshell, char *key, char *value);
 void	remove_nodes(t_arg **head, t_arg *node);

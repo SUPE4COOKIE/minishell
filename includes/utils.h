@@ -24,16 +24,17 @@ bool		is_redir_before(t_cmd *cmd, char **redir, char **reference);
 void		free_mshell(t_minishell *mshell);
 void		print_tab(char **tab);
 int			ft_tablen(char **tab);
-void		put_in_env(char **args, size_t i, t_minishell *mshell);
+int 		put_in_env(char **args, size_t i, t_minishell *mshell);
 size_t		ft_varlen(char *var, char c);
 int			is_n_only_spaces(char *line, size_t size);
 bool		isnumber(char *str);
 int			lst_size(t_cmd *cmd);
 void		reset_fds(t_minishell *mshell, int old[2], int new[2]);
 void		reset_default_fd(t_minishell *mshell);
-void		set_default_fd(t_minishell *mshell, int old[2], int new[2]);
+int         set_default_fd(t_minishell *mshell, int old[2], int new[2]);
 void		reset_fds(t_minishell *mshell, int old[2], int new[2]);
 uint8_t		atoutint8(const char *str, bool *is_overflow);
 long long	ft_atol_overflow(const char *str, bool *is_overflow);
+int	        error_msg(char *msg);
 
 #endif

@@ -28,17 +28,29 @@ int	is_in_env(char **env, char *key)
 	return (0);
 }
 
-void	put_in_env(char **args, size_t i, t_minishell *mshell)
+int	put_in_env(char **args, size_t i, t_minishell *mshell)
 {
 	char	*key;
 	char	*value;
 
 	key = ft_substr(args[i], 0, ft_varlen(args[i], '='));
+	if (!key)
+		return (error_msg(": ft_substr failed"));
 	value = ft_strdup(args[i] + ft_varlen(args[i], '=') + 1);
+	if (!value)
+	{
+		free_null(key);
+		return (error_msg(": ft_strdup failed"));
+	}
 	if (strncmp(key, "PATH=", 5) == 0)
 	{
 		free_tab(mshell->path);
-		save_path(mshell, args + i);
+		if (parse_path(mshell, value))
+		{
+			free(key);
+			free(value);
+			return (error_msg(": parse_path failed"));
+		}
 	}
 	if (is_in_env(mshell->env, key))
 		set_env(&mshell->env, key, value);
