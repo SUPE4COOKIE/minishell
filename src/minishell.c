@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/07/23 17:09:22 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/03 10:56:53 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	signal_here_doc(int signal)
 
 void	signal_exec(int signal)
 {
-	g_sig = 0;
+	g_sig = signal;
 	(void)signal;
 }
 
