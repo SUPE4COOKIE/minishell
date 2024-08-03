@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/03 02:01:18 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/04 00:19:35 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,22 +210,20 @@ int existing_var(t_lexer **lex, size_t *i, char **var)
 
 int inexistant_var(t_lexer **lex, size_t *i, char **var)
 {
-	t_lexer	*tmp = *lex;
-
-	if (tmp->type == T_WORD && *var && contain_spaced_words(*var))
-	{
-		tmp = lexer_replacer(tmp, NULL, lex);
-		if (!tmp)
-			return (free(*var), -1);
-		return (1);
-	}
-	else
-	{
-		tmp->value = var_replacer(tmp, *var, i);
-		if (!tmp->value)
-			return (free(*var), -1);
-	}
-	return (0);
+    if ((*lex)->type == T_WORD && *var && contain_spaced_words(*var))
+    {
+        *lex = lexer_replacer(*lex, NULL, lex);
+        if (!(*lex))
+            return (free(*var), -1);
+        return (1);
+    }
+    else
+    {
+        (*lex)->value = var_replacer(*lex, *var, i);
+        if (!(*lex)->value)
+            return (free(*var), -1);
+    }
+    return (0);
 }
 
 int	var_replace_manager(t_lexer **lex, size_t *i, char **var)
