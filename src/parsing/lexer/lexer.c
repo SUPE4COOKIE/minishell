@@ -6,109 +6,12 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 17:15:30 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/04 19:25:05 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	is_operator_char(char c)
-{
-	return (c == '|' || c == '<' || c == '>');
-}
-
-t_token_type	get_lexer_type(char *line)
-{
-	if (line[0] == '"' )
-		return (T_D_QUOTED_WORD);
-	else if (line[0] == '\'')
-		return (T_S_QUOTED_WORD);
-	else if (line[0] == '|')
-		return (T_PIPE);
-	else if (line[0] == '<')
-	{
-		if (line[1] == '<')
-			return (T_HERE_DOC);
-		else
-			return (T_REDIR_IN);
-	}
-	else if (line[0] == '>')
-	{
-		if (line[1] == '>')
-			return (T_APPEND_OUT);
-		else
-			return (T_REDIR_OUT);
-	}
-	else
-		return (T_WORD);
-}
-
-void	append_new_lexer(t_lexer **lex, t_lexer **new)
-{
-	t_lexer	*tmp;
-
-	if (*lex == NULL)
-	{
-		*lex = *new;
-		(*lex)->prev = NULL;
-	}
-	else
-	{
-		tmp = *lex;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = *new;
-		(*new)->prev = tmp;
-	}
-}
-
-int	is_n_only_spaces(char *line, size_t size)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < size)
-	{
-		if (line[i] != ' ' && line[i] != '\t' && line[i] != '\n'
-			&& line[i] != '\v' && line[i] != '\f' && line[i] != '\r')
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-char	*get_token_type(t_token_type type)
-{
-	if (type == T_WORD)
-		return ("T_WORD");
-	else if (type == T_PIPE)
-		return ("T_PIPE");
-	else if (type == T_REDIR_IN)
-		return ("T_REDIR_IN");
-	else if (type == T_REDIR_OUT)
-		return ("T_REDIR_OUT");
-	else if (type == T_APPEND_OUT)
-		return ("T_APPEND_OUT");
-	else if (type == T_D_QUOTED_WORD)
-		return ("T_D_QUOTED_WORD");
-	else if (type == T_S_QUOTED_WORD)
-		return ("T_S_QUOTED_WORD");
-	else if (type == T_HERE_DOC)
-		return ("T_HERE_DOC");
-	else
-		return ("UNKNOWN");
-}
-
-void	print_lexer(t_lexer *lex)
-{
-	while (lex)
-	{
-		printf("value: %s\n", lex->value);
-		printf("type: %s\n", get_token_type(lex->type));
-		printf("space_after: %d\n\n", lex->space_after);
-		lex = lex->next;
-	}
-}
 
 int	split_remaining(t_lexer **lex, char *line, size_t size)
 {
@@ -121,16 +24,6 @@ int	split_remaining(t_lexer **lex, char *line, size_t size)
 	else if (*lex)
 		get_last_lexer(*lex)->space_after = false;
 	return (0);
-}
-
-size_t	skip_whitespaces(char *line, size_t size)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < size && ft_iswhitespace(line[i]))
-		i++;
-	return (i);
 }
 
 int	split_word_lexer(t_lexer **lex, char *line, size_t size)
@@ -176,129 +69,6 @@ int	handle_new_lexer_value(t_lexer *new, char *line, size_t size)
 		if (new->value == NULL)
 			return (1);
 	}
-	return (0);
-}
-
-int	new_lexer(t_lexer **lex, char *line, size_t size)
-{
-	t_lexer	*new;
-
-	if (!line || !line[0])
-		return (0);
-	if (is_n_only_spaces(line, size))
-		return (0);
-	new = malloc(sizeof(t_lexer));
-	if (new == NULL)
-		return (1);
-	new->value = malloc(size + 1);
-	if (new->value == NULL)
-		return (free(new), 1);
-	if (handle_new_lexer_value(new, line, size))
-	{
-		free(new->value);
-		free(new);
-		return (1);
-	}
-	new->type = get_lexer_type(line);
-	append_new_lexer(lex, &new);
-	new->next = NULL;
-	new->space_after = false;
-	return (0);
-}
-
-void	free_lexer(t_lexer *lex)
-{
-	t_lexer	*tmp;
-
-	while (lex)
-	{
-		tmp = lex;
-		lex = lex->next;
-		if (tmp->value)
-			free(tmp->value);
-		if (tmp)
-			free(tmp);
-	}
-}
-
-int	add_operator(t_lexer **lex, char *line, size_t *end)
-{
-	size_t	len;
-
-	len = 0;
-	while (line[len] && is_operator_char(line[len])
-		&& line[0] == line[len] && len < 2)
-	{
-		len++;
-		if (line[0] == '|')
-			break ;
-	}
-	if (new_lexer(lex, line, len))
-		return (1);
-	(*end) += len;
-	get_last_lexer(*lex)->space_after = ft_iswhitespace(line[len]);
-	return (0);
-}
-
-t_lexer	*get_last_lexer(t_lexer *lex)
-{
-	while (lex && lex->next)
-		lex = lex->next;
-	return (lex);
-}
-
-t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete)
-{
-	t_lexer	*tmp;
-
-	tmp = *lex;
-	if (tmp == to_delete)
-	{
-		*lex = tmp->next;
-		free_null(tmp->value);
-		free_null(tmp);
-		return (NULL);
-	}
-	while (tmp && tmp != to_delete)
-		tmp = tmp->next;
-	if (tmp && tmp == to_delete)
-	{
-		if (tmp->prev)
-		{
-			tmp->prev->next = tmp->next;
-			if (!tmp->prev->space_after)
-				tmp->prev->space_after = tmp->space_after;
-		}
-		if (tmp->next)
-			tmp->next->prev = tmp->prev;
-		free(tmp->value);
-	}
-	return (free(tmp), *lex);
-}
-
-int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
-{
-	size_t	len;
-	t_lexer	*tmp;
-	char	quote;
-
-	quote = line[0];
-	len = 1;
-	while (line[len] && line[len] != quote)
-		len++;
-	if (len > 1)
-	{
-		if (new_lexer(lex, line, len)) //TODO: check return value
-			return (1);
-	}
-	if (line[len] == quote)
-		len++;
-	(*end) += len;
-	tmp = get_last_lexer(*lex);
-	if (ft_iswhitespace(line[len]) && tmp)
-		tmp->space_after = true;
-	else if (tmp && !tmp->space_after)
-		tmp->space_after = false;
 	return (0);
 }
 

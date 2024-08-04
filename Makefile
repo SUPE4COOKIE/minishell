@@ -40,8 +40,6 @@ SRCS = $(addprefix src/, \
 		) \
 		cmd_finder.c \
 		env_parse.c \
-		ft_split_args_utils.c \
-		ft_split_args.c \
 		main_parser.c \
 	) \
 	$(addprefix utils/, \
@@ -51,7 +49,10 @@ SRCS = $(addprefix src/, \
 			redir_order.c \
 		) \
 		$(addprefix lexer/, \
-			lexer_utils.c \
+			lexer_info_utils.c \
+			lexer_str_utils.c \
+			lexer_delete_utils.c \
+			lexer_modify_utils.c \
 		) \
 		error.c \
 		exit_free.c \
@@ -74,7 +75,7 @@ OBJ = $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
 
 # Compiler and flags
 CC = cc
-CFLAGS = -Iincludes -Ilibft -g3
+CFLAGS = -Wall -Werror -Wextra -Iincludes -Ilibft -g3
 
 # Libraries
 LIB = -Llibft -lft -lreadline

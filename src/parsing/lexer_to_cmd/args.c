@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 16:56:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 17:01:28 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/04 19:05:54 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ int	allocate_args_cmd(t_lexer *lex, char ***args, char ***args_start, t_cmd **la
 	if (!*args)
 		return (-1);
 	*last_cmd = new_cmd(NULL);
-    if (!*last_cmd)
-        return (free(*args), -1);
+	if (!*last_cmd)
+		return (free(*args), -1);
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 17:01:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/04 17:14:39 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/04 19:00:50 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,8 @@ struct s_lexer
 };
 
 int		parse(t_minishell *mshell);
-char	**ft_split_args(char const *str, char sep);
-char	*copy_str(const char *str, size_t start, size_t len);
 int		is_in_quote(char c, char *in_quote);
-void	free_str(char **split);
-char	**init_split(size_t count);
 t_lexer	*lexer(char *line);
-void	print_lexer(t_lexer *lex);
 bool	validate(t_lexer *lex, int *exit_code);
 int		new_lexer(t_lexer **lex, char *line, size_t size);
 int		save_path(t_minishell *mshell, char **env);
