@@ -3,38 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_checks.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 21:26:52 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 11:05:54 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/04 11:14:37 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-	things to check for each:
-
-	- pipe:
-		- no pipe at the end
-		- no pipe at the start
-		- should be between 2 words // can have an operation after
-	
-	- redirections:
-		- followed by a word
-		- no consecutive operations without a word in between
-	
-	- here_doc:
-		- followed by a word
-		- no consecutive operations without a word in between
-*/
-
 #include "minishell.h"
 
-static inline bool syntax_error(char *message, int *status_code)
+static inline bool	syntax_error(char *message, int *status_code)
 {
-	printf("minishell: syntax error near unexpected token `%s'\n", message);
+	write(2, "minishell: syntax error near unexpected token `", 47);
+	write(2, message, ft_strlen(message));
+	write(2, "'\n", 2);
 	*status_code = 2;
 	return (false);
 }
+
 bool	validate(t_lexer *lex, int *exit_code)
 {
 	t_lexer	*tmp;
@@ -47,11 +33,14 @@ bool	validate(t_lexer *lex, int *exit_code)
 			if (!tmp->next || !tmp->prev || tmp->next->type == T_PIPE)
 				return (syntax_error("|", exit_code));
 		}
-		else if (tmp->type == T_REDIR_IN || tmp->type == T_REDIR_OUT || tmp->type == T_APPEND_OUT || tmp->type == T_HERE_DOC)
+		else if (tmp->type == T_REDIR_IN || tmp->type == T_REDIR_OUT
+			|| tmp->type == T_APPEND_OUT || tmp->type == T_HERE_DOC)
 		{
 			if (!tmp->next)
 				return (syntax_error("newline", exit_code));
-			if (!(tmp->next->type == T_WORD || tmp->next->type == T_D_QUOTED_WORD || tmp->next->type == T_S_QUOTED_WORD))
+			if (!(tmp->next->type == T_WORD
+					||tmp->next->type == T_D_QUOTED_WORD
+					||tmp->next->type == T_S_QUOTED_WORD))
 				return (syntax_error(tmp->next->value, exit_code));
 		}
 		tmp = tmp->next;

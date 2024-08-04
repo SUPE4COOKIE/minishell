@@ -1,0 +1,223 @@
+Memcheck, a memory error detector
+Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+Command: ./minishell echo\ \<\ salut\ |\ cat\ $HOME/monitoring.sh$SALUT\ |\ \<\<\ bonjour\ |\ \>\ oui\ \<\ non\ \>\>\ salut\ cat\ |\ $OUI|dsfdsfdsfdsfs|"e"ch"o"\ salut\ \<\ oui\ \>non\ \>\>salut|\ $?$?\ |\ echo\ ""\ ""\ salut
+
+dsfdsfdsfdsfs: command not found
+00: command not found
+value: echo
+type: T_WORD
+space_after: 1
+
+value: <
+type: T_REDIR_IN
+space_after: 1
+
+value: salut
+type: T_WORD
+space_after: 1
+
+value: |
+type: T_PIPE
+space_after: 1
+
+value: cat
+type: T_WORD
+space_after: 1
+
+value: /home/mwojtasi/monitoring.sh
+type: T_WORD
+space_after: 1
+
+value: |
+type: T_PIPE
+space_after: 1
+
+value: <<
+type: T_HERE_DOC
+space_after: 1
+
+value: bonjour
+type: T_WORD
+space_after: 1
+
+value: |
+type: T_PIPE
+space_after: 1
+
+value: >
+type: T_REDIR_OUT
+space_after: 1
+
+value: oui
+type: T_WORD
+space_after: 1
+
+value: <
+type: T_REDIR_IN
+space_after: 1
+
+value: non
+type: T_WORD
+space_after: 1
+
+value: >>
+type: T_APPEND_OUT
+space_after: 1
+
+value: salut
+type: T_WORD
+space_after: 1
+
+value: cat
+type: T_WORD
+space_after: 1
+
+value: |
+type: T_PIPE
+space_after: 1
+
+value: echo
+type: T_WORD
+space_after: 1
+
+value: salut
+type: T_WORD
+space_after: 1
+
+value: $HOME
+type: T_WORD
+space_after: 1
+
+value: $0
+type: T_WORD
+space_after: 0
+
+value: |
+type: T_PIPE
+space_after: 0
+
+value: dsfdsfdsfdsfs
+type: T_WORD
+space_after: 0
+
+value: |
+type: T_PIPE
+space_after: 0
+
+value: e
+type: T_D_QUOTED_WORD
+space_after: 0
+
+value: ch
+type: T_WORD
+space_after: 0
+
+value: o
+type: T_D_QUOTED_WORD
+space_after: 1
+
+value: salut
+type: T_WORD
+space_after: 1
+
+value: <
+type: T_REDIR_IN
+space_after: 1
+
+value: oui
+type: T_WORD
+space_after: 1
+
+value: >
+type: T_REDIR_OUT
+space_after: 0
+
+value: non
+type: T_WORD
+space_after: 1
+
+value: >>
+type: T_APPEND_OUT
+space_after: 0
+
+value: salut
+type: T_WORD
+space_after: 0
+
+value: |
+type: T_PIPE
+space_after: 1
+
+value: 00
+type: T_WORD
+space_after: 1
+
+value: |
+type: T_PIPE
+space_after: 1
+
+value: echo
+type: T_WORD
+space_after: 1
+
+value: salut
+type: T_WORD
+space_after: 0
+
+cmd: echo
+args: echo, 
+infile op type: RED_IN
+outfile op type: UNDEFINED
+infile: salut , 
+type chain: RED_IN, 
+
+cmd: /usr/bin/cat
+args: cat, /home/mwojtasi/monitoring.sh, 
+infile op type: UNDEFINED
+outfile op type: UNDEFINED
+
+cmd: (null)
+args: (null)
+infile op type: HDOC
+outfile op type: UNDEFINED
+infile: bonjour , 
+type chain: HDOC, 
+
+cmd: /usr/bin/cat
+args: cat, 
+infile op type: RED_IN
+outfile op type: APP_OUT
+infile: non , 
+outfile: oui , salut , 
+type chain: RED_OUT, RED_IN, APP_OUT, 
+
+cmd: echo
+args: echo, salut, $HOME, $0, 
+infile op type: UNDEFINED
+outfile op type: UNDEFINED
+
+cmd: echo
+args: echo, salut, 
+infile op type: RED_IN
+outfile op type: APP_OUT
+infile: oui , 
+outfile: non , salut , 
+type chain: RED_IN, RED_OUT, APP_OUT, 
+
+cmd: echo
+args: echo, salut, 
+infile op type: UNDEFINED
+outfile op type: UNDEFINED
+
+
+FILE DESCRIPTORS: 3 open (3 std) at exit.
+
+HEAP SUMMARY:
+    in use at exit: 0 bytes in 0 blocks
+  total heap usage: 337 allocs, 337 frees, 13,023 bytes allocated
+
+All heap blocks were freed -- no leaks are possible
+
+For lists of detected and suppressed errors, rerun with: -s
+ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
