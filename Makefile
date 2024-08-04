@@ -32,14 +32,27 @@ SRCS = $(addprefix src/, \
 		$(addprefix syntax/, \
 			syntax_checks.c \
 		) \
+		$(addprefix lexer_to_cmd/, \
+			lexer_to_cmd.c \
+			redirections.c \
+			args.c \
+			space_addition.c \
+		) \
 		cmd_finder.c \
 		env_parse.c \
 		ft_split_args_utils.c \
 		ft_split_args.c \
-		lexer_to_cmd.c \
 		main_parser.c \
 	) \
 	$(addprefix utils/, \
+		$(addprefix cmd/, \
+			cmd_utils.c \
+			cmd_delete_utils.c \
+			redir_order.c \
+		) \
+		$(addprefix lexer/, \
+			lexer_utils.c \
+		) \
 		error.c \
 		exit_free.c \
 		utils.c \
@@ -75,11 +88,14 @@ RM = rm -rf
 DIRS = $(OBJ_DIR) \
 	$(OBJ_DIR)/parsing \
 	$(OBJ_DIR)/parsing/lexer \
+	$(OBJ_DIR)/parsing/lexer_to_cmd \
 	$(OBJ_DIR)/parsing/expand \
 	$(OBJ_DIR)/parsing/syntax \
 	$(OBJ_DIR)/builtin \
 	$(OBJ_DIR)/exec \
-	$(OBJ_DIR)/utils
+	$(OBJ_DIR)/utils \
+	$(OBJ_DIR)/utils/cmd \
+	$(OBJ_DIR)/utils/lexer
 
 # Header files
 HEADERS = $(addprefix includes/, \

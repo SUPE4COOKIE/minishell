@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 11:53:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/23 14:07:40 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/04 17:16:38 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,21 @@ int	ft_tablen(char **tab)
 	while (tab[i])
 		i++;
 	return (i);
+}
+
+void free_str_array(char **array)
+{
+	size_t i;
+
+	if (!array)
+		return;
+	i = 0;
+	while (array[i])
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
 }
 
 /*
