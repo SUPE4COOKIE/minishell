@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 16:35:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/02 12:08:50 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/04 16:02:07 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static inline int	is_operator_char(char c)
+bool	is_operator_char(char c)
 {
 	return (c == '|' || c == '<' || c == '>');
 }
@@ -287,7 +287,10 @@ int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
 	while (line[len] && line[len] != quote)
 		len++;
 	if (len > 1)
-		new_lexer(lex, line, len); // TODO: check return
+	{
+		if (new_lexer(lex, line, len)) //TODO: check return value
+			return (1);
+	}
 	if (line[len] == quote)
 		len++;
 	(*end) += len;

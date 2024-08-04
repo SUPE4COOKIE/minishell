@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_parser.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 05:31:43 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 00:23:05 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/04 15:58:40 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,6 @@ int	parse(t_minishell *mshell)
 		free_cmds(mshell->cmds);
 		return (1);
 	}
-	if (DEBUG)
-		print_cmds(mshell->cmds);
-	// get cmd fo all path
 	free_lexer(lex);
 	return (0);
 }
