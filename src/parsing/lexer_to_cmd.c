@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 11:15:59 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/04 11:23:15 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -424,16 +424,6 @@ bool is_redir(t_token_type type)
 {
 	return (type == T_REDIR_IN || type == T_REDIR_OUT
 		|| type == T_APPEND_OUT || type == T_HERE_DOC);
-}
-
-int	handle_redirections(t_cmd *last_cmd, t_lexer **lex)
-{
-	if (is_redir((*lex)->type))
-	{
-		if (append_redir(last_cmd, lex) == -1)
-			return (-1);
-	}
-	return (0);
 }
 
 int	handle_args(char ***args, t_lexer **lex)

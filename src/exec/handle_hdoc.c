@@ -6,11 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/08/03 10:59:31 by scrumier         ###   ########.fr       */
-=======
-/*   Updated: 2024/06/27 15:05:09 by mwojtasi         ###   ########.fr       */
->>>>>>> parse
+/*   Updated: 2024/08/04 11:21:22 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +24,6 @@ int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 	g_sig = 0;
 	while (42)
 	{
-<<<<<<< HEAD
 		signal(SIGINT, signal_here_doc);
 		rl_event_hook = event;
 		line = readline("> ");
@@ -36,18 +31,6 @@ int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 			if (g_sig == 0)
 				break ;
 		if (g_sig != 0)
-=======
-		g_sig = true;
-		ft_putstr_fd("> ", STDOUT_FILENO);
-		line = readline("");
-		g_sig = false;
-		if (DEBUG)
-		{
-			printf("line = %s\n", line);
-			printf("cmd->infile[i] = %s\n", cmd->infile[i]);
-		}
-		if (ft_strncmp(line, cmd->infile[i], ft_strlen(cmd->infile[i])) == 0)
->>>>>>> parse
 		{
 			ft_printf("\n");
 			break ;
