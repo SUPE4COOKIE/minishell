@@ -46,7 +46,7 @@ SRCS = $(addprefix src/, \
 		utils.c \
 		name_file.c \
 		pid_utils.c \
-		env.c \
+		env_utils.c \
 		list.c \
 		remove_double_points.c \
 		change_dir.c \
