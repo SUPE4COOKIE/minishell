@@ -56,6 +56,7 @@ int	put_in_env(char **args, size_t i, t_minishell *mshell)
 		set_env(&mshell->env, key, value);
 	else
 		ft_addenv(mshell, key, value);
+	return (EXIT_SUCCESS);
 }
 
 size_t	ft_varlen(char *var, char c)
