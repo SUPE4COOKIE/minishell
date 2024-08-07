@@ -25,6 +25,8 @@ SRCS = $(addprefix src/, \
 	$(addprefix parsing/, \
 		$(addprefix lexer/, \
 			lexer.c \
+			type_handling.c \
+			word_processing.c \
 		) \
 		$(addprefix expand/, \
 			expand.c \

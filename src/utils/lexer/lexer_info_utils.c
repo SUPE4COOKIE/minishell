@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_info_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 16:48:51 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 19:13:49 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/07 02:53:51 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,25 +54,6 @@ t_token_type	get_lexer_type(char *line)
 	}
 	else
 		return (T_WORD);
-}
-
-void	append_new_lexer(t_lexer **lex, t_lexer **new)
-{
-	t_lexer	*tmp;
-
-	if (*lex == NULL)
-	{
-		*lex = *new;
-		(*lex)->prev = NULL;
-	}
-	else
-	{
-		tmp = *lex;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = *new;
-		(*new)->prev = tmp;
-	}
 }
 
 char	*get_token_type(t_token_type type)

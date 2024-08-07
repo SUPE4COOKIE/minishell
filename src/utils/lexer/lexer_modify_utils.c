@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_modify_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 19:18:48 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 19:20:36 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/07 03:40:01 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,23 @@ int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
 	else if (tmp && !tmp->space_after)
 		tmp->space_after = false;
 	return (0);
+}
+
+void	append_new_lexer(t_lexer **lex, t_lexer **new)
+{
+	t_lexer	*tmp;
+
+	if (*lex == NULL)
+	{
+		*lex = *new;
+		(*lex)->prev = NULL;
+	}
+	else
+	{
+		tmp = *lex;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = *new;
+		(*new)->prev = tmp;
+	}
 }

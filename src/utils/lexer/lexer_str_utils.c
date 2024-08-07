@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_str_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 18:58:50 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 19:13:35 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/07 02:55:19 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,3 +54,4 @@ size_t	skip_whitespaces(char *line, size_t size)
 		i++;
 	return (i);
 }
+
