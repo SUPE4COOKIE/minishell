@@ -30,6 +30,9 @@ SRCS = $(addprefix src/, \
 		) \
 		$(addprefix expand/, \
 			expand.c \
+			expand_str_tools.c \
+			lexer_expand.c \
+			var_handling.c \
 		) \
 		$(addprefix syntax/, \
 			syntax_checks.c \

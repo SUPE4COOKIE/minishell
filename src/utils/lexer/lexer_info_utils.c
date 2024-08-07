@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 16:48:51 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/07 02:53:51 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/07 16:33:50 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,5 +82,12 @@ t_lexer	*get_last_lexer(t_lexer *lex)
 {
 	while (lex && lex->next)
 		lex = lex->next;
+	return (lex);
+}
+
+t_lexer	*get_first_lexer(t_lexer *lex)
+{
+	while (lex && lex->prev)
+		lex = lex->prev;
 	return (lex);
 }
