@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 17:01:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/07 16:33:59 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/08 00:28:20 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ t_lexer	*get_last_lexer(t_lexer *lex);
 int		get_cmd_path(t_cmd **cmd, char **path, int *exit_status);
 t_cmd	*delete_cmd(t_cmd **cmd, t_cmd *to_delete);
 t_lexer	*delete_lexer(t_lexer **lex, t_lexer *to_delete);
-void	allocate_env(t_minishell *mshell, char **envp);
+int		allocate_env(t_minishell *mshell, char **envp);
 void	free_env_path(t_minishell *mshell);
 void	free_lexer(t_lexer *lex);
 bool	is_valid_quotes(char *line, int *status_code);
@@ -79,7 +79,7 @@ int	dir_error(t_cmd **cmd, int *exit_status);
 bool	is_point(t_cmd **cmd);
 int	error_permissions(t_cmd **cmd, int *exit_status);
 int	error_command_not_found(t_cmd **cmd, int *exit_status);
-
+int	set_sysbin(t_minishell *mshell);
 void free_str_array(char **array);
 void free_cmd(t_cmd *cmd);
 void free_cmds(t_cmd *cmd);
