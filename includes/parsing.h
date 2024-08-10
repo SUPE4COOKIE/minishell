@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 17:01:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/08 00:28:20 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 18:36:42 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ int	dir_error(t_cmd **cmd, int *exit_status);
 bool	is_point(t_cmd **cmd);
 int	error_permissions(t_cmd **cmd, int *exit_status);
 int	error_command_not_found(t_cmd **cmd, int *exit_status);
+int	cmd_not_found(t_cmd **cmd, int *exit_status);
 int	set_sysbin(t_minishell *mshell);
 void free_str_array(char **array);
 void free_cmd(t_cmd *cmd);

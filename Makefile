@@ -62,6 +62,7 @@ SRCS = $(addprefix src/, \
 		error.c \
 		exit_free.c \
 		utils.c \
+		cmd_finder_errors.c \
 		name_file.c \
 		pid_utils.c \
 		env_utils.c \
