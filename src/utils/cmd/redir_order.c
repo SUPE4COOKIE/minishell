@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   redir_order.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 16:38:22 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 16:52:08 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:48:03 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void redir_before_init(size_t *i, size_t *redir_in, size_t *redir_out, bool *reference_found)
+void	redir_before_init(size_t *i, size_t *redir_in,
+		size_t *redir_out, bool *reference_found)
 {
 	*i = 0;
 	*redir_in = 0;
@@ -31,22 +32,22 @@ bool	is_redir_before(t_cmd *cmd, char **redir, char **reference)
 	size_t	i;
 	size_t	redir_in;
 	size_t	redir_out;
-	bool	reference_found;
-	
-	redir_before_init(&i, &redir_in, &redir_out, &reference_found);
+	bool	ref_found;
+
+	redir_before_init(&i, &redir_in, &redir_out, &ref_found);
 	while (cmd->type_chain[i] != UNDEFINED)
 	{
 		if (cmd->type_chain[i] == RED_IN || cmd->type_chain[i] == HDOC)
 		{
-			is_redir_reference(cmd->infile[redir_in], *reference, &reference_found);
-			if (cmd->infile[redir_in] == *redir && !reference_found)
+			is_redir_reference(cmd->infile[redir_in], *reference, &ref_found);
+			if (cmd->infile[redir_in] == *redir && !ref_found)
 				return (true);
 			redir_in++;
 		}
 		else
 		{
-			is_redir_reference(cmd->outfile[redir_out], *reference, &reference_found);
-			if (cmd->outfile[redir_out] == *redir && !reference_found)
+			is_redir_reference(cmd->outfile[redir_out], *reference, &ref_found);
+			if (cmd->outfile[redir_out] == *redir && !ref_found)
 				return (true);
 			redir_out++;
 		}
@@ -55,7 +56,7 @@ bool	is_redir_before(t_cmd *cmd, char **redir, char **reference)
 	return (false);
 }
 
-int append_new_typechain(t_cmd_type **type_chain, t_cmd_type type)
+int	append_new_typechain(t_cmd_type **type_chain, t_cmd_type type)
 {
 	*type_chain = malloc(sizeof(t_cmd_type) * 2);
 	if (!*type_chain)

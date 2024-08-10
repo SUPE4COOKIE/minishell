@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 20:55:03 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/10 18:11:06 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 20:59:40 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,11 @@
 
 bool	is_point(t_cmd **cmd)
 {
-	return (!ft_strncmp((*cmd)->cmd, ".", 2) || !ft_strncmp((*cmd)->cmd, "..", 3));
+	return (!ft_strncmp((*cmd)->cmd, ".", 2)
+		|| !ft_strncmp((*cmd)->cmd, "..", 3));
 }
 
-static int is_full_path(t_cmd **cmd, int *exit_status)
+static int	is_full_path(t_cmd **cmd, int *exit_status)
 {
 	if (is_builtin((*cmd)->cmd))
 	{
@@ -34,7 +35,8 @@ static int is_full_path(t_cmd **cmd, int *exit_status)
 			(*cmd)->is_valid_cmd = true;
 			return (1);
 		}
-		else if (access((*cmd)->cmd, F_OK) == 0 && access((*cmd)->cmd, X_OK) != 0)
+		else if (access((*cmd)->cmd, F_OK) == 0
+			&& access((*cmd)->cmd, X_OK) != 0)
 			return (error_permissions(cmd, exit_status));
 		else
 			return (error_command_not_found(cmd, exit_status));
@@ -42,7 +44,7 @@ static int is_full_path(t_cmd **cmd, int *exit_status)
 	return (0);
 }
 
-static int cmd_no_path(t_cmd **cmd, char **path, int *exit_status)
+static int	cmd_no_path(t_cmd **cmd, char **path, int *exit_status)
 {
 	if (!path)
 	{
@@ -82,7 +84,7 @@ static	int	cmd_for_path(t_cmd **cmd, char *path, int *exit_status)
 	return (0);
 }
 
-int get_cmd_path(t_cmd **cmd, char **path, int *exit_status)
+int	get_cmd_path(t_cmd **cmd, char **path, int *exit_status)
 {
 	int		return_value;
 
@@ -95,7 +97,7 @@ int get_cmd_path(t_cmd **cmd, char **path, int *exit_status)
 		{
 			return_value = cmd_for_path(cmd, *path, exit_status);
 			if (return_value == 1)
-				break;
+				break ;
 			else if (return_value == -1)
 				return (-1);
 			path++;

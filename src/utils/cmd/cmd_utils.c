@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 16:07:27 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 16:47:19 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:16:47 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ size_t	get_cmd_size(t_lexer *lex)
 	while (lex)
 	{
 		if (lex->value && (lex->type == T_WORD || lex->type == T_S_QUOTED_WORD
-			|| lex->type == T_D_QUOTED_WORD))
+				|| lex->type == T_D_QUOTED_WORD))
 			size += ft_strlen(lex->value) + 1;
 		lex = lex->next;
 	}

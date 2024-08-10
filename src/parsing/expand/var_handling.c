@@ -6,13 +6,13 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 16:35:01 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/07 16:38:25 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:08:23 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int existing_var(t_lexer **lex, size_t *i, char **var)
+int	existing_var(t_lexer **lex, size_t *i, char **var)
 {
 	char	*replaced;
 
@@ -46,22 +46,22 @@ void	copy_var(char **result, char **var_value, size_t *i)
 	}
 }
 
-int inexistant_var(t_lexer **lex, size_t *i, char **var)
+int	inexistant_var(t_lexer **lex, size_t *i, char **var)
 {
-    if ((*lex)->type == T_WORD && *var && contain_spaced_words(*var))
-    {
-        *lex = lexer_replacer(*lex, NULL, lex);
-        if (!(*lex))
-            return (free(*var), -1);
-        return (1);
-    }
-    else
-    {
-        (*lex)->value = var_replacer(*lex, *var, i);
-        if (!(*lex)->value)
-            return (free(*var), -1);
-    }
-    return (0);
+	if ((*lex)->type == T_WORD && *var && contain_spaced_words(*var))
+	{
+		*lex = lexer_replacer(*lex, NULL, lex);
+		if (!(*lex))
+			return (free(*var), -1);
+		return (1);
+	}
+	else
+	{
+		(*lex)->value = var_replacer(*lex, *var, i);
+		if (!(*lex)->value)
+			return (free(*var), -1);
+	}
+	return (0);
 }
 
 int	get_var_value(t_lexer **lex, char **var, size_t *i, char **envp)
@@ -70,8 +70,8 @@ int	get_var_value(t_lexer **lex, char **var, size_t *i, char **envp)
 	t_lexer	*tmp;
 
 	tmp = *lex;
-	if (tmp->value[*i] == '$' && tmp->value[*i + 1] && 
-			(ft_isalpha(tmp->value[*i + 1]) || tmp->value[*i + 1] == '_'))
+	if (tmp->value[*i] == '$' && tmp->value[*i + 1]
+		&& (ft_isalpha(tmp->value[*i + 1]) || tmp->value[*i + 1] == '_'))
 	{
 		tmp = *lex;
 		(*i)++;
@@ -87,9 +87,9 @@ int	get_var_value(t_lexer **lex, char **var, size_t *i, char **envp)
 
 char	*var_replacer(t_lexer *var, char *value, size_t *iter)
 {
-	char *result;
-	char *var_start;
-	size_t i;
+	char	*result;
+	char	*var_start;
+	size_t	i;
 
 	result = malloc(ft_strlen(var->value) + ft_strlen(value) + 1);
 	if (!result)
@@ -102,7 +102,7 @@ char	*var_replacer(t_lexer *var, char *value, size_t *iter)
 		{
 			skip_var(&(var->value));
 			copy_value(&result, &value, iter, &i);
-			break;
+			break ;
 		}
 		result[i] = *(var->value);
 		i++;

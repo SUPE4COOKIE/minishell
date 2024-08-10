@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 03:24:48 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/07 03:35:38 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:01:28 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ int	split_word_lexer(t_lexer **lex, char *line, size_t size)
 	}
 	return (split_remaining(lex, line, size));
 }
+
 int	process_word(t_lexer **lex, char *line, size_t start, size_t end)
 {
 	int	type;

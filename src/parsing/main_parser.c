@@ -6,91 +6,11 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 05:31:43 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/08 22:06:47 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:00:12 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
-char	*cmd_type_to_str(t_cmd_type type)
-{
-	if (type == CMD)
-		return ("CMD");
-	else if (type == PIP)
-		return ("PIP");
-	else if (type == RED_IN)
-		return ("RED_IN");
-	else if (type == RED_OUT)
-		return ("RED_OUT");
-	else if (type == APP_OUT)
-		return ("APP_OUT");
-	else if (type == HDOC)
-		return ("HDOC");
-	return ("UNDEFINED");
-}
-
-void	print_types(t_cmd_type *type)
-{
-	int	i;
-
-	i = 0;
-	while (type[i] != UNDEFINED)
-	{
-		printf("%s, ", cmd_type_to_str(type[i]));
-		i++;
-	}
-	printf("\n");
-}
-
-void	print_cmd(t_cmd *cmd) // will be deleted later
-{
-	printf("cmd: %s\n", cmd->cmd);
-	printf("args: ");
-	if (cmd->args)
-	{
-		for (int i = 0; cmd->args[i]; i++)
-			printf("%s, ", cmd->args[i]);
-	}
-	else
-		printf("(null)");
-	printf("\ninfile op type: %s\n", cmd_type_to_str(cmd->op_type[0]));
-	printf("outfile op type: %s\n", cmd_type_to_str(cmd->op_type[1]));
-	if (cmd->op_type[0] != UNDEFINED)
-	{
-		printf("infile: ");
-		for (int i = 0; cmd->infile[i]; i++)
-			printf("%s , ", cmd->infile[i]);
-		printf("\n");
-	}
-	if (cmd->op_type[1] != UNDEFINED)
-	{
-		printf("outfile: ");
-		for (int i = 0; cmd->outfile[i]; i++)
-			printf("%s , ", cmd->outfile[i]);
-		printf("\n");
-	
-	}
-	if (cmd->op_type[0] != UNDEFINED || cmd->op_type[1] != UNDEFINED)
-	{
-		printf("type chain: ");
-		print_types(cmd->type_chain);
-	}
-	printf("\n");
-	(void)cmd;
-}
-
-void	print_cmds(t_cmd *cmd)
-{
-	t_cmd	*tmp;
-
-	tmp = cmd;
-	while (tmp)
-	{
-		print_cmd(tmp);
-		tmp = tmp->next;
-	}
-}
 
 int	parse(t_minishell *mshell)
 {
@@ -111,6 +31,5 @@ int	parse(t_minishell *mshell)
 		return (1);
 	}
 	free_lexer(lex);
-	print_cmds(mshell->cmds);
 	return (0);
 }

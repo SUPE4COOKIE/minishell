@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 18:13:26 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/07 20:42:16 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:02:42 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ char	*get_name(char *str)
 	size_t	i;
 
 	i = 0;
-	while (str[i] && (ft_isalpha(str[i]) || str[i] == '_' || ft_isdigit(str[i])))
+	while (str[i] && (ft_isalpha(str[i]) || str[i] == '_'
+			|| ft_isdigit(str[i])))
 		i++;
 	name = ft_substr(str, 0, i);
 	if (!name)
@@ -43,11 +44,12 @@ void	skip_var(char **var_value)
 		(*var_value)++;
 	if (**var_value && **var_value != '?')
 	{
-		while (ft_isalpha(**var_value) || **var_value == '_' || ft_isdigit(**var_value))
+		while (ft_isalpha(**var_value) || **var_value == '_'
+			|| ft_isdigit(**var_value))
 		{
 			(*var_value)++;
 			if (ft_isdigit(*((*var_value) - 1)) && *((*var_value) - 2) == '$')
-				break;
+				break ;
 		}
 	}
 	else if (**var_value == '?')

@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 18:58:50 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/07 02:55:19 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:49:24 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,3 @@ size_t	skip_whitespaces(char *line, size_t size)
 		i++;
 	return (i);
 }
-

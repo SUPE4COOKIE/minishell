@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 18:09:49 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/10 18:35:48 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:15:49 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 int	dir_error(t_cmd **cmd, int *exit_status)
 {
-	char	*tmp;
-	struct	stat buf;
+	char		*tmp;
+	struct stat	buf;
 
 	if (stat((*cmd)->cmd, &buf) == -1)
 	{

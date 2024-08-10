@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 19:18:48 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/07 03:40:01 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:50:24 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ int	add_operator(t_lexer **lex, char *line, size_t *end)
 	return (0);
 }
 
-
 int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
 {
 	size_t	len;
@@ -71,7 +70,7 @@ int	add_quoted_word(t_lexer **lex, char *line, size_t *end)
 		len++;
 	if (len > 1)
 	{
-		if (new_lexer(lex, line, len)) //TODO: check return value
+		if (new_lexer(lex, line, len))
 			return (1);
 	}
 	if (line[len] == quote)

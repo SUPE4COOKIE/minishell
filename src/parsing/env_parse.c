@@ -6,16 +6,16 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 16:40:14 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/08 21:51:52 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:00:50 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int allocate_env(t_minishell *mshell, char **envp)
+int	allocate_env(t_minishell *mshell, char **envp)
 {
-	size_t i;
-	size_t len;
+	size_t	i;
+	size_t	len;
 
 	i = 0;
 	while (envp[i])
@@ -39,7 +39,7 @@ int allocate_env(t_minishell *mshell, char **envp)
 
 void	free_env_path(t_minishell *mshell)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	if (mshell->env)
@@ -80,7 +80,7 @@ int	parse_path(t_minishell *mshell, char *env)
 int	env_path_saver(t_minishell *mshell, char **env)
 {
 	size_t	i;
-	
+
 	i = 0;
 	while (env[i])
 	{

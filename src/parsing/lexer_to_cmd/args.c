@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   args.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 16:56:17 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 19:05:54 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:12:30 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	allocate_args_cmd(t_lexer *lex, char ***args, char ***args_start, t_cmd **last_cmd)
+int	allocate_args_cmd(t_lexer *lex, char ***args,
+	char ***args_start, t_cmd **last_cmd)
 {
 	int	word_num;
 
@@ -29,8 +30,8 @@ int	allocate_args_cmd(t_lexer *lex, char ***args, char ***args_start, t_cmd **la
 
 int	handle_args(char ***args, t_lexer **lex)
 {
-	if (!(*lex)->space_after && (*lex)->next &&
-		is_nospace_addable((*lex)->next->type))
+	if (!(*lex)->space_after && (*lex)->next
+		&& is_nospace_addable((*lex)->next->type))
 	{
 		if (nospace_add(*args, lex))
 			return (-1);
