@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:02:25 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/07 20:45:51 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 15:31:35 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int expand(t_lexer **lex, char **envp, int last_exit_status)
 		}
 		if (tmp)
 		{
-			if (tmp->next == NULL)
+			if (tmp->next == NULL || return_value == -1)
 			{
 				*lex = get_first_lexer(tmp);
 				break ;
