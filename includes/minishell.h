@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:18:24 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/12 14:36:20 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/04 11:20:31 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@
 extern volatile sig_atomic_t	g_sig;
 void	print_cat(void);
 int		event(void);
-void	init(t_minishell *mshell);
 int		handle_dash_c(t_minishell *mshell, int argc, char **argv);
 
 #endif

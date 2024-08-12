@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 14:23:07 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 14:32:25 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/05/30 15:08:15 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,3 +62,4 @@ int	builtin_env(t_minishell *mshell, char **args)
 		ft_putendl_fd(mshell->env[i], STDOUT_FILENO);
 	return (EXIT_SUCCESS);
 }
+

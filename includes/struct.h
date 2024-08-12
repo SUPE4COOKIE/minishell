@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:15:56 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 14:34:48 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 10:32:26 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 typedef struct s_cmd			t_cmd;
 typedef struct s_lexer			t_lexer;
 
-typedef struct t_fds
+typedef struct s_fds
 {
-	int	old[2];
-	int	new[2];
-}	t_fds;
+    int old[2];
+    int new[2];
+} t_fds;
 
 typedef enum e_token_type
 {
