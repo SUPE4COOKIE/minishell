@@ -64,11 +64,15 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 		handle_file_redirection(mshell, cmd, old, new);
 		if (cmd->is_valid_cmd == false)
 			return (0);
+		reset_fds(mshell, old, new);
 		if (exec_cmd(mshell, cmd))
 			return (1);
 		if (is_builtin(cmd->cmd) == false || \
 				(is_builtin(cmd->cmd) == true && cmd->next))
+		{
+			reset_fds(mshell, old, new);
 			exit(0);
+		}
 	}
 	close_and_cpy(old, new, i);
 	return (0);
