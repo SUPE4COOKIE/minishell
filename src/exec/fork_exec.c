@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:19:44 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/23 14:06:57 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:30:00 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 
 	cmd = init_before_fork(&y, mshell, &id, i);
 	if (is_builtin(cmd->cmd) == false || \
-			(is_builtin(cmd->cmd) == true && mshell->cmds->next != NULL))
+			(is_builtin(cmd->cmd) == true && cmd->next))
 		id = fork();
 	if (id == -1)
 		return (error_msg("fork failed"));
@@ -70,7 +70,8 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 		if (is_builtin(cmd->cmd) == false || \
 				(is_builtin(cmd->cmd) == true && cmd->next))
 		{
-			//reset_fds(mshell, old, new);
+			free_env_path(mshell);
+			free_cmds(mshell->cmds);
 			exit(0);
 		}
 	}
