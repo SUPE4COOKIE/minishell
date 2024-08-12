@@ -52,6 +52,8 @@ SRCS = $(addprefix src/, \
 		change_dir.c \
 		fds.c \
 		ascii_to.c \
+		exec_utils.c \
+		redir_utils.c \
 	) \
 	minishell.c \
 	)
