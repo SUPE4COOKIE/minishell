@@ -56,6 +56,8 @@ int	exec_cmd(t_minishell *mshell, t_cmd *cmd)
     }
     else if (cmd->cmd)
     {
+        close(mshell->original_stdout);
+        close(mshell->original_stdin);
         if (execve(cmd->cmd, cmd->args, mshell->env))
             return (error_msg("execve failed"));
     }
