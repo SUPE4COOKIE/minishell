@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 17:01:31 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/04 11:17:19 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/12 15:02:11 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,12 @@ int	change_to_oldpwd(t_minishell *mshell)
 	return (change_dir(mshell, path));
 }
 
+static void	add_slash_cd(char *path)
+{
+	path[0] = '/';
+	path[1] = '\0';
+}
+
 int	change_to_specified(t_minishell *mshell, char *arg, bool is_slash)
 {
 	char	*path;
@@ -62,8 +68,7 @@ int	change_to_specified(t_minishell *mshell, char *arg, bool is_slash)
 			path = malloc(2 * sizeof(char));
 			if (!path)
 				return (error_msg("malloc failed"));
-			path[0] = '/';
-			path[1] = '\0';
+			add_slash_cd(path);
 		}
 		else
 		{
@@ -75,6 +80,5 @@ int	change_to_specified(t_minishell *mshell, char *arg, bool is_slash)
 	if (!path)
 		return (0);
 	result = change_dir(mshell, path);
-	free_null(path);
-	return (result);
+	return (free_null(path), result);
 }

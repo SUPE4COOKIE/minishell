@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 16:51:54 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 13:08:53 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 14:50:11 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,7 @@ int	put_in_env(char **args, size_t i, t_minishell *mshell)
 		return (error_msg(": ft_substr failed"));
 	value = ft_strdup(args[i] + ft_varlen(args[i], '=') + 1);
 	if (!value)
-	{
-		free_null(key);
-		return (error_msg(": ft_strdup failed"));
-	}
+		return (free_null(key), error_msg(": ft_strdup failed"));
 	if (is_in_env(mshell->env, key))
 		set_env(&mshell->env, key, value);
 	else
@@ -56,9 +53,7 @@ int	put_in_env(char **args, size_t i, t_minishell *mshell)
 			return (error_msg(": parse_path failed"));
 		}
 	}
-	free(key);
-	free(value);
-	return (EXIT_SUCCESS);
+	return (free(key), free(value), EXIT_SUCCESS);
 }
 
 size_t	ft_varlen(char *var, char c)

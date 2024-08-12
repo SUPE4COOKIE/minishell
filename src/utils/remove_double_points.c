@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   remove_double_points.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 16:56:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 16:56:53 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 15:27:50 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,7 @@ char	*remove_double_point(char *path)
 	if (new_args != NULL)
 		new_path = lst_to_path(new_args);
 	else
-	{
-		free(path);
 		new_path = NULL;
-	}
 	free_lst(new_args);
 	return (new_path);
 }
