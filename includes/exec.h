@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 11:57:22 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 11:30:39 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:47:33 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,18 @@
 # define URANDOM_PATH "/dev/urandom"
 # define RANDOM_BYTES 8
 
-typedef struct	s_redir_args
+typedef struct s_redir_args
 {
-	t_cmd	*cmd;
+	t_cmd		*cmd;
 	t_minishell	*mshell;
-	int	old[2];
-	int	new[2];
-	int	i;
+	int			old[2];
+	int			new[2];
+	int			i;
 }				t_redir_args;
 
-int	pipe_command(t_cmd *cmd, int new[2]);
+int		pipe_command(t_cmd *cmd, int new[2]);
 void	handle_signal_process(void);
-void next_command(t_cmd **cmd, int *i);
+void	next_command(t_cmd **cmd, int *i);
 int		exec(t_minishell *mshell);
 bool	is_builtin(char *cmd);
 int		replace_hdoc(t_cmd *cmd, int old[2], int new[2]);
@@ -56,6 +56,7 @@ int		process_outfile(t_cmd *cmd, t_minishell *mshell, int i);
 void	handle_file_redirection(t_minishell *mshell, t_cmd *cmd, \
 		int old[2], int new[2]);
 void	handle_outfiles(t_redir_args *args);
-void	handle_redirections(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell);
+void	handle_redirections(t_cmd *cmd, int old[2], int new[2], \
+		t_minishell *mshell);
 
 #endif

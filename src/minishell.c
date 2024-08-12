@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/12 13:39:36 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 14:34:16 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,20 +55,28 @@ int event(void)
 
 void init(t_minishell *mshell)
 {
+	mshell->env = NULL;
+	mshell->path = NULL;
+	mshell->line = NULL;
 	mshell->last_exit_status = 0;
+	mshell->in_heredoc = false;
 	mshell->last_pid = 0;
+	mshell->original_stdin = 0;
+	mshell->original_stdout = 0;
+	mshell->invalid_redir = NULL;
+	mshell->cmds = NULL;
 	g_sig = 0;
 	rl_done = 0;
-	mshell->in_heredoc = false;
 }
 
 int main(int argc, char **argv, char **envp)
 {
-    t_minishell mshell = {0};
+    t_minishell mshell;
 
 	print_cat();
 	allocate_env(&mshell, envp);
-	save_path(&mshell, mshell.env); // TODO: protect
+	if (save_path(&mshell, mshell.env))
+		return (free_tab(mshell.env), 1);
 	init(&mshell);
 	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
 	{

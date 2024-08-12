@@ -2,7 +2,7 @@ NAME = minishell
 
 # Source files
 SRCS = $(addprefix src/, \
-	print_cat.c handle-c.c \
+	print_cat.c handle-c.c minishell.c signals.c \
 	$(addprefix builtin/, \
 		cd.c \
 		echo.c \
@@ -74,10 +74,7 @@ SRCS = $(addprefix src/, \
 		ascii_to.c \
 		exec_utils.c \
 		redir_utils.c \
-	) \
-	minishell.c \
-	)
-
+	))
 # Object files directory and object files
 OBJ_DIR = .obj
 OBJ = $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
