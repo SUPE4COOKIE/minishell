@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 11:57:22 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 16:22:46 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 11:30:39 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ typedef struct	s_redir_args
 	int	i;
 }				t_redir_args;
 
+int	pipe_command(t_cmd *cmd, int new[2]);
+void	handle_signal_process(void);
+void next_command(t_cmd **cmd, int *i);
 int		exec(t_minishell *mshell);
 bool	is_builtin(char *cmd);
 int		replace_hdoc(t_cmd *cmd, int old[2], int new[2]);

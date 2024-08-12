@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 17:01:12 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/04 17:14:39 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:36:07 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	free_env_path(t_minishell *mshell);
 void	free_lexer(t_lexer *lex);
 bool	is_valid_quotes(char *line, int *status_code);
 void	free_cmds(t_cmd *cmd);
+void	free_cmd(t_cmd *cmd);
 int		parse_path(t_minishell *mshell, char *env);
 
 t_lexer	*lexer_replacer(t_lexer *lex, char *value, t_lexer **origin);

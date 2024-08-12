@@ -19,13 +19,13 @@
 */
 void	ft_close(int old[2], int new[2])
 {
-	if (old[0] >= 0)
+	if (old[0] != -1)
 		close(old[0]);
-	if (old[1] >= 0)
+	if (old[1] != -1)
 		close(old[1]);
-	if (new[0] >= 0)
+	if (new[0] != -1)
 		close(new[0]);
-	if (new[1] >= 0)
+	if (new[1] != -1)
 		close(new[1]);
 }
 
@@ -56,9 +56,9 @@ void	close_old(int i, int old[2])
 {
 	if (i > 0)
 	{
-		if (old[0] >= 0)
+		if (old[0] != -1)
 			close(old[0]);
-		if (old[1] >= 0)
+		if (old[1] != -1)
 			close(old[1]);
 	}
 }

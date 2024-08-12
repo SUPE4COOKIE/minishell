@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:15:47 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/23 14:36:09 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 12:47:09 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,11 @@ bool		isnumber(char *str);
 int			lst_size(t_cmd *cmd);
 void		reset_fds(t_minishell *mshell, int old[2], int new[2]);
 void		reset_default_fd(t_minishell *mshell);
-int         set_default_fd(t_minishell *mshell, int old[2], int new[2]);
+int			set_default_fd(t_minishell *mshell, int old[2], int new[2]);
 void		reset_fds(t_minishell *mshell, int old[2], int new[2]);
 uint8_t		atoutint8(const char *str, bool *is_overflow);
 long long	ft_atol_overflow(const char *str, bool *is_overflow);
-int	        error_msg(char *msg);
+int			error_msg(char *msg);
+void		if_is_directory(t_cmd *cmd, t_minishell *mshell, int i, char *tmp);
 
 #endif

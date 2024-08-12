@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 15:31:10 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:28:32 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,13 @@ int	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 		if (exec_builtin(mshell, cmd))
 			return (1);
 	}
-	else
-		if (cmd->cmd)
-			if (execve(cmd->cmd, cmd->args, mshell->env))
-				return (error_msg("execve failed"));
-
+	else if (cmd->cmd)
+	{
+		close(mshell->original_stdout);
+		close(mshell->original_stdin);
+		if (execve(cmd->cmd, cmd->args, mshell->env))
+			return (error_msg("execve failed"));
+	}
 	if (dup2(mshell->original_stdout, STDOUT_FILENO) == -1)
 	{
 		perror("dup2 failed");
@@ -74,13 +76,6 @@ int	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 	return (0);
 }
 
-/**
- * @brief Duplicate the file descriptors
- * @param i
- * @param cmd
- * @param old
- * @param new
- */
 int	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 {
 	if (i != 0)
@@ -110,12 +105,6 @@ int	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 	return (0);
 }
 
-/**
- * @brief Execute de command / pipe
- * @param mshell
- * @param old
- * @param new
- */
 int	process_commands(t_minishell *mshell, int old[2], int new[2])
 {
 	t_cmd	*cmd;
@@ -127,31 +116,24 @@ int	process_commands(t_minishell *mshell, int old[2], int new[2])
 	cmd = mshell->cmds;
 	while (cmd)
 	{
-		signal(SIGINT, signal_exec);
-		signal(SIGQUIT, signal_exec);
+		handle_signal_process();
 		if (cmd->is_valid_cmd == false)
 		{
-			cmd = cmd->next;
-			i++;
+			next_command(&cmd, &i);
 			if (set_default_fd(mshell, old, new))
 				return (1);
 			continue ;
 		}
-		if (cmd->next)
-			if (pipe(new) == -1)
-				error_pipe("pipe failed", new, old, cmd);
+		if (pipe_command(cmd, new) == 1)
+			return (1);
 		if (fork_exec(mshell, old, new, i))
 			return (1);
-		i++;
-		cmd = cmd->next;
+		next_command(&cmd, &i);
 	}
+	reset_fds(mshell, old, new);
 	return (0);
 }
 
-/**
- * @brief Execute the minishell
- * @param mshell
- */
 int	exec(t_minishell *mshell)
 {
 	int	old[2];
@@ -170,10 +152,10 @@ int	exec(t_minishell *mshell)
 	{
 		if (waitpid(-1, &status, 0) == mshell->last_pid)
 		{
-			if (WIFEXITED(status))
-				mshell->last_exit_status = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-				mshell->last_exit_status = WTERMSIG(status) + 128;
+			if ((((status) & 0x7f) == 0))
+				mshell->last_exit_status = (((status) & 0xff00) >> 8);
+			else if ((((signed char)(((status) & 0x7f) + 1) >> 1) > 0))
+				mshell->last_exit_status = ((status) & 0x7f) + 128;
 		}
 	}
 	if (g_sig == SIGINT)
