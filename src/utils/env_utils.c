@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 16:51:54 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 13:04:58 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:08:53 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ int	put_in_env(char **args, size_t i, t_minishell *mshell)
 			return (error_msg(": parse_path failed"));
 		}
 	}
+	free(key);
+	free(value);
 	return (EXIT_SUCCESS);
 }
 
