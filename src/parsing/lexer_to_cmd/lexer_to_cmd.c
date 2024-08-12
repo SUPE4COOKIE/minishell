@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_to_cmd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:23:05 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 17:07:57 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 15:19:03 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ int	resolve_cmd_path(t_cmd **cmd, char **path, int *exit_status)
 			tmp = tmp->next;
 			continue ;
 		}
-		get_cmd_path(&tmp, path, exit_status);
+		if (get_cmd_path(&tmp, path, exit_status) == -1)
+			return (-1);
 		if (!tmp->is_valid_cmd)
 		{
 			free(tmp->cmd);

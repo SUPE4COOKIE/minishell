@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_checks.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 21:26:52 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 11:14:37 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/08 22:23:11 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,18 @@ static inline bool	syntax_error(char *message, int *status_code)
 	write(2, "'\n", 2);
 	*status_code = 2;
 	return (false);
+}
+
+bool	bad_redirect(int *status_code, t_lexer *lex)
+{
+	if (!lex)
+		return (syntax_error("newline", status_code));
+	else
+	{
+		write(2, "minishell: ambiguous redirect\n", 30);
+		*status_code = 1;
+		return (false);
+	}
 }
 
 bool	validate(t_lexer *lex, int *exit_code)
@@ -36,8 +48,8 @@ bool	validate(t_lexer *lex, int *exit_code)
 		else if (tmp->type == T_REDIR_IN || tmp->type == T_REDIR_OUT
 			|| tmp->type == T_APPEND_OUT || tmp->type == T_HERE_DOC)
 		{
-			if (!tmp->next)
-				return (syntax_error("newline", exit_code));
+			if (!tmp->next || !(*tmp->next->value))
+				return (bad_redirect(exit_code, tmp->next));
 			if (!(tmp->next->type == T_WORD
 					||tmp->next->type == T_D_QUOTED_WORD
 					||tmp->next->type == T_S_QUOTED_WORD))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_delete_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 16:42:45 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 17:08:04 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:16:24 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ t_cmd	*delete_cmd(t_cmd **cmd, t_cmd *to_delete)
 {
 	t_cmd	*tmp;
 	t_cmd	*next;
-	
+
 	tmp = *cmd;
 	if (*cmd == to_delete)
 	{

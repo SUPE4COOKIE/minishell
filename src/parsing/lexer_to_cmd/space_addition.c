@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   space_addition.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 16:57:29 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 16:57:40 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:09:37 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,12 @@ bool	is_nospace_addable(t_token_type type)
 int	nospace_add(char **args, t_lexer **lex)
 {
 	size_t	size;
-	t_lexer *start;
+	t_lexer	*start;
 
 	size = 0;
 	start = *lex;
-	while (*lex && (*lex)->value && (!size || (!(*lex)->prev->space_after)) && is_nospace_addable((*lex)->type))
+	while (*lex && (*lex)->value && (!size || (!(*lex)->prev->space_after))
+		&& is_nospace_addable((*lex)->type))
 	{
 		size += ft_strlen((*lex)->value) + 1;
 		*lex = (*lex)->next;
@@ -35,7 +36,8 @@ int	nospace_add(char **args, t_lexer **lex)
 	*args = ft_calloc(size + 1, sizeof(char));
 	if (!*args)
 		return (-1);
-	while (*lex && (*lex)->value && !(*lex)->space_after && is_nospace_addable((*lex)->type))
+	while (*lex && (*lex)->value && !(*lex)->space_after
+		&& is_nospace_addable((*lex)->type))
 	{
 		ft_strlcat(*args, (*lex)->value, size + 1);
 		*lex = (*lex)->next;

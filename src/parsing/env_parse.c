@@ -3,42 +3,43 @@
 /*                                                        :::      ::::::::   */
 /*   env_parse.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 16:40:14 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/04 17:15:10 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/10 21:00:50 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void allocate_env(t_minishell *mshell, char **envp)
+int	allocate_env(t_minishell *mshell, char **envp)
 {
-	size_t i;
-	size_t len;
+	size_t	i;
+	size_t	len;
 
 	i = 0;
 	while (envp[i])
 		i++;
-	mshell->env = malloc(sizeof(char *) * (i + 1));
+	mshell->env = ft_calloc(i + 1, sizeof(char *));
 	if (!mshell->env)
-		exit(1);
+		return (1);
 	i = 0;
 	while (envp[i])
 	{
 		len = ft_strlen(envp[i]);
 		mshell->env[i] = malloc(sizeof(char) * (len + 1));
 		if (!mshell->env[i])
-			exit(1);
+			return (free_str_array(mshell->env), 1);
 		ft_strlcpy(mshell->env[i], envp[i], len + 1);
 		i++;
 	}
 	mshell->env[i] = NULL;
+	return (0);
 }
 
 void	free_env_path(t_minishell *mshell)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	if (mshell->env)
@@ -68,45 +69,46 @@ int	parse_path(t_minishell *mshell, char *env)
 
 	path = ft_strdup(env + 5);
 	if (!path)
-		return (1); // TODO: add a free struct
+		return (1);
 	mshell->path = ft_split(path, ':');
 	free_null(path);
 	if (!mshell->path)
-		return (1); // TODO: add a free struct
+		return (1);
 	return (0);
 }
 
-static int	set_sysbin(t_minishell *mshell)
+int	env_path_saver(t_minishell *mshell, char **env)
 {
-	mshell->path = ft_split(DEFAULT_PATH, ':');
-	if (!mshell->path)
-		return (1); // TODO: add a free struct
+	size_t	i;
+
+	i = 0;
+	while (env[i])
+	{
+		if (ft_strncmp(env[i], "PATH=", 5) == 0)
+		{
+			if (env[i][5] == 0)
+				return (set_sysbin(mshell));
+			else
+				return (parse_path(mshell, env[i]));
+		}
+		i++;
+	}
 	return (0);
 }
 
 int	save_path(t_minishell *mshell, char **env)
 {
-	size_t	i;
-
-	i = 0;
 	if (!env || !env[0])
-		set_sysbin(mshell);
+	{
+		if (set_sysbin(mshell))
+			return (1);
+	}
 	else
 	{
-		while (env[i])
-		{
-			if (ft_strncmp(env[i], "PATH=", 5) == 0)
-			{
-				if (env[i][5] == 0)
-					set_sysbin(mshell);
-				else
-					parse_path(mshell, env[i]);
-				return (0);
-			}
-			i++;
-		}
+		if (env_path_saver(mshell, env))
+			return (1);
 	}
 	if (!mshell->path)
-		set_sysbin(mshell);
+		return (set_sysbin(mshell));
 	return (0);
 }
