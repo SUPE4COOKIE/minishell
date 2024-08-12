@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 13:28:32 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 18:32:04 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,25 +54,13 @@ int	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 		if (exec_builtin(mshell, cmd))
 			return (1);
 	}
-	else if (cmd->cmd)
+	else if (cmd->cmd && cmd->is_valid_cmd == true)
 	{
 		close(mshell->original_stdout);
 		close(mshell->original_stdin);
 		if (execve(cmd->cmd, cmd->args, mshell->env))
 			return (error_msg("execve failed"));
 	}
-	if (dup2(mshell->original_stdout, STDOUT_FILENO) == -1)
-	{
-		perror("dup2 failed");
-		exit(free_shell(mshell, errno));
-	}
-	close(mshell->original_stdout);
-	if (dup2(mshell->original_stdin, STDIN_FILENO) == -1)
-	{
-		perror("dup2 failed");
-		exit(free_shell(mshell, errno));
-	}
-	close(mshell->original_stdin);
 	return (0);
 }
 
@@ -80,8 +68,10 @@ int	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 {
 	if (i != 0)
 	{
-		if (dup2(old[0], STDIN_FILENO) == -1)
+		if (old[0] != -1 && dup2(old[0], STDIN_FILENO) == -1)
 		{
+			printf("fd = %d\n", old[0]);
+			ft_close(old, new);
 			perror("dup2 failed");
 			return (1);
 		}
@@ -92,7 +82,7 @@ int	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 	}
 	if (cmd->next)
 	{
-		if (dup2(new[1], STDOUT_FILENO) == -1)
+		if (new[1] != -1 && dup2(new[1], STDOUT_FILENO) == -1)
 		{
 			perror("dup2 failed");
 			return (1);
@@ -117,17 +107,11 @@ int	process_commands(t_minishell *mshell, int old[2], int new[2])
 	while (cmd)
 	{
 		handle_signal_process();
-		if (cmd->is_valid_cmd == false)
-		{
-			next_command(&cmd, &i);
-			if (set_default_fd(mshell, old, new))
-				return (1);
-			continue ;
-		}
 		if (pipe_command(cmd, new) == 1)
 			return (1);
 		if (fork_exec(mshell, old, new, i))
 			return (1);
+		close_and_cpy(old, new, i);
 		next_command(&cmd, &i);
 	}
 	reset_fds(mshell, old, new);

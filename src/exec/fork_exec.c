@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:19:44 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 13:30:00 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/13 11:04:56 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
  */
 void	close_and_cpy(int old[2], int new[2], int i)
 {
-	(void)i;
 	close_old(i, old);
 	old[0] = new[0];
 	old[1] = new[1];
@@ -35,6 +34,42 @@ t_cmd	*init_before_fork(int *y, t_minishell *mshell, pid_t *id, int i)
 	while ((*y)++ < i)
 		cmd = cmd->next;
 	return (cmd);
+}
+
+int	manage_cmd(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds)
+{
+	int	old[2];
+	int	new[2];
+
+	old[0] = fds.old[0];
+	old[1] = fds.old[1];
+	new[0] = fds.new[0];
+	new[1] = fds.new[1];
+	if (handle_file_redirection(mshell, cmd, old, new) == 1)
+		return (1);
+	if (cmd->is_valid_cmd == false)
+	{
+		free_env_path(mshell);
+		free_cmds(mshell->cmds);
+		ft_close(old, new);
+		close(mshell->original_stdout);
+		close(mshell->original_stdin);
+		exit(127);
+	}
+	dup_cmd(i, cmd, old, new);
+	ft_close(old, new);
+	if (exec_cmd(mshell, cmd))
+		return (1);
+	if (is_builtin(cmd->cmd) == false || \
+			(is_builtin(cmd->cmd) == true && cmd->next))
+	{
+		free_env_path(mshell);
+		free_cmds(mshell->cmds);
+		close(mshell->original_stdout);
+		close(mshell->original_stdin);
+		exit(0);
+	}
+	return (0);
 }
 
 /**
@@ -60,12 +95,7 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 		mshell->last_pid = id;
 	else if (id == 0)
 	{
-		dup_cmd(i, cmd, old, new);
-		handle_file_redirection(mshell, cmd, old, new);
-		if (cmd->is_valid_cmd == false)
-			return (0);
-		ft_close(old, new);
-		if (exec_cmd(mshell, cmd))
+		if (manage_cmd(mshell, cmd, i, fds))
 			return (1);
 		if (is_builtin(cmd->cmd) == false || \
 				(is_builtin(cmd->cmd) == true && cmd->next))
@@ -75,6 +105,5 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 			exit(0);
 		}
 	}
-	close_and_cpy(old, new, i);
 	return (0);
 }

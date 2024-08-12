@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/12 13:39:36 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/13 11:04:25 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,19 @@ volatile sig_atomic_t g_sig;
 
 void signal_new_line(int sig)
 {
-	if (sig == SIGINT)
+	mshell->line = NULL;
+	signal(SIGINT, signal_new_line);
+	signal(SIGQUIT, signal_new_line);
+	rl_event_hook = event;
+	mshell->line = readline("minishell$> ");
+	if (g_sig == SIGINT)
+		mshell->last_exit_status = 130;
+	signal(SIGINT, signal_exec);
+}
+
+int	handle_mshell(t_minishell *mshell)
+{
+	while (42)
 	{
 		ft_printf("\n");
 		rl_on_new_line();

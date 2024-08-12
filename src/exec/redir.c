@@ -6,13 +6,13 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 15:55:11 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/23 14:00:02 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 17:42:35 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	handle_red_out(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
+int	handle_red_out(t_cmd *cmd, t_minishell *mshell)
 {
 	int	fd;
 	int	i;
@@ -24,18 +24,21 @@ void	handle_red_out(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
 			&mshell->invalid_redir, &cmd->outfile[i]) == true)
 	{
 		fd = open("/dev/null", O_WRONLY, 0644);
+		if (fd == -1)
+			return (error_msg("No such file or directory"));
 		if (dup2(fd, STDOUT_FILENO) == -1)
-			error_pipe("dup2 failed", new, old, cmd);
+			return (error_msg("dup2 failed"));
 	}
 	else
 	{
 		fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd == -1)
-			error_pipe("No such file or directory", new, old, cmd);
+			return (error_msg("No such file or directory"));
 		if (dup2(fd, STDOUT_FILENO) == -1)
-			error_pipe("dup2 failed", new, old, cmd);
+			return (error_msg("dup2 failed"));
 		close(fd);
 	}
+	return (0);
 }
 
 void	handle_append_out(t_cmd *cmd, int old[2], int new[2], \
