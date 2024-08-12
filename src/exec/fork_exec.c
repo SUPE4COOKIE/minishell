@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:19:44 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 14:34:48 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 14:39:09 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ t_cmd	*init_before_fork(int *y, t_minishell *mshell, pid_t *id, int i)
 	return (cmd);
 }
 
-int manage_pipes(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds)
+int	manage_pipes(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds)
 {
-	int old[2];
-	int new[2];
+	int	old[2];
+	int	new[2];
 
 	old[0] = fds.old[0];
 	old[1] = fds.old[1];
