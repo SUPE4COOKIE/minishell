@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 15:01:08 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/23 14:07:13 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 11:24:10 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,31 +38,42 @@ int	process_infile(t_cmd *cmd, t_minishell *mshell, int i)
 	return (0);
 }
 
+void	if_is_directory(t_cmd *cmd, t_minishell *mshell, int i, char *tmp)
+{
+	tmp = ft_strjoin(cmd->outfile[i], ": is a directory\n");
+	if (!tmp)
+	{
+		free_shell(mshell, 1);
+		return ;
+	}
+	write(2, tmp, ft_strlen(tmp));
+	if (mshell->invalid_redir == NULL || is_redir_before(cmd, \
+			&mshell->invalid_redir, &cmd->outfile[i]))
+		mshell->invalid_redir = cmd->outfile[i];
+	free(tmp);
+}
+
 int	process_outfile(t_cmd *cmd, t_minishell *mshell, int i)
 {
 	struct stat	buf;
 	char		*tmp;
 	int			access_status;
 
+	tmp = NULL;
 	access_status = access(cmd->outfile[i], F_OK);
 	if (access_status == -1)
 		return (0);
 	if (stat(cmd->outfile[i], &buf) == -1)
 		return (perror(cmd->outfile[i]), 1);
-	if (((buf.st_mode) & S_IFMT) == S_IFDIR)
+	if (((buf.st_mode) & 0170000) == (0040000))
 	{
-		tmp = ft_strjoin(cmd->outfile[i], ": is a directory\n");
-		if (!tmp)
-			exit(free_shell(mshell, 1));
-		write(2, tmp, ft_strlen(tmp));
-		if (mshell->invalid_redir == NULL || is_redir_before(cmd, &mshell->invalid_redir, &cmd->outfile[i]))
-			mshell->invalid_redir = cmd->outfile[i];
-		free(tmp);
+		if_is_directory(cmd, mshell, i, tmp);
 		return (1);
 	}
 	if (access(cmd->outfile[i], W_OK) == -1)
 	{
-		if (mshell->invalid_redir == NULL || is_redir_before(cmd, &mshell->invalid_redir, &cmd->outfile[i]))
+		if (mshell->invalid_redir == NULL || is_redir_before(cmd, \
+				&mshell->invalid_redir, &cmd->outfile[i]))
 			mshell->invalid_redir = cmd->outfile[i];
 		return (perror(cmd->outfile[i]), 1);
 	}
