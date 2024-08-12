@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:19:44 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 13:30:00 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 14:39:09 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,30 @@ t_cmd	*init_before_fork(int *y, t_minishell *mshell, pid_t *id, int i)
 	return (cmd);
 }
 
+int	manage_pipes(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds)
+{
+	int	old[2];
+	int	new[2];
+
+	old[0] = fds.old[0];
+	old[1] = fds.old[1];
+	dup_cmd(i, cmd, old, new);
+	handle_file_redirection(mshell, cmd, old, new);
+	if (cmd->is_valid_cmd == false)
+		return (0);
+	ft_close(old, new);
+	if (exec_cmd(mshell, cmd))
+		return (1);
+	if (is_builtin(cmd->cmd) == false || \
+			(is_builtin(cmd->cmd) == true && cmd->next))
+	{
+		free_env_path(mshell);
+		free_cmds(mshell->cmds);
+		exit(0);
+	}
+	return (0);
+}
+
 /**
  * @brief Fork and execute a command
  * @param mshell
@@ -49,7 +73,12 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 	pid_t	id;
 	t_cmd	*cmd;
 	int		y;
+	t_fds	fds;
 
+	fds.old[0] = old[0];
+	fds.old[1] = old[1];
+	fds.new[0] = new[0];
+	fds.new[1] = new[1];
 	cmd = init_before_fork(&y, mshell, &id, i);
 	if (is_builtin(cmd->cmd) == false || \
 			(is_builtin(cmd->cmd) == true && cmd->next))
@@ -60,20 +89,8 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 		mshell->last_pid = id;
 	else if (id == 0)
 	{
-		dup_cmd(i, cmd, old, new);
-		handle_file_redirection(mshell, cmd, old, new);
-		if (cmd->is_valid_cmd == false)
-			return (0);
-		ft_close(old, new);
-		if (exec_cmd(mshell, cmd))
+		if (manage_pipes(mshell, cmd, i, fds))
 			return (1);
-		if (is_builtin(cmd->cmd) == false || \
-				(is_builtin(cmd->cmd) == true && cmd->next))
-		{
-			free_env_path(mshell);
-			free_cmds(mshell->cmds);
-			exit(0);
-		}
 	}
 	close_and_cpy(old, new, i);
 	return (0);
