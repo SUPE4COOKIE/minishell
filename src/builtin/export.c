@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 10:23:57 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/07/22 17:16:50 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/13 11:22:06 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	ft_addenv(t_minishell *mshell, char *key, char *value)
 	return (0);
 }
 
-int	check_input(t_minishell *mshell, char *args)
+int	 check_input(t_minishell *mshell, char *args)
 {
 	size_t	i;
 
@@ -99,6 +99,11 @@ int	builtin_export(t_minishell *mshell, char **args)
 	i = 1;
 	while (args[i])
 	{
+		if (ft_strchr(args[i], '=') == NULL)
+		{
+			i++;
+			continue ;
+		}
 		if (check_input(mshell, args[i]))
 		{
 			ft_putendl_fd(": ", 2);

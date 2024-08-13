@@ -35,6 +35,7 @@ int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 			ft_printf("\n");
 			break ;
 		}
+		printf("infile[%d] = %s\n", i, cmd->infile[i]);
 		if (ft_strncmp(line, cmd->infile[i], \
 				ft_strlen(cmd->infile[i]) + 1) == 0)
 			break ;
@@ -63,14 +64,17 @@ int	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
 	i = 0;
 	while (tmp_filename && tmp_filename[i] && cmd->infile && cmd->infile[i])
 	{
-		fd = open(tmp_filename[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (fd == -1)
-			error_pipe("No such file or directory", new, old, cmd);
-		if (read_the_line(line, fd, cmd, i) == 1)
-			return (free_tab(tmp_filename), 1);
-		free_null(cmd->infile[i]);
-		cmd->infile[i] = ft_strdup(tmp_filename[i]);
-		close(fd);
+		if (cmd->type_chain[i] == T_HERE_DOC)
+		{
+			fd = open(tmp_filename[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd == -1)
+				error_pipe("No such file or directory", new, old, cmd);
+			if (read_the_line(line, fd, cmd, i) == 1)
+				return (free_tab(tmp_filename), 1);
+			free_null(cmd->infile[i]);
+			cmd->infile[i] = ft_strdup(tmp_filename[i]);
+			close(fd);
+		}
 		i++;
 	}
 	if (tmp_filename)
@@ -100,8 +104,6 @@ void	generate_unique_filenames(t_cmd *cmd, char ***tmp_filename, \
 		generate_unique_filename((*tmp_filename)[i], filename_length);
 		i++;
 	}
-	if (DEBUG && (*tmp_filename))
-		print_tab(*tmp_filename);
 }
 
 int	handle_heredoc_operations(t_cmd *cmd, int old[2], int new[2], \
@@ -112,11 +114,8 @@ int	handle_heredoc_operations(t_cmd *cmd, int old[2], int new[2], \
 	tmp = cmd;
 	while (tmp)
 	{
-		if (tmp->op_type[0] == HDOC)
-		{
-			if (handle_hdoc(tmp, old, new, tmp_filename) == 1)
-				return (1);
-		}
+		if (handle_hdoc(tmp, old, new, tmp_filename) == 1)
+			return (1);
 		tmp = tmp->next;
 	}
 	return (0);
@@ -124,17 +123,28 @@ int	handle_heredoc_operations(t_cmd *cmd, int old[2], int new[2], \
 
 int	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
 {
-	char	**tmp_filename;
-	t_cmd	*tmp;
-
-	tmp = cmd;
-	while (tmp)
-	{
-		if (tmp->op_type[0] == HDOC)
-			generate_unique_filenames(cmd, &tmp_filename, old, new);
-		tmp = tmp->next;
-	}
-	if (handle_heredoc_operations(cmd, old, new, tmp_filename))
-		return (1);
+	(void) cmd;
+	(void) old;
+	(void) new;
+	// char	**tmp_filename;
+	// t_cmd	*tmp;
+	// size_t	i;
+	// size_t	j;
+	//
+	// tmp = cmd;
+	// while (tmp)
+	// {
+	// 	i = 0;
+	// 	j = 0;
+	// 	while (tmp->infile && tmp->infile[i])
+	// 	{
+	// 		if (tmp->type_chain[j++] == T_HERE_DOC)
+	// 			generate_unique_filenames(cmd, &tmp_filename, old, new);
+	// 		i++;
+	// 	}
+	// 	tmp = tmp->next;
+	// }
+	// if (handle_heredoc_operations(cmd, old, new, tmp_filename))
+	// 	return (1);
 	return (0);
 }

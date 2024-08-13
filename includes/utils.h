@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:15:47 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 12:47:09 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/13 11:45:58 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void		reset_fds(t_minishell *mshell, int old[2], int new[2]);
 uint8_t		atoutint8(const char *str, bool *is_overflow);
 long long	ft_atol_overflow(const char *str, bool *is_overflow);
 int			error_msg(char *msg);
+void		close_old(int i, int old[2]);
 void		if_is_directory(t_cmd *cmd, t_minishell *mshell, int i, char *tmp);
 
 #endif

@@ -50,22 +50,22 @@ int	builtin_exit(t_minishell *mshell, char **args)
 	bool	is_overflow;
 
 	is_overflow = false;
+	if (get_is_between_cmd(mshell) == false)
+		ft_putstr_fd("exit\n", 2);
 	if (args)
 	{
 		if (args[1] && isnumber(args[1]) == false)
-		{
-			return (error_cmd(mshell, 2, "exit: numeric argument required"));
-		}
+			exit(error_cmd(mshell, 2, "exit: numeric argument required"));
+		else if (args[1] && args[2] && mshell->cmds->next)
+			exit(error_cmd(mshell, 1, "exit: too many arguments"));
 		else if (args[1] && args[2])
 			return (error_cmd(mshell, 1, "exit: too many arguments"));
 		else if (args[1])
 		{
 			mshell->last_exit_status = atoutint8(args[1], &is_overflow);
 			if (is_overflow == true)
-				return (error_cmd(mshell, 2, "exit: numeric argument \
+				exit(error_cmd(mshell, 2, "exit: numeric argument \
 					required"));
-			if (get_is_between_cmd(mshell) == false)
-				ft_putstr_fd("exit\n", 2);
 		}
 		exit(free_shell(mshell, mshell->last_exit_status));
 	}
