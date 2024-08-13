@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 15:01:08 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 17:42:54 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/12 11:28:56 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	process_infile(t_cmd *cmd, t_minishell *mshell, int i)
 		mshell->invalid_redir = cmd->infile[i];
 		tmp = ft_strjoin(cmd->infile[i], ": is a directory\n");
 		if (!*tmp)
-			return (1);
+			exit(free_shell(mshell, 1));
 		write(2, tmp, ft_strlen(tmp));
 		free_null(tmp);
 		return (1);
@@ -65,7 +65,7 @@ int	process_outfile(t_cmd *cmd, t_minishell *mshell, int i)
 	return (0);
 }
 
-int	handle_file_redirection(t_minishell *mshell, t_cmd *cmd, \
+void	handle_file_redirection(t_minishell *mshell, t_cmd *cmd, \
 		int old[2], int new[2])
 {
 	t_redir_args	args;
@@ -85,17 +85,15 @@ int	handle_file_redirection(t_minishell *mshell, t_cmd *cmd, \
 			{
 				cmd->is_valid_cmd = false;
 				mshell->last_exit_status = 1;
-				return (1);
+				return ;
 			}
 		}
-		if (handle_outfiles(&args))
-			return (1);
+		handle_outfiles(&args);
 		handle_redirections(cmd, old, new, mshell);
 	}
-	return (0);
 }
 
-int	handle_outfiles(t_redir_args *args)
+void	handle_outfiles(t_redir_args *args)
 {
 	int	fd;
 
@@ -106,7 +104,7 @@ int	handle_outfiles(t_redir_args *args)
 			if (check_outfiles(args->cmd, args->mshell, args->i) == 1)
 			{
 				args->mshell->last_exit_status = 1;
-				return (1);
+				return ;
 			}
 			fd = open(args->cmd->outfile[args->i], O_WRONLY | O_CREAT, 0644);
 			if (fd == -1)
@@ -116,7 +114,6 @@ int	handle_outfiles(t_redir_args *args)
 			args->i++;
 		}
 	}
-	return (0);
 }
 
 void	handle_redirections(t_cmd *cmd, int old[2], int new[2], \
@@ -125,8 +122,7 @@ void	handle_redirections(t_cmd *cmd, int old[2], int new[2], \
 	if (cmd->op_type[0] == RED_IN)
 		handle_red_in(cmd, old, new, mshell);
 	if (cmd->op_type[1] == RED_OUT)
-		if (handle_red_out(cmd, mshell))
-			return ;
-	if (cmd->op_type[1] == APP_OUT)
+		handle_red_out(cmd, old, new, mshell);
+	else if (cmd->op_type[1] == APP_OUT)
 		handle_append_out(cmd, old, new, mshell);
 }

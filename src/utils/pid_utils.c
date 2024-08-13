@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:14:41 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 18:10:27 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/07/22 16:56:03 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,5 @@ void	close_old(int i, int old[2])
 			close(old[0]);
 		if (old[1] != -1)
 			close(old[1]);
-		old[0] = -1;
-		old[1] = -1;
 	}
 }
