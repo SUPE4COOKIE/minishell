@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   change_dir.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 17:01:31 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 15:02:11 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/14 10:00:20 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,14 @@ bool	change_dir(t_minishell *mshell, char *path)
 	char	cwd[PATH_MAX];
 
 	if (chdir(path) != 0)
-		return (error_cmd(mshell, 1, "cd: no such file or directory"));
+		return (perror("minishell: cd"), 1);
 	if (getcwd(cwd, PATH_MAX) == NULL)
-		return (error_cmd(mshell, 1, "cd: getcwd failed"));
+		return (perror("minishell: cd"), 1);
 	if (set_env(&mshell->env, "OLDPWD", \
 			get_path(mshell->env, "PWD")) == EXIT_FAILURE)
-		return (error_cmd(mshell, 1, "cd: setenv failed"));
+		return (perror("minishell: cd"), 1);
 	if (set_env(&mshell->env, "PWD", cwd) == EXIT_FAILURE)
-		return (error_cmd(mshell, 1, "cd: setenv failed"));
+		return (perror("minishell: cd"), 1);
 	return (EXIT_SUCCESS);
 }
 
