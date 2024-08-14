@@ -29,7 +29,7 @@ int	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 		close(mshell->original_stdout);
 		close(mshell->original_stdin);
 		if (execve(cmd->cmd, cmd->args, mshell->env))
-			return (error_msg("execve failed"));
+			return (perror("execve"), 127);
 	}
 	if (dup2(mshell->original_stdout, STDOUT_FILENO) == -1)
 	{
@@ -48,11 +48,11 @@ int	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 
 int	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 {
-	if (i != 0 && cmd->prev->is_valid_cmd == true)
+	if (i != 0)
 	{
 		if (dup2(old[0], STDIN_FILENO) == -1)
 		{
-			perror("dup2 failed");
+			perror("dup2 failedregbverge");
 			return (1);
 		}
 		if (old[0] != -1)
