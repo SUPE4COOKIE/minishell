@@ -6,71 +6,17 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/14 10:24:31 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/14 11:29:35 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-volatile sig_atomic_t g_sig;
-
-void signal_new_line(int sig)
-{
-	if (sig == SIGINT)
-	{
-		ft_printf("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-		g_sig = SIGINT;
-	}
-	else if (sig == SIGQUIT)
-	{
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-		g_sig = 0;
-	}
-}
-
-void	signal_here_doc(int signal)
-{
-	g_sig = signal;
-	if (g_sig == SIGINT)
-	{
-		rl_done = 1;
-	}
-}
-
-void	signal_exec(int signal)
-{
-	g_sig = signal;
-}
-
-int event(void)
-{
-	return (0);
-}
-
-void init(t_minishell *mshell)
-{
-	mshell->env = NULL;
-	mshell->path = NULL;
-	mshell->cmds = NULL;
-	mshell->last_exit_status = 0;
-	mshell->in_heredoc = false;
-	mshell->last_pid = 0;
-	mshell->original_stdout = 0;
-	mshell->original_stdin = 0;
-	mshell->invalid_redir = NULL;
-	mshell->cmds = NULL;
-	g_sig = 0;
-	rl_done = 0;
-}
+volatile sig_atomic_t	g_sig;
 
 int	print_prompt(t_minishell *mshell)
 {
-	char *msg;
+	char	*msg;
 
 	msg = ft_strjoin("minishell-\033[0;31m", ft_itoa(mshell->last_exit_status));
 	if (!msg)
@@ -100,7 +46,18 @@ int	scan_line(t_minishell *mshell)
 	return (0);
 }
 
-void	start_minishell(t_minishell *mshell)
+int	start_mshell(t_minishell *mshell)
+{
+	if (scan_line(mshell))
+		return (1);
+	if (parse(mshell))
+		return (1);
+	if (exec(mshell) != 0)
+		return (1);
+	return (0);
+}
+
+void	prompt_minishell(t_minishell *mshell)
 {
 	while (42)
 	{
@@ -113,38 +70,38 @@ void	start_minishell(t_minishell *mshell)
 			break ;
 		}
 		signal(SIGINT, signal_exec);
+		signal(SIGQUIT, signal_exec);
 		if (!mshell->line || g_sig == SIGQUIT)
 		{
 			free_env_path(mshell);
 			printf("exit\n");
 			break ;
 		}
-		if (scan_line(mshell))
-			continue ;
-		if (parse(mshell))
-			continue ;
-		if (exec(mshell) != 0)
+		if (start_mshell(mshell) == 1)
 			continue ;
 		free_null(mshell->line);
-		mshell->line = NULL;
 		free_cmds(mshell->cmds);
 	}
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-    t_minishell mshell;
+	t_minishell	mshell;
 
 	print_cat();
 	init(&mshell);
 	allocate_env(&mshell, envp);
-	save_path(&mshell, mshell.env); // TODO: protect
+	if (save_path(&mshell, mshell.env))
+	{
+		free_env_path(&mshell);
+		return (mshell.last_exit_status);
+	}
 	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
 	{
 		handle_dash_c(&mshell, argc, argv);
 		return (mshell.last_exit_status);
 	}
 	else
-		start_minishell(&mshell);
+		prompt_minishell(&mshell);
 	return (0);
 }

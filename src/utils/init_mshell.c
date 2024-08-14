@@ -1,33 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle-c.c                                         :+:      :+:    :+:   */
+/*   init_mshell.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/09 10:18:54 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/14 11:21:30 by scrumier         ###   ########.fr       */
+/*   Created: 2024/08/14 11:26:50 by scrumier          #+#    #+#             */
+/*   Updated: 2024/08/14 11:26:54 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	handle_dash_c(t_minishell *mshell, int argc, char **argv)
+void	init(t_minishell *mshell)
 {
-	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
-	{
-		mshell->line = ft_strdup(argv[2]);
-		if (!is_valid_quotes(mshell->line, &mshell->last_exit_status))
-		{
-			free_mshell(mshell);
-			return (1);
-		}
-		if (parse(mshell))
-		{
-			free_mshell(mshell);
-			return (1);
-		}
-		exec(mshell);
-	}
-	return (0);
+	mshell->env = NULL;
+	mshell->path = NULL;
+	mshell->cmds = NULL;
+	mshell->last_exit_status = 0;
+	mshell->in_heredoc = false;
+	mshell->last_pid = 0;
+	mshell->original_stdout = 0;
+	mshell->original_stdin = 0;
+	mshell->invalid_redir = NULL;
+	mshell->cmds = NULL;
+	g_sig = 0;
+	rl_done = 0;
 }

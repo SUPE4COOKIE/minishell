@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 15:02:45 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 11:06:10 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/14 10:51:08 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,11 @@ void	reset_fds(t_minishell *mshell, int old[2], int new[2])
 	if (new[1] != -1)
 		close(new[1]);
 	reset_default_fd(mshell);
+}
+
+void	close_and_cpy(int old[2], int new[2], int i)
+{
+	close_old(i, old);
+	old[0] = new[0];
+	old[1] = new[1];
 }

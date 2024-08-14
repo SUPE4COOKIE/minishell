@@ -1,0 +1,8 @@
+exit | exit qui fait tout exploser
+exit 1000000000000000 / exit oui n exit pas
+bien verif fork et retour d erreur
+path jamais unset
+exit met pas last exit status
+""/"$NULL" met une erreur normalement (si vous voulew le faire)
+"" " " devrait mettre une erreur (: command not found)
+$NULL ne devrait pas faire une erreur et renvoyer 0

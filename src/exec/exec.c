@@ -6,41 +6,11 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/13 11:29:45 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/14 10:58:40 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/**
- * @brief Copy the arguments
- * @param args
- * @return The copied arguments
- */
-char	**copy_args(char **args)
-{
-	int		arg_count;
-	char	**args_copy;
-	int		i;
-
-	arg_count = 0;
-	args_copy = NULL;
-	i = 0;
-	while (args[arg_count])
-		arg_count++;
-	args_copy = malloc((arg_count + 1) * sizeof(char *));
-	if (args_copy == NULL)
-		return (NULL);
-	while (args[i] != NULL)
-	{
-		args_copy[i] = ft_strdup(args[i]);
-		if (args_copy[i] == NULL)
-			return (free_tab(args_copy), NULL);
-		i++;
-	}
-	args_copy[arg_count] = NULL;
-	return (args_copy);
-}
 
 /**
  * @brief Execute a command
@@ -128,20 +98,13 @@ int	process_commands(t_minishell *mshell, int old[2], int new[2])
 	return (0);
 }
 
-int	exec(t_minishell *mshell)
+void	return_status(t_minishell *mshell, int status)
 {
-	int	old[2];
-	int	new[2];
-	int	status;
 	int	i;
 	int	size;
 
 	i = -1;
 	size = lst_size(mshell->cmds);
-	status = 0;
-	if (init_exec(old, new, mshell) == 1)
-		return (1);
-	process_commands(mshell, old, new);
 	while (++i < size)
 	{
 		if (waitpid(-1, &status, 0) == mshell->last_pid)
@@ -152,7 +115,25 @@ int	exec(t_minishell *mshell)
 				mshell->last_exit_status = ((status) & 0x7f) + 128;
 		}
 	}
+}
+
+int	exec(t_minishell *mshell)
+{
+	int	old[2];
+	int	new[2];
+	int	status;
+	int	size;
+
+	size = lst_size(mshell->cmds);
+	status = 0;
+	if (init_exec(old, new, mshell) == 1)
+		return (1);
+	process_commands(mshell, old, new);
+	return_status(mshell, status);
 	if (g_sig == SIGINT)
+	{
+		mshell->last_exit_status = 130;
 		rl_done = 1;
+	}
 	return (ft_close(old, new), 0);
 }

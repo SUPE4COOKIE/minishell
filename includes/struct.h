@@ -6,21 +6,21 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:15:56 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 10:32:26 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/14 11:20:35 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCT_H
 # define STRUCT_H
 
-typedef struct s_cmd			t_cmd;
-typedef struct s_lexer			t_lexer;
+typedef struct s_cmd	t_cmd;
+typedef struct s_lexer	t_lexer;
 
 typedef struct s_fds
 {
-    int old[2];
-    int new[2];
-} t_fds;
+	int	old[2];
+	int	new[2];
+}				t_fds;
 
 typedef enum e_token_type
 {

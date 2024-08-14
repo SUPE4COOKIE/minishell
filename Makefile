@@ -2,7 +2,7 @@ NAME = minishell
 
 # Source files
 SRCS = $(addprefix src/, \
-	print_cat.c handle-c.c \
+	print_cat.c handle-c.c signals.c\
 	$(addprefix builtin/, \
 		cd.c \
 		echo.c \
@@ -74,6 +74,8 @@ SRCS = $(addprefix src/, \
 		ascii_to.c \
 		exec_utils.c \
 		redir_utils.c \
+		export_utils.c \
+		init_mshell.c \
 	) \
 	minishell.c \
 	)

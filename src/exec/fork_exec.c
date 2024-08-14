@@ -6,23 +6,11 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:19:44 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/13 11:42:48 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/14 10:56:13 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/**
- * @brief Close the old file descriptors and cpy new to old
- * @param i The index
- * @param old The old file descriptors
- */
-void	close_and_cpy(int old[2], int new[2], int i)
-{
-	close_old(i, old);
-	old[0] = new[0];
-	old[1] = new[1];
-}
 
 t_cmd	*init_before_fork(int *y, t_minishell *mshell, pid_t *id, int i)
 {
@@ -49,11 +37,7 @@ int	manage_cmd(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds)
 		return (1);
 	if (cmd->is_valid_cmd == false)
 	{
-		close(mshell->original_stdout);
-		close(mshell->original_stdin);
-		free_env_path(mshell);
-		free_cmds(mshell->cmds);
-		ft_close(old, new);
+		close_free(mshell, old, new);
 		exit(127);
 	}
 	dup_cmd(i, cmd, old, new);
@@ -63,10 +47,7 @@ int	manage_cmd(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds)
 	if (is_builtin(cmd->cmd) == false || \
 			(is_builtin(cmd->cmd) == true && cmd->next))
 	{
-		free_env_path(mshell);
-		free_cmds(mshell->cmds);
-		close(mshell->original_stdout);
-		close(mshell->original_stdin);
+		close_free(mshell, old, new);
 		exit(0);
 	}
 	return (0);
@@ -97,17 +78,22 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 	else if (id != 0)
 		mshell->last_pid = id;
 	else if (id == 0)
-	{
-		if (manage_cmd(mshell, cmd, i, fds))
+		if (process_child(mshell, cmd, i, fds))
 			return (1);
-		if (is_builtin(cmd->cmd) == false || \
-				((is_builtin(cmd->cmd) == true && cmd->next) || cmd->prev))
-		{
-			free_env_path(mshell);
-			free_cmds(mshell->cmds);
-			exit(0);
-		}
-	}
 	close_and_cpy(old, new, i);
+	return (0);
+}
+
+int	process_child(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds)
+{
+	if (manage_cmd(mshell, cmd, i, fds))
+		return (1);
+	if (is_builtin(cmd->cmd) == false || \
+			((is_builtin(cmd->cmd) == true && cmd->next) || cmd->prev))
+	{
+		free_env_path(mshell);
+		free_cmds(mshell->cmds);
+		exit(0);
+	}
 	return (0);
 }

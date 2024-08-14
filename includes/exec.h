@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 11:57:22 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/13 11:47:24 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/14 10:48:33 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@
 # define URANDOM_PATH "/dev/urandom"
 # define RANDOM_BYTES 8
 
-typedef struct	s_redir_args
+typedef struct s_redir_args
 {
-	t_cmd	*cmd;
+	t_cmd		*cmd;
 	t_minishell	*mshell;
-	int	old[2];
-	int	new[2];
-	int	i;
+	int			old[2];
+	int			new[2];
+	int			i;
 }				t_redir_args;
 
 void	close_and_cpy(int old[2], int new[2], int i);
@@ -56,6 +56,8 @@ void	handle_file_redirections(t_minishell *mshell, t_cmd *cmd, \
 		int old[2], int new[2]);
 int		fork_exec(t_minishell *mshell, int old[2], int new[2], int i);
 int		handle_outfiles(t_redir_args *args);
-void	handle_redirections(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell);
+void	handle_redirections(t_cmd *cmd, int old[2], int new[2], \
+		t_minishell *mshell);
+int		process_child(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds);
 
 #endif

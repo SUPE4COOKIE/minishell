@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_hdoc.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/04 11:21:22 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/14 11:12:25 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,12 +130,11 @@ int	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
 	// t_cmd	*tmp;
 	// size_t	i;
 	// size_t	j;
-	//
+	
 	// tmp = cmd;
 	// while (tmp)
 	// {
 	// 	i = 0;
-	// 	j = 0;
 	// 	while (tmp->infile && tmp->infile[i])
 	// 	{
 	// 		if (tmp->type_chain[j++] == T_HERE_DOC)
