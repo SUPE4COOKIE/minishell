@@ -33,11 +33,11 @@ int		exec(t_minishell *mshell);
 int		exec_cmd(t_minishell *mshell, t_cmd *cmd);
 int		dup_cmd(int i, t_cmd *cmd, int old[2], int new[2]);
 bool	is_builtin(char *cmd);
-int		replace_hdoc(t_cmd *cmd, int old[2], int new[2]);
+int		replace_hdoc(t_cmd *cmd);
 int		exec_builtin(t_minishell *mshell, t_cmd *cmd);
 int		handle_file_redirection(t_minishell *mshell, t_cmd *cmd, \
 		int old[2], int new[2]);
-int		handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename);
+int		handle_hdoc(t_cmd *cmd, char ***hdoc, char **tmp_filename);
 void	ft_close(int old[2], int new[2]);
 int		init_exec(int old[2], int new[2], t_minishell *mshell);
 int		generate_unique_filename(char *buffer, size_t length);

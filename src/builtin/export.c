@@ -44,7 +44,7 @@ int	builtin_export(t_minishell *mshell, char **args)
 
 	if (!args || !args[1])
 		return (1);
-	i = 0;
+	i = -1;
 	while (args[++i])
 	{
 		if (ft_strchr(args[i++], '=') == NULL)

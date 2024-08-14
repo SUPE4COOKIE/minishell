@@ -80,5 +80,6 @@ int	builtin_echo(t_minishell *mshell, char **args)
 		i++;
 	}
 	print_args(args, i, n);
+	mshell->last_exit_status = 0;
 	return (0);
 }

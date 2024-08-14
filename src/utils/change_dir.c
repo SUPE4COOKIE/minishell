@@ -80,5 +80,7 @@ int	change_to_specified(t_minishell *mshell, char *arg, bool is_slash)
 	if (!path)
 		return (0);
 	result = change_dir(mshell, path);
+	if (result == 1)
+		mshell->last_exit_status = 1;
 	return (free_null(path), result);
 }

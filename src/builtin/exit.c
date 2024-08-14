@@ -63,6 +63,8 @@ int	builtin_exit(t_minishell *mshell, char **args)
 		else if (args[1])
 		{
 			mshell->last_exit_status = atoutint8(args[1], &is_overflow);
+			close(mshell->original_stdin);
+			close(mshell->original_stdout);
 			if (is_overflow == true)
 				exit(error_cmd(mshell, 2, "exit: numeric argument \
 					required"));

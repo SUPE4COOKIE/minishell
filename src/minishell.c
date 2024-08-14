@@ -103,5 +103,5 @@ int	main(int argc, char **argv, char **envp)
 	}
 	else
 		prompt_minishell(&mshell);
-	return (0);
+	return (mshell.last_exit_status);
 }

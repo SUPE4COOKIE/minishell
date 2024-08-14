@@ -121,7 +121,7 @@ int	handle_outfiles(t_redir_args *args)
 void	handle_redirections(t_cmd *cmd, int old[2], int new[2], \
 		t_minishell *mshell)
 {
-	if (cmd->op_type[0] == RED_IN)
+	if (cmd->op_type[0] == RED_IN || cmd->op_type[0] == HDOC)
 		handle_red_in(cmd, old, new, mshell);
 	if (cmd->op_type[1] == RED_OUT)
 		if (handle_red_out(cmd, mshell))
