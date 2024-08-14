@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:19:44 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/14 10:56:13 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/14 13:54:48 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 	init_fds(&fds, old, new);
 	cmd = init_before_fork(&y, mshell, &id, i);
 	if (is_builtin(cmd->cmd) == false || \
-			((is_builtin(cmd->cmd) == true && cmd->next) || cmd->prev))
+			is_builtin(cmd->cmd) == true)
 		id = fork();
 	if (id == -1)
 		return (error_msg("fork failed"));
@@ -80,7 +80,6 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 	else if (id == 0)
 		if (process_child(mshell, cmd, i, fds))
 			return (1);
-	close_and_cpy(old, new, i);
 	return (0);
 }
 
@@ -89,10 +88,8 @@ int	process_child(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds)
 	if (manage_cmd(mshell, cmd, i, fds))
 		return (1);
 	if (is_builtin(cmd->cmd) == false || \
-			((is_builtin(cmd->cmd) == true && cmd->next) || cmd->prev))
+			(is_builtin(cmd->cmd) == true && cmd->next))
 	{
-		free_env_path(mshell);
-		free_cmds(mshell->cmds);
 		exit(0);
 	}
 	return (0);
