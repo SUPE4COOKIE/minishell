@@ -55,7 +55,9 @@ static void	convert_to_hex(unsigned char *random_bytes, char *hex_string)
 	hex_string[2 * RANDOM_BYTES] = '\0';
 }
 
-int	generate_unique_filename(char *buffer, size_t length)
+#include <string.h>
+
+char	*generate_unique_filename(char *buffer, size_t length)
 {
 	int				urandom_fd;
 	unsigned char	random_bytes[RANDOM_BYTES];
@@ -63,11 +65,11 @@ int	generate_unique_filename(char *buffer, size_t length)
 
 	urandom_fd = open_urandom();
 	if (urandom_fd < 0)
-		return (1);
+		return (NULL);
 	if (read_random_bytes(urandom_fd, random_bytes) != 0)
-		return (1);
+		return (NULL);
 	convert_to_hex(random_bytes, hex_string);
-	ft_strlcpy(buffer, TMP_FILE_PREFIX, length);
+	buffer = ft_strdup(TMP_FILE_PREFIX);
 	ft_strlcat(buffer, hex_string, length);
-	return (0);
+	return (buffer);
 }

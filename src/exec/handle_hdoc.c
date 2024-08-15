@@ -22,6 +22,7 @@
 int	read_the_line(char *line, int fd, char **hdoc)
 {
 	g_sig = 0;
+	print_tab(hdoc);
 	while (42)
 	{
 		signal(SIGINT, signal_here_doc);
@@ -46,55 +47,59 @@ int	read_the_line(char *line, int fd, char **hdoc)
 	return (0);
 }
 
-int	handle_hdoc(t_cmd *cmd, char ***hdoc, char **tmp_filename)
+int	handle_hdoc(t_cmd *cmd, char **tmp_filename)
 {
 	int		fd;
 	char	*line;
-	int		i;
+	size_t	i;
+	size_t	j;
 
-	(void) cmd;
 	line = NULL;
 	i = 0;
-	while (tmp_filename && tmp_filename[i] && hdoc && hdoc[i])
+
+	while (cmd)
 	{
-		fd = open(tmp_filename[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (fd == -1)
-			return (perror("open"), 1);
-		read_the_line(line, fd, hdoc[i]);
-		free_null(*(hdoc[i]));
-		*(hdoc[i]) = ft_strdup(tmp_filename[i]);
-		close(fd);
-		i++;
+		j = 0;
+		while (tmp_filename && tmp_filename[i] && cmd->hdoc && cmd->hdoc[j])
+		{
+			fd = open(tmp_filename[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd == -1)
+				return (perror("open"), 1);
+			read_the_line(line, fd, cmd->hdoc[j]);
+			*(cmd->hdoc[j]) = ft_strdup(tmp_filename[i]);
+			close(fd);
+			j++;
+			i++;
+		}
+		cmd = cmd->next;
 	}
 	if (tmp_filename)
 		free_tab(tmp_filename);
 	return (0);
 }
 
-int	generate_unique_filenames(t_cmd *cmd, char ***tmp_filename)
+int	generate_unique_filenames(t_cmd *cmd, char ***tmp_filename, size_t *k)
 {
 	size_t	filename_length;
-	int		i;
+	size_t	i;
 	t_cmd	*tmp;
 
 	tmp = cmd;
 	filename_length = ft_strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
-	*tmp_filename = ft_calloc(ft_tablen(tmp->infile) + 1, sizeof(char *));
-	if (!(*tmp_filename))
+	if ((*tmp_filename) == NULL)
 		return (1);
 	i = 0;
-	while ((*tmp_filename) && i < ft_tablen(tmp->infile))
+	while ((*tmp_filename) && i < (size_t)ft_tablen(*tmp->hdoc))
 	{
-		(*tmp_filename)[i] = (char *)ft_calloc(filename_length, sizeof(char));
-		if (!(*tmp_filename)[i])
-			return (1);
-		generate_unique_filename((*tmp_filename)[i], filename_length);
+		printf("i = %zu\n", i);
+		(*tmp_filename)[*k] = generate_unique_filename((*tmp_filename)[*k], filename_length);
+		printf("tmp_filename[%zu] = %s\n", i, (*tmp_filename)[*k]);
+		(*k)++;
 		i++;
 	}
 	return (0);
 }
 
-//print a tab
 void	print_tab(char **tab)
 {
 	int	i;
@@ -134,32 +139,40 @@ char	***save_heredocs(t_cmd *cmd, size_t *k)
 	return (hdoc);
 }
 
+size_t	count_hdoc(t_cmd *cmd)
+{
+	t_cmd	*tmp;
+	size_t	i;
+	size_t	count;
+
+	tmp = cmd;
+	count = 0;
+	while (tmp)
+	{
+		i = 0;
+		while (tmp->hdoc[i])
+			i++;
+		count += i;
+		tmp = tmp->next;
+	}
+	return (count);
+}
+
 int	replace_hdoc(t_cmd *cmd)
 {
 	char	**tmp_filename;
-	char	***hdoc;
 	t_cmd	*tmp;
 	size_t	k;
 
 	tmp = cmd;
-	hdoc = NULL;
 	k = 0;
+	tmp_filename = ft_calloc(count_hdoc(cmd) + 1, sizeof(char **));
 	while (tmp)
 	{
-		hdoc = save_heredocs(tmp, &k);
-		if (!hdoc)
-			return (1);
-		if (generate_unique_filenames(tmp, &tmp_filename))
+		if (generate_unique_filenames(tmp, &tmp_filename, &k))
 			return (1);
 		tmp = tmp->next;
 	}
-	handle_hdoc(cmd, hdoc, tmp_filename);
-	// faire un fonction pour remplacer les optype de chaque cmd par redir in
-	free_null(hdoc);
-	while (cmd)
-	{
-		cmd->op_type[0] = RED_IN;
-		cmd = cmd->next;
-	}
+	handle_hdoc(cmd, tmp_filename);
 	return (0);
 }

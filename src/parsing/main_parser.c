@@ -103,13 +103,13 @@ bool	save_hdoc(t_minishell *mshell, t_cmd *cmd)
 	size_t	j;
 	size_t	k;
 
-	i = 0;
-	j = 0;
-	k = 0;
-	cmd->hdoc = ft_calloc(sizeof(char **) , (ft_tablen(cmd->infile) + 1));
 	while (cmd)
 	{
-		while (cmd->type_chain[i] != UNDEFINED)
+		cmd->hdoc = ft_calloc(sizeof(char **) , (ft_tablen(cmd->infile) + 1));
+		i = 0;
+		j = 0;
+		k = 0;
+		while (cmd->type_chain && cmd->type_chain[i] && cmd->type_chain[i] != UNDEFINED)
 		{
 			if (cmd->type_chain[i] == HDOC || cmd->type_chain[i] == RED_IN)
 			{

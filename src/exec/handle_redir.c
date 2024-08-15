@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 15:01:08 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/13 11:45:07 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/15 10:46:37 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ int	handle_outfiles(t_redir_args *args)
 void	handle_redirections(t_cmd *cmd, int old[2], int new[2], \
 		t_minishell *mshell)
 {
+	print_tab(cmd->infile);
 	if (cmd->op_type[0] == RED_IN || cmd->op_type[0] == HDOC)
 		handle_red_in(cmd, old, new, mshell);
 	if (cmd->op_type[1] == RED_OUT)

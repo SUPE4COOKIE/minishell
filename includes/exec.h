@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 11:57:22 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/14 10:48:33 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/15 11:27:28 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ int		replace_hdoc(t_cmd *cmd);
 int		exec_builtin(t_minishell *mshell, t_cmd *cmd);
 int		handle_file_redirection(t_minishell *mshell, t_cmd *cmd, \
 		int old[2], int new[2]);
-int		handle_hdoc(t_cmd *cmd, char ***hdoc, char **tmp_filename);
+int		handle_hdoc(t_cmd *cmd, char **tmp_filename);
 void	ft_close(int old[2], int new[2]);
 int		init_exec(int old[2], int new[2], t_minishell *mshell);
-int		generate_unique_filename(char *buffer, size_t length);
+char	*generate_unique_filename(char *buffer, size_t length);
 void	signal_exec(int signal);
 void	signal_here_doc(int signal);
 void	signal_new_line(int sig);

@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 15:55:11 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/13 11:36:54 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/15 12:07:47 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,22 +18,25 @@ int	handle_red_out(t_cmd *cmd, t_minishell *mshell)
 	int	i;
 
 	i = 0;
+	printf("cmd->infile: %s\n", cmd->outfile[i]);
 	while (cmd->outfile[i] && cmd->outfile[i + 1])
 		i++;
 	if (mshell->invalid_redir != NULL && is_redir_before(cmd, \
 			&mshell->invalid_redir, &cmd->outfile[i]) == true)
 	{
 		fd = open("/dev/null", O_WRONLY, 0644);
+		if (fd == -1)
+			return (perror("open"), 1);
 		if (dup2(fd, STDOUT_FILENO) == -1)
-			return (error_msg("dup2 failed"));
+			return (perror("dup2"), 1);
 	}
 	else
 	{
 		fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd == -1)
-			return (error_msg("No such file or directory"));
+			return (perror("open"), 1);
 		if (dup2(fd, STDOUT_FILENO) == -1)
-			return (error_msg("dup2 failed"));
+			return (perror("dup2"), 1);
 		close(fd);
 	}
 	return (0);
@@ -57,9 +60,9 @@ void	handle_append_out(t_cmd *cmd, int old[2], int new[2], \
 	}
 	fd = open(cmd->outfile[i], O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd == -1)
-		error_pipe("No such file or directory", new, old, cmd);
+		return (perror("open"));
 	if (dup2(fd, STDOUT_FILENO) == -1)
-		error_pipe("dup2 failed", new, old, cmd);
+		return (perror("dup2"));
 	close(fd);
 }
 
@@ -74,6 +77,8 @@ void	handle_red_in(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
 	int	fd;
 	int	i;
 
+	(void)old;
+	(void)new;
 	i = 0;
 	while (cmd->infile && cmd->infile[i] && cmd->infile[i + 1])
 		i++;
@@ -81,17 +86,20 @@ void	handle_red_in(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
 			&mshell->invalid_redir, &cmd->outfile[i]) == true)
 	{
 		fd = open("/dev/null", O_WRONLY, 0644);
+		if (fd == -1)
+			return (perror("open"));
 		if (dup2(STDIN_FILENO, fd) == -1)
-			error_pipe("dup2 failed", new, old, cmd);
+			perror("dup2");
 		close(fd);
+		return ;
 	}
 	fd = open(cmd->infile[i], O_RDONLY);
 	if (fd == -1)
-		error_pipe("No such file or directory", new, old, cmd);
+		return (perror("open"));
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
-		error_pipe("dup2 failed", new, old, cmd);
 		close(fd);
+		return (perror("dup2"));
 	}
 	close(fd);
 }

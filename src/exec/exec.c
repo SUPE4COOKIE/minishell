@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/14 10:58:40 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/15 10:48:12 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 	{
 		close(mshell->original_stdout);
 		close(mshell->original_stdin);
+		mshell->last_exit_status = 0;
 		if (execve(cmd->cmd, cmd->args, mshell->env))
 			return (perror("execve"), 127);
 	}
@@ -127,8 +128,9 @@ int	exec(t_minishell *mshell)
 	size = lst_size(mshell->cmds);
 	status = 0;
 	if (init_exec(old, new, mshell) == 1)
-		return (1);
-	process_commands(mshell, old, new);
+		return (reset_fds(mshell, old, new), 1);
+	if (process_commands(mshell, old, new) == 1)
+		return (reset_fds(mshell, old, new), 1);
 	return_status(mshell, status);
 	if (g_sig == SIGINT)
 	{

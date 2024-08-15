@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/15 10:32:44 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/15 11:04:44 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,10 @@ int	start_mshell(t_minishell *mshell)
 	if (parse(mshell))
 		return (1);
 	if (exec(mshell) != 0)
+	{
+		free_cmds(mshell->cmds);
 		return (1);
+	}
 	return (0);
 }
 
