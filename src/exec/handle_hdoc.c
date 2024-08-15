@@ -153,7 +153,6 @@ int	replace_hdoc(t_cmd *cmd)
 			return (1);
 		tmp = tmp->next;
 	}
-	print_tab(cmd->infile);
 	handle_hdoc(cmd, hdoc, tmp_filename);
 	// faire un fonction pour remplacer les optype de chaque cmd par redir in
 	free_null(hdoc);
