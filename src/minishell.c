@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/14 11:29:35 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/15 10:32:44 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,21 @@ volatile sig_atomic_t	g_sig;
 int	print_prompt(t_minishell *mshell)
 {
 	char	*msg;
+	char	*tmp;
 
-	msg = ft_strjoin("minishell-\033[0;31m", ft_itoa(mshell->last_exit_status));
+	tmp = ft_itoa(mshell->last_exit_status);
+	if (!tmp)
+		return (1);
+	msg = ft_strjoin("minishell-\033[0;31m", tmp);
 	if (!msg)
 		return (1);
-	msg = ft_strjoin(msg, "\033[0m-$> ");
-	if (!msg)
+	free_null(tmp);
+	tmp = ft_strjoin(msg, "\033[0m-$> ");
+	if (!tmp)
 		return (1);
-	mshell->line = readline(msg);
+	mshell->line = readline(tmp);
 	free_null(msg);
+	free_null(tmp);
 	return (0);
 }
 
