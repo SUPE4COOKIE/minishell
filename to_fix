@@ -6,3 +6,5 @@ exit met pas last exit status
 ""/"$NULL" met une erreur normalement (si vous voulew le faire)
 "" " " devrait mettre une erreur (: command not found)
 $NULL ne devrait pas faire une erreur et renvoyer 0
+exit value sur permission denied minishell:127  bash:126
+export a="fi le" echo > $a

@@ -64,11 +64,7 @@ void	prompt_minishell(t_minishell *mshell)
 		signal(SIGINT, signal_new_line);
 		signal(SIGQUIT, signal_new_line);
 		rl_event_hook = event;
-		if (print_prompt(mshell))
-		{
-			free_env_path(mshell);
-			break ;
-		}
+		mshell->line = readline("minishell-$> ");
 		signal(SIGINT, signal_exec);
 		signal(SIGQUIT, signal_exec);
 		if (!mshell->line || g_sig == SIGQUIT)
@@ -90,7 +86,8 @@ int	main(int argc, char **argv, char **envp)
 
 	print_cat();
 	init(&mshell);
-	allocate_env(&mshell, envp);
+	if (allocate_env(&mshell, envp))
+		return (1);
 	if (save_path(&mshell, mshell.env))
 	{
 		free_env_path(&mshell);
