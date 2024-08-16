@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/16 12:01:09 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 13:36:34 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	prompt_minishell(t_minishell *mshell)
 	while (42)
 	{
 		signal(SIGINT, signal_new_line);
-		signal(SIGQUIT, signal_new_line);
+		signal(SIGQUIT, SIG_IGN);
 		rl_event_hook = event;
 		mshell->line = readline("minishell$ ");
 		if (mshell->line == NULL)
@@ -58,14 +58,13 @@ void	prompt_minishell(t_minishell *mshell)
 			free_env_path(mshell);
 			break ;
 		}
-		signal(SIGINT, signal_exec);
-		signal(SIGQUIT, signal_exec);
 		if (!mshell->line || g_sig == SIGQUIT)
 		{
 			free_env_path(mshell);
 			printf("exit\n");
 			break ;
 		}
+		set_sig_and_exit_status(mshell);
 		if (start_mshell(mshell) == 1)
 			continue ;
 		free_null(mshell->line);
@@ -73,12 +72,13 @@ void	prompt_minishell(t_minishell *mshell)
 	}
 }
 
-int	main(int argc, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	mshell;
 
+	(void)argv;
 	if (argc != 1)
-		return(1);
+		return (1);
 	print_cat();
 	init(&mshell);
 	allocate_env(&mshell, envp);

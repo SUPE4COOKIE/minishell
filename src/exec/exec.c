@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/16 11:12:18 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 13:28:19 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 {
 	if (is_builtin(cmd->cmd) == true)
 	{
-		if (exec_builtin(mshell, cmd))
+		if (exec_builtin(mshell, cmd) == 1)
 			return (1);
 	}
 	else if (cmd->cmd && cmd->is_valid_cmd == true)
@@ -52,7 +52,7 @@ int	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])
 	{
 		if (dup2(old[0], STDIN_FILENO) == -1)
 		{
-			perror("dup2 failedregbverge");
+			perror("dup2 failed");
 			return (1);
 		}
 		if (old[0] != -1)
@@ -86,7 +86,6 @@ int	process_commands(t_minishell *mshell, int old[2], int new[2])
 	cmd = mshell->cmds;
 	while (cmd)
 	{
-		handle_signal_process();
 		if (pipe_command(cmd, new) == 1)
 			return (1);
 		if (fork_exec(mshell, old, new, i))
@@ -113,6 +112,14 @@ void	return_status(t_minishell *mshell, int status)
 				mshell->last_exit_status = (((status) & 0xff00) >> 8);
 			else if ((((signed char)(((status) & 0x7f) + 1) >> 1) > 0))
 				mshell->last_exit_status = ((status) & 0x7f) + 128;
+			if (WIFSIGNALED(status))
+			{
+				if (WTERMSIG(status) == SIGQUIT)
+					ft_putstr_fd("Quit: 3\n", 2);
+				else if (WTERMSIG(status) == SIGINT)
+					ft_putstr_fd("\n", 2);
+				mshell->last_exit_status = WTERMSIG(status) + 128;
+			}
 		}
 	}
 }

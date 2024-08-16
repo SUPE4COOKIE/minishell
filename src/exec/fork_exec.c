@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:19:44 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/16 11:33:06 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 12:58:21 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,10 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 	if (id == -1)
 		return (error_msg("fork failed"));
 	else if (id != 0)
+	{
 		mshell->last_pid = id;
+		signal(SIGINT, SIG_IGN);
+	}
 	else if (id == 0)
 		if (process_child(mshell, cmd, i, fds))
 			return (1);
@@ -91,6 +94,8 @@ int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)
 
 int	process_child(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds)
 {
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (manage_cmd(mshell, cmd, i, fds))
 		return (1);
 	if (is_builtin(cmd->cmd) == false || \

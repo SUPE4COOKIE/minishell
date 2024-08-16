@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:04:04 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/03 11:01:38 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 13:22:53 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	builtin_exit(t_minishell *mshell, char **args)
 	if (args)
 	{
 		if (args[1] && isnumber(args[1]) == false)
-			exit(error_cmd(mshell, 2, "exit: numeric argument required"));
+			exit(free_shell(mshell, 2));
 		else if (args[1] && args[2] && mshell->cmds->next)
 			exit(error_cmd(mshell, 1, "exit: too many arguments"));
 		else if (args[1] && args[2])

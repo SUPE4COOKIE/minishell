@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 10:32:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/14 11:15:50 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 13:02:49 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,6 @@ void	signal_new_line(int sig)
 		rl_redisplay();
 		g_sig = SIGINT;
 	}
-	else if (sig == SIGQUIT)
-	{
-		printf("Quit (core dumped)");
-		g_sig = SIGQUIT;
-	}
 }
 
 void	signal_here_doc(int signal)
@@ -41,6 +36,10 @@ void	signal_here_doc(int signal)
 void	signal_exec(int signal)
 {
 	g_sig = signal;
+	if (g_sig == SIGINT)
+		ft_putstr_fd("\n", 2);
+	else if (g_sig == SIGQUIT)
+		ft_putstr_fd("Quit: 3\n", 2);
 }
 
 int	event(void)
