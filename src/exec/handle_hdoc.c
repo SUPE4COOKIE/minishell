@@ -19,8 +19,11 @@
  * @param cmd The command
  * @param i The index
  */
-int	read_the_line(char *line, int fd, char **hdoc)
+int	read_the_line(int fd, char **hdoc)
 {
+	char *line;
+
+	line = NULL;
 	g_sig = 0;
 	print_tab(hdoc);
 	while (42)
@@ -40,23 +43,19 @@ int	read_the_line(char *line, int fd, char **hdoc)
 				ft_strlen(*hdoc) + 1) == 0)
 			break ;
 		ft_putendl_fd(line, fd);
-		free_null(line);
+		free(line);
 	}
-	if (line)
-		free_null(line);
+	free(line);
 	return (0);
 }
 
 int	handle_hdoc(t_cmd *cmd, char **tmp_filename)
 {
 	int		fd;
-	char	*line;
 	size_t	i;
 	size_t	j;
 
-	line = NULL;
 	i = 0;
-
 	while (cmd)
 	{
 		j = 0;
@@ -65,7 +64,8 @@ int	handle_hdoc(t_cmd *cmd, char **tmp_filename)
 			fd = open(tmp_filename[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
 				return (perror("open"), 1);
-			read_the_line(line, fd, cmd->hdoc[j]);
+			read_the_line(fd, cmd->hdoc[j]);
+			free(*(cmd->hdoc[j]));
 			*(cmd->hdoc[j]) = ft_strdup(tmp_filename[i]);
 			close(fd);
 			j++;
@@ -73,8 +73,6 @@ int	handle_hdoc(t_cmd *cmd, char **tmp_filename)
 		}
 		cmd = cmd->next;
 	}
-	if (tmp_filename)
-		free_tab(tmp_filename);
 	return (0);
 }
 
@@ -85,15 +83,15 @@ int	generate_unique_filenames(t_cmd *cmd, char ***tmp_filename, size_t *k)
 	t_cmd	*tmp;
 
 	tmp = cmd;
-	filename_length = ft_strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
+	filename_length = ft_strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES + 1);
 	if ((*tmp_filename) == NULL)
 		return (1);
 	i = 0;
 	while ((*tmp_filename) && i < (size_t)ft_tablen(*tmp->hdoc))
 	{
-		printf("i = %zu\n", i);
+		printf("k = %zu\n", *k);
 		(*tmp_filename)[*k] = generate_unique_filename((*tmp_filename)[*k], filename_length);
-		printf("tmp_filename[%zu] = %s\n", i, (*tmp_filename)[*k]);
+		printf("tmp_filename[%zu] = %s\n", *k, (*tmp_filename)[*k]);
 		(*k)++;
 		i++;
 	}
@@ -111,32 +109,6 @@ void	print_tab(char **tab)
 		i++;
 	}
 	printf("\n");
-}
-
-char	***save_heredocs(t_cmd *cmd, size_t *k)
-{
-	size_t	i;
-	size_t	j;
-	char	***hdoc;
-
-	i = 0;
-	j = 0;
-	hdoc = ft_calloc(ft_tablen(cmd->infile) + 1, sizeof(char *));
-	if (!hdoc)
-		return (NULL);
-	while (cmd->type_chain && cmd->type_chain[j] != UNDEFINED)
-	{
-		if (cmd->type_chain[j] == HDOC || cmd->type_chain[j] == RED_IN)
-		{
-			if (cmd->type_chain[j] == HDOC)
-			{
-				hdoc[(*k)++] = &(cmd->infile[i]);
-			}
-			i++;
-		}
-		j++;
-	}
-	return (hdoc);
 }
 
 size_t	count_hdoc(t_cmd *cmd)
@@ -174,5 +146,6 @@ int	replace_hdoc(t_cmd *cmd)
 		tmp = tmp->next;
 	}
 	handle_hdoc(cmd, tmp_filename);
+	free_tab(tmp_filename);
 	return (0);
 }

@@ -100,6 +100,7 @@ int	main(int argc, char **argv, char **envp)
 	print_cat();
 	init(&mshell);
 	allocate_env(&mshell, envp);
+	mshell.last_exit_status = 0;
 	if (save_path(&mshell, mshell.env))
 	{
 		free_env_path(&mshell);
@@ -110,7 +111,7 @@ int	main(int argc, char **argv, char **envp)
 		handle_dash_c(&mshell, argc, argv);
 		return (mshell.last_exit_status);
 	}
-	else
+	else if (argc == 1)
 		prompt_minishell(&mshell);
 	return (mshell.last_exit_status);
 }

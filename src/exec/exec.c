@@ -123,9 +123,7 @@ int	exec(t_minishell *mshell)
 	int	old[2];
 	int	new[2];
 	int	status;
-	int	size;
 
-	size = lst_size(mshell->cmds);
 	status = 0;
 	if (init_exec(old, new, mshell) == 1)
 		return (reset_fds(mshell, old, new), 1);
