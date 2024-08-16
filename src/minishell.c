@@ -6,34 +6,13 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/15 11:04:44 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 12:01:09 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 volatile sig_atomic_t	g_sig;
-
-int	print_prompt(t_minishell *mshell)
-{
-	char	*msg;
-	char	*tmp;
-
-	tmp = ft_itoa(mshell->last_exit_status);
-	if (!tmp)
-		return (1);
-	msg = ft_strjoin("minishell-\033[0;31m", tmp);
-	if (!msg)
-		return (1);
-	free_null(tmp);
-	tmp = ft_strjoin(msg, "\033[0m-$> ");
-	if (!tmp)
-		return (1);
-	mshell->line = readline(tmp);
-	free_null(msg);
-	free_null(tmp);
-	return (0);
-}
 
 int	scan_line(t_minishell *mshell)
 {
@@ -73,7 +52,8 @@ void	prompt_minishell(t_minishell *mshell)
 		signal(SIGINT, signal_new_line);
 		signal(SIGQUIT, signal_new_line);
 		rl_event_hook = event;
-		if (print_prompt(mshell))
+		mshell->line = readline("minishell$ ");
+		if (mshell->line == NULL)
 		{
 			free_env_path(mshell);
 			break ;
@@ -93,10 +73,12 @@ void	prompt_minishell(t_minishell *mshell)
 	}
 }
 
-int	main(int argc, char **argv, char **envp)
+int	main(int argc, char **envp)
 {
 	t_minishell	mshell;
 
+	if (argc != 1)
+		return(1);
 	print_cat();
 	init(&mshell);
 	allocate_env(&mshell, envp);
@@ -104,11 +86,6 @@ int	main(int argc, char **argv, char **envp)
 	if (save_path(&mshell, mshell.env))
 	{
 		free_env_path(&mshell);
-		return (mshell.last_exit_status);
-	}
-	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
-	{
-		handle_dash_c(&mshell, argc, argv);
 		return (mshell.last_exit_status);
 	}
 	else if (argc == 1)
