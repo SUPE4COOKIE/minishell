@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 15:55:11 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/15 12:07:47 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 11:38:41 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ int	handle_red_out(t_cmd *cmd, t_minishell *mshell)
 	int	i;
 
 	i = 0;
-	printf("cmd->infile: %s\n", cmd->outfile[i]);
 	while (cmd->outfile[i] && cmd->outfile[i + 1])
 		i++;
 	if (mshell->invalid_redir != NULL && is_redir_before(cmd, \
@@ -72,13 +71,11 @@ void	handle_append_out(t_cmd *cmd, int old[2], int new[2], \
  * @param old The old file descriptors
  * @param new The new file descriptors
  */
-void	handle_red_in(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
+void	handle_red_in(t_cmd *cmd, t_minishell *mshell)
 {
 	int	fd;
 	int	i;
 
-	(void)old;
-	(void)new;
 	i = 0;
 	while (cmd->infile && cmd->infile[i] && cmd->infile[i + 1])
 		i++;
@@ -88,7 +85,7 @@ void	handle_red_in(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
 		fd = open("/dev/null", O_WRONLY, 0644);
 		if (fd == -1)
 			return (perror("open"));
-		if (dup2(STDIN_FILENO, fd) == -1)
+		if (dup2(fd, STDIN_FILENO) == -1)
 			perror("dup2");
 		close(fd);
 		return ;
@@ -97,9 +94,6 @@ void	handle_red_in(t_cmd *cmd, int old[2], int new[2], t_minishell *mshell)
 	if (fd == -1)
 		return (perror("open"));
 	if (dup2(fd, STDIN_FILENO) == -1)
-	{
-		close(fd);
-		return (perror("dup2"));
-	}
+		return (close(fd), perror("dup2"));
 	close(fd);
 }

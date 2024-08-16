@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 10:43:36 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/15 10:48:12 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 11:12:18 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,7 @@ int	exec_cmd(t_minishell *mshell, t_cmd *cmd)
 		perror("dup2 failed");
 		exit(free_shell(mshell, errno));
 	}
-	close(mshell->original_stdin);
-	return (0);
+	return (close(mshell->original_stdin), 0);
 }
 
 int	dup_cmd(int i, t_cmd *cmd, int old[2], int new[2])

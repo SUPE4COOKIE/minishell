@@ -76,6 +76,7 @@ SRCS = $(addprefix src/, \
 		redir_utils.c \
 		export_utils.c \
 		init_mshell.c \
+		cd_utils.c \
 	) \
 	minishell.c \
 	)

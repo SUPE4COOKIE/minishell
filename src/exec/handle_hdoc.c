@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/14 11:12:25 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 11:37:58 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,10 @@
  */
 int	read_the_line(int fd, char **hdoc)
 {
-	char *line;
+	char	*line;
 
 	line = NULL;
 	g_sig = 0;
-	print_tab(hdoc);
 	while (42)
 	{
 		signal(SIGINT, signal_here_doc);
@@ -89,26 +88,12 @@ int	generate_unique_filenames(t_cmd *cmd, char ***tmp_filename, size_t *k)
 	i = 0;
 	while ((*tmp_filename) && i < (size_t)ft_tablen(*tmp->hdoc))
 	{
-		printf("k = %zu\n", *k);
-		(*tmp_filename)[*k] = generate_unique_filename((*tmp_filename)[*k], filename_length);
-		printf("tmp_filename[%zu] = %s\n", *k, (*tmp_filename)[*k]);
+		(*tmp_filename)[*k] = generate_unique_filename((*tmp_filename)[*k], \
+								filename_length);
 		(*k)++;
 		i++;
 	}
 	return (0);
-}
-
-void	print_tab(char **tab)
-{
-	int	i;
-
-	i = 0;
-	while (tab && tab[i])
-	{
-		printf("tab[%d] = %s\n", i, tab[i]);
-		i++;
-	}
-	printf("\n");
 }
 
 size_t	count_hdoc(t_cmd *cmd)

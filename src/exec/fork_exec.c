@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:19:44 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/14 13:54:48 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 11:33:06 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,26 @@ t_cmd	*init_before_fork(int *y, t_minishell *mshell, pid_t *id, int i)
 	return (cmd);
 }
 
+void	handle_error_exec(t_minishell *mshell, t_cmd *cmd, \
+		int old[2], int new[2])
+{
+	if (handle_file_redirection(mshell, cmd, old, new) == 1)
+	{
+		ft_close(old, new);
+		close(mshell->original_stdout);
+		close(mshell->original_stdin);
+		free_mshell(mshell);
+		exit(1);
+	}
+	if (cmd->is_valid_cmd == false)
+	{
+		free_mshell(mshell);
+		close(mshell->original_stdout);
+		close(mshell->original_stdin);
+		exit(127);
+	}
+}
+
 int	manage_cmd(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds)
 {
 	int	old[2];
@@ -33,32 +53,18 @@ int	manage_cmd(t_minishell *mshell, t_cmd *cmd, int i, t_fds fds)
 	old[1] = fds.old[1];
 	new[0] = fds.new[0];
 	new[1] = fds.new[1];
-	if (handle_file_redirection(mshell, cmd, old, new) == 1)
-		return (1);
-	if (cmd->is_valid_cmd == false)
-	{
-		close_free(mshell, old, new);
-		exit(127);
-	}
+	handle_error_exec(mshell, cmd, old, new);
 	dup_cmd(i, cmd, old, new);
 	ft_close(old, new);
 	if (exec_cmd(mshell, cmd))
 		return (1);
 	if (is_builtin(cmd->cmd) == false || \
-			(is_builtin(cmd->cmd) == true && cmd->next))
+			(is_builtin(cmd->cmd) == true && mshell->cmds->next))
 	{
 		close_free(mshell, old, new);
 		exit(0);
 	}
 	return (0);
-}
-
-void	init_fds(t_fds *fds, int old[2], int new[2])
-{
-	fds->old[0] = old[0];
-	fds->old[1] = old[1];
-	fds->new[0] = new[0];
-	fds->new[1] = new[1];
 }
 
 int	fork_exec(t_minishell *mshell, int old[2], int new[2], int i)

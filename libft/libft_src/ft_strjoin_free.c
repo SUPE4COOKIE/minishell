@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 10:15:44 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/15 10:32:51 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 11:48:21 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 char	*ft_strjoin_free(char *s1, char *s2)
 {
 	char	*str;
-	int	i;
+	int		i;
 	size_t	j;
 
 	i = -1;

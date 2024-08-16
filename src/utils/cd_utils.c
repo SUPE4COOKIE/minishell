@@ -1,46 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_utils.c                                       :+:      :+:    :+:   */
+/*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/12 11:29:55 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/16 11:36:00 by scrumier         ###   ########.fr       */
+/*   Created: 2024/08/16 11:07:29 by scrumier          #+#    #+#             */
+/*   Updated: 2024/08/16 11:36:38 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	next_command(t_cmd **cmd, int *i)
+void	add_slash_cd(char *path)
 {
-	*cmd = (*cmd)->next;
-	(*i)++;
+	path[0] = '/';
+	path[1] = '\0';
 }
 
-void	handle_signal_process(void)
+int	is_directory(struct stat *buf, t_cmd *cmd, t_minishell *mshell, int i)
 {
-	signal(SIGINT, signal_exec);
-	signal(SIGQUIT, signal_exec);
-}
+	char	*tmp;
 
-int	pipe_command(t_cmd *cmd, int new[2])
-{
-	if (cmd->next)
+	tmp = NULL;
+	if (((buf->st_mode) & 0170000) == (0040000))
 	{
-		if (pipe(new) == -1)
-		{
-			perror("pipe failed");
+		mshell->invalid_redir = cmd->infile[i];
+		tmp = ft_strjoin(cmd->infile[i], ": is a directory\n");
+		if (!*tmp)
 			return (1);
-		}
+		write(2, tmp, ft_strlen(tmp));
+		free_null(tmp);
+		return (1);
 	}
 	return (0);
-}
-
-void	init_fds(t_fds *fds, int old[2], int new[2])
-{
-	fds->old[0] = old[0];
-	fds->old[1] = old[1];
-	fds->new[0] = new[0];
-	fds->new[1] = new[1];
 }

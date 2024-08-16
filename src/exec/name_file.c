@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:21:40 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 14:26:56 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 11:09:40 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ static void	convert_to_hex(unsigned char *random_bytes, char *hex_string)
 	hex_string[RANDOM_BYTES] = '\0';
 }
 
-#include <string.h>
-
 char	*generate_unique_filename(char *buffer, size_t length)
 {
 	int				urandom_fd;
@@ -72,7 +70,6 @@ char	*generate_unique_filename(char *buffer, size_t length)
 		return (NULL);
 	convert_to_hex(random_bytes, hex_string);
 	buffer = ft_strdup(TMP_FILE_PREFIX);
-	printf("hex_string : %s\n",hex_string);
 	buffer = ft_strjoin_free(buffer, hex_string);
 	return (buffer);
 }

@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:15:47 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/14 11:27:03 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 11:50:56 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,9 @@ int			error_msg(char *msg);
 void		close_old(int i, int old[2]);
 void		if_is_directory(t_cmd *cmd, t_minishell *mshell, int i, char *tmp);
 void		init(t_minishell *mshell);
+void		add_slash_cd(char *path);
+void		init_fds(t_fds *fds, int old[2], int new[2]);
+int			is_directory(struct stat *buf, t_cmd *cmd, \
+			t_minishell *mshell, int i);
 
 #endif
