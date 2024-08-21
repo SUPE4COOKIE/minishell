@@ -35,5 +35,5 @@ valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fd
 ```
 
 ## Authors
-- [**scrumier**](
-- [**mwojtasi**](
+- [**scrumier**]
+- [**mwojtasi**]
