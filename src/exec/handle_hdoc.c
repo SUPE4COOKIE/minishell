@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 14:06:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/14 11:12:25 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 11:37:58 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,11 @@
  * @param cmd The command
  * @param i The index
  */
-int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
+int	read_the_line(int fd, char **hdoc)
 {
+	char	*line;
+
+	line = NULL;
 	g_sig = 0;
 	while (42)
 	{
@@ -29,121 +32,105 @@ int	read_the_line(char *line, int fd, t_cmd *cmd, int i)
 		line = readline("> ");
 		if (!line)
 			if (g_sig == 0)
-				break ;
+				return (1);
 		if (g_sig != 0)
 		{
 			ft_printf("\n");
 			break ;
 		}
-		printf("infile[%d] = %s\n", i, cmd->infile[i]);
-		if (ft_strncmp(line, cmd->infile[i], \
-				ft_strlen(cmd->infile[i]) + 1) == 0)
+		if (ft_strncmp(line, *hdoc, \
+				ft_strlen(*hdoc) + 1) == 0)
 			break ;
 		ft_putendl_fd(line, fd);
-		free_null(line);
+		free(line);
 	}
-	if (line)
-		free_null(line);
+	free(line);
 	return (0);
 }
 
-/**
- * @brief Handle here document
- * @param cmd The command
- * @param old The old file descriptors
- * @param new The new file descriptors
- * @param tmp_filename The temporary filename
- */
-int	handle_hdoc(t_cmd *cmd, int old[2], int new[2], char **tmp_filename)
+int	handle_hdoc(t_cmd *cmd, char **tmp_filename)
 {
 	int		fd;
-	char	*line;
-	int		i;
+	size_t	i;
+	size_t	j;
 
-	line = NULL;
 	i = 0;
-	while (tmp_filename && tmp_filename[i] && cmd->infile && cmd->infile[i])
+	while (cmd)
 	{
-		if (cmd->type_chain[i] == T_HERE_DOC)
+		j = 0;
+		while (tmp_filename && tmp_filename[i] && cmd->hdoc && cmd->hdoc[j])
 		{
 			fd = open(tmp_filename[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
-				error_pipe("No such file or directory", new, old, cmd);
-			if (read_the_line(line, fd, cmd, i) == 1)
-				return (free_tab(tmp_filename), 1);
-			free_null(cmd->infile[i]);
-			cmd->infile[i] = ft_strdup(tmp_filename[i]);
+				return (perror("open"), 1);
+			read_the_line(fd, cmd->hdoc[j]);
+			free(*(cmd->hdoc[j]));
+			*(cmd->hdoc[j]) = ft_strdup(tmp_filename[i]);
 			close(fd);
+			j++;
+			i++;
 		}
-		i++;
+		cmd = cmd->next;
 	}
-	if (tmp_filename)
-		free_tab(tmp_filename);
-	cmd->op_type[0] = RED_IN;
 	return (0);
 }
 
-void	generate_unique_filenames(t_cmd *cmd, char ***tmp_filename, \
-		int old[2], int new[2])
+int	generate_unique_filenames(t_cmd *cmd, char ***tmp_filename, size_t *k)
 {
 	size_t	filename_length;
-	int		i;
+	size_t	i;
 	t_cmd	*tmp;
 
 	tmp = cmd;
-	filename_length = ft_strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES * 2) + 1;
-	*tmp_filename = ft_calloc(ft_tablen(tmp->infile) + 1, sizeof(char *));
-	if (!(*tmp_filename))
-		error_pipe("malloc failed", new, old, tmp);
+	filename_length = ft_strlen(TMP_FILE_PREFIX) + (RANDOM_BYTES + 1);
+	if ((*tmp_filename) == NULL)
+		return (1);
 	i = 0;
-	while ((*tmp_filename) && i < ft_tablen(tmp->infile))
+	while ((*tmp_filename) && i < (size_t)ft_tablen(*tmp->hdoc))
 	{
-		(*tmp_filename)[i] = (char *)ft_calloc(filename_length, sizeof(char));
-		if (!(*tmp_filename)[i])
-			error_pipe("malloc failed", new, old, tmp);
-		generate_unique_filename((*tmp_filename)[i], filename_length);
+		(*tmp_filename)[*k] = generate_unique_filename((*tmp_filename)[*k], \
+								filename_length);
+		(*k)++;
 		i++;
 	}
+	return (0);
 }
 
-int	handle_heredoc_operations(t_cmd *cmd, int old[2], int new[2], \
-		char **tmp_filename)
+size_t	count_hdoc(t_cmd *cmd)
 {
 	t_cmd	*tmp;
+	size_t	i;
+	size_t	count;
 
 	tmp = cmd;
+	count = 0;
 	while (tmp)
 	{
-		if (handle_hdoc(tmp, old, new, tmp_filename) == 1)
+		i = 0;
+		while (tmp->hdoc[i])
+			i++;
+		count += i;
+		tmp = tmp->next;
+	}
+	return (count);
+}
+
+int	replace_hdoc(t_cmd *cmd)
+{
+	char	**tmp_filename;
+	t_cmd	*tmp;
+	size_t	k;
+
+	tmp = cmd;
+	k = 0;
+	tmp_filename = ft_calloc(count_hdoc(cmd) + 1, sizeof(char **));
+	while (tmp)
+	{
+		if (generate_unique_filenames(tmp, &tmp_filename, &k))
 			return (1);
 		tmp = tmp->next;
 	}
-	return (0);
-}
-
-int	replace_hdoc(t_cmd *cmd, int old[2], int new[2])
-{
-	(void) cmd;
-	(void) old;
-	(void) new;
-	// char	**tmp_filename;
-	// t_cmd	*tmp;
-	// size_t	i;
-	// size_t	j;
-	
-	// tmp = cmd;
-	// while (tmp)
-	// {
-	// 	i = 0;
-	// 	while (tmp->infile && tmp->infile[i])
-	// 	{
-	// 		if (tmp->type_chain[j++] == T_HERE_DOC)
-	// 			generate_unique_filenames(cmd, &tmp_filename, old, new);
-	// 		i++;
-	// 	}
-	// 	tmp = tmp->next;
-	// }
-	// if (handle_heredoc_operations(cmd, old, new, tmp_filename))
-	// 	return (1);
+	handle_hdoc(cmd, tmp_filename);
+	free_tab(tmp_filename);
 	return (0);
 }

@@ -114,11 +114,6 @@ int	builtin_unset(t_minishell *mshell, char **args)
 	while (args[i])
 	{
 		index = get_index_env(mshell->env, args[i]);
-		if (mshell->path && ft_strncmp(args[i], "PATH", 5) == 0)
-		{
-			free_tab(mshell->path);
-			mshell->path = NULL;
-		}
 		if (index != -1)
 		{
 			new_env = remove_env_var(mshell->env, index);

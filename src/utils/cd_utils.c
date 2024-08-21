@@ -1,48 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/14 10:32:46 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/16 13:02:49 by scrumier         ###   ########.fr       */
+/*   Created: 2024/08/16 11:07:29 by scrumier          #+#    #+#             */
+/*   Updated: 2024/08/16 13:36:46 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	signal_new_line(int sig)
+void	add_slash_cd(char *path)
 {
-	if (sig == SIGINT)
-	{
-		ft_printf("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-		g_sig = SIGINT;
-	}
+	path[0] = '/';
+	path[1] = '\0';
 }
 
-void	signal_here_doc(int signal)
+void	set_sig_and_exit_status(t_minishell *mshell)
 {
-	g_sig = signal;
 	if (g_sig == SIGINT)
 	{
+		mshell->last_exit_status = 130;
 		rl_done = 1;
 	}
 }
 
-void	signal_exec(int signal)
+int	is_directory(struct stat *buf, t_cmd *cmd, t_minishell *mshell, int i)
 {
-	g_sig = signal;
-	if (g_sig == SIGINT)
-		ft_putstr_fd("\n", 2);
-	else if (g_sig == SIGQUIT)
-		ft_putstr_fd("Quit: 3\n", 2);
-}
+	char	*tmp;
 
-int	event(void)
-{
+	tmp = NULL;
+	if (((buf->st_mode) & 0170000) == (0040000))
+	{
+		mshell->invalid_redir = cmd->infile[i];
+		tmp = ft_strjoin(cmd->infile[i], ": is a directory\n");
+		if (!*tmp)
+			return (1);
+		write(2, tmp, ft_strlen(tmp));
+		free_null(tmp);
+		return (1);
+	}
 	return (0);
 }
