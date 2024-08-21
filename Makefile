@@ -1,6 +1,5 @@
 NAME = minishell
 
-# Source files
 SRCS = $(addprefix src/, \
 	print_cat.c handle-c.c signals.c\
 	$(addprefix builtin/, \
@@ -76,27 +75,23 @@ SRCS = $(addprefix src/, \
 		redir_utils.c \
 		export_utils.c \
 		init_mshell.c \
+		cd_utils.c \
 	) \
 	minishell.c \
 	)
 
-# Object files directory and object files
 OBJ_DIR = .obj
 OBJ = $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
 
-# Compiler and flags
 CC = cc
 CFLAGS = -Wall -Werror -Wextra -Iincludes -Ilibft -g3
 
-# Libraries
 LIB = -Llibft -lft -lreadline
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-# Clean up command
 RM = rm -rf
 
-# Directory structure
 DIRS = $(OBJ_DIR) \
 	$(OBJ_DIR)/parsing \
 	$(OBJ_DIR)/parsing/lexer \
@@ -109,7 +104,6 @@ DIRS = $(OBJ_DIR) \
 	$(OBJ_DIR)/utils/cmd \
 	$(OBJ_DIR)/utils/lexer
 
-# Header files
 HEADERS = $(addprefix includes/, \
 		builtins.h \
 		exec.h \
@@ -124,10 +118,9 @@ LIBFT_HEADERS = $(addprefix libft/, \
 		libft.h \
 		)
 
-# Targets
 all: $(LIBFT) $(NAME)
 
-$(LIBFT): $(LIBFT_HEADERS) libft/Makefile
+$(LIBFT): FORCE
 	$(MAKE) -C $(LIBFT_DIR)
 
 $(OBJ_DIR)/%.o: src/%.c $(HEADERS) Makefile $(LIBFT) | $(DIRS)
@@ -146,6 +139,8 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 	$(MAKE) -C $(LIBFT_DIR) fclean
+
+FORCE:
 
 re: fclean all
 

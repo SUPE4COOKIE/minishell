@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 10:23:57 by sonamcrumie       #+#    #+#             */
-/*   Updated: 2024/08/14 11:15:32 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 13:16:29 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,11 @@ int	builtin_export(t_minishell *mshell, char **args)
 
 	if (!args || !args[1])
 		return (1);
-	i = 0;
+	i = -1;
 	while (args[++i])
 	{
-		if (ft_strchr(args[i++], '=') == NULL)
+		if (ft_strchr(args[i], '=') == NULL)
 			continue ;
-		i--;
 		if (check_input(mshell, args[i]))
 		{
 			ft_putendl_fd(": ", 2);

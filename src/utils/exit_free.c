@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/23 22:16:55 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/14 10:43:40 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 13:25:51 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ void	free_mshell(t_minishell *mshell)
 	free_env_path(mshell);
 	free_cmds(mshell->cmds);
 	free_null(mshell->line);
+	reset_default_fd(mshell);
 }
 
 void	free_lst(t_arg *new_args)

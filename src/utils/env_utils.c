@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 16:51:54 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/12 14:50:11 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/08/16 11:42:19 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	put_in_env(char **args, size_t i, t_minishell *mshell)
 		set_env(&mshell->env, key, value);
 	else
 		ft_addenv(mshell, key, value);
-	if (strncmp(key, "PATH", 5) == 0)
+	if (ft_strncmp(key, "PATH", 5) == 0)
 	{
 		free_tab(mshell->path);
 		if (parse_path(mshell, value))

@@ -95,11 +95,6 @@ int	get_cmd_path(t_cmd **cmd, char **path, int *exit_status)
 	{
 		while (path && *path)
 		{
-			if ((*cmd)->cmd && (*cmd)->cmd[0] == 0)
-			{
-				free((*cmd)->cmd);
-				(*cmd)->cmd = NULL;
-			}
 			return_value = cmd_for_path(cmd, *path, exit_status);
 			if (return_value == 1)
 				break ;

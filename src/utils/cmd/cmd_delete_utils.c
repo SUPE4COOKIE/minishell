@@ -26,6 +26,8 @@ void	free_cmd(t_cmd *cmd)
 		free_str_array(cmd->outfile);
 	if (cmd->type_chain)
 		free(cmd->type_chain);
+	if (cmd->hdoc)
+		free_null(cmd->hdoc);
 	free(cmd);
 }
 

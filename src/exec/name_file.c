@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:21:40 by scrumier          #+#    #+#             */
-/*   Updated: 2024/07/22 14:26:56 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 11:09:40 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,22 +52,24 @@ static void	convert_to_hex(unsigned char *random_bytes, char *hex_string)
 		hex_string[2 * i + 1] = hex_chars[random_bytes[i] & 0xF];
 		i++;
 	}
-	hex_string[2 * RANDOM_BYTES] = '\0';
+	hex_string[RANDOM_BYTES] = '\0';
 }
 
-int	generate_unique_filename(char *buffer, size_t length)
+char	*generate_unique_filename(char *buffer, size_t length)
 {
 	int				urandom_fd;
 	unsigned char	random_bytes[RANDOM_BYTES];
-	char			hex_string[RANDOM_BYTES * 2 + 1];
+	char			*hex_string;
 
+	(void)length;
+	hex_string = (char *)malloc(RANDOM_BYTES * 2 + 1);
 	urandom_fd = open_urandom();
 	if (urandom_fd < 0)
-		return (1);
+		return (NULL);
 	if (read_random_bytes(urandom_fd, random_bytes) != 0)
-		return (1);
+		return (NULL);
 	convert_to_hex(random_bytes, hex_string);
-	ft_strlcpy(buffer, TMP_FILE_PREFIX, length);
-	ft_strlcat(buffer, hex_string, length);
-	return (0);
+	buffer = ft_strdup(TMP_FILE_PREFIX);
+	buffer = ft_strjoin_free(buffer, hex_string);
+	return (buffer);
 }

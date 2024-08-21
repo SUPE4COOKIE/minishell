@@ -45,24 +45,24 @@ int	exec_builtin(t_minishell *mshell, t_cmd *cmd)
 {
 	if (ft_strncmp(cmd->cmd, "echo", 5) == 0)
 		if (builtin_echo(mshell, cmd->args))
-			return (error_msg("echo failed"));
+			return (1);
 	if (ft_strncmp(cmd->cmd, "cd", 3) == 0)
 		if (builtin_cd(mshell, cmd->args))
-			return (error_msg("cd failed"));
+			return (1);
 	if (ft_strncmp(cmd->cmd, "pwd", 4) == 0)
 		if (builtin_pwd(mshell))
-			return (error_msg("pwd failed"));
+			return (1);
 	if (ft_strncmp(cmd->cmd, "export", 7) == 0)
 		if (builtin_export(mshell, cmd->args))
-			return (error_msg("export failed"));
+			return (1);
 	if (ft_strncmp(cmd->cmd, "unset", 6) == 0)
 		if (builtin_unset(mshell, cmd->args))
-			return (error_msg("unset failed"));
+			return (1);
 	if (ft_strncmp(cmd->cmd, "env", 4) == 0)
 		if (builtin_env(mshell, cmd->args))
-			return (error_msg("env failed"));
+			return (1);
 	if (ft_strncmp(cmd->cmd, "exit", 6) == 0)
 		if (builtin_exit(mshell, cmd->args))
-			return (error_msg("exit failed"));
+			return (1);
 	return (0);
 }

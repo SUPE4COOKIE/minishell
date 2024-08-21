@@ -6,28 +6,13 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 03:19:56 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/08/14 11:29:35 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/16 13:36:34 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 volatile sig_atomic_t	g_sig;
-
-int	print_prompt(t_minishell *mshell)
-{
-	char	*msg;
-
-	msg = ft_strjoin("minishell-\033[0;31m", ft_itoa(mshell->last_exit_status));
-	if (!msg)
-		return (1);
-	msg = ft_strjoin(msg, "\033[0m-$> ");
-	if (!msg)
-		return (1);
-	mshell->line = readline(msg);
-	free_null(msg);
-	return (0);
-}
 
 int	scan_line(t_minishell *mshell)
 {
@@ -53,7 +38,10 @@ int	start_mshell(t_minishell *mshell)
 	if (parse(mshell))
 		return (1);
 	if (exec(mshell) != 0)
+	{
+		free_cmds(mshell->cmds);
 		return (1);
+	}
 	return (0);
 }
 
@@ -62,17 +50,21 @@ void	prompt_minishell(t_minishell *mshell)
 	while (42)
 	{
 		signal(SIGINT, signal_new_line);
-		signal(SIGQUIT, signal_new_line);
+		signal(SIGQUIT, SIG_IGN);
 		rl_event_hook = event;
-		mshell->line = readline("minishell-$> ");
-		signal(SIGINT, signal_exec);
-		signal(SIGQUIT, signal_exec);
+		mshell->line = readline("minishell$ ");
+		if (mshell->line == NULL)
+		{
+			free_env_path(mshell);
+			break ;
+		}
 		if (!mshell->line || g_sig == SIGQUIT)
 		{
 			free_env_path(mshell);
 			printf("exit\n");
 			break ;
 		}
+		set_sig_and_exit_status(mshell);
 		if (start_mshell(mshell) == 1)
 			continue ;
 		free_null(mshell->line);
@@ -84,21 +76,19 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	mshell;
 
+	(void)argv;
+	if (argc != 1)
+		return (1);
 	print_cat();
 	init(&mshell);
-	if (allocate_env(&mshell, envp))
-		return (1);
+	allocate_env(&mshell, envp);
+	mshell.last_exit_status = 0;
 	if (save_path(&mshell, mshell.env))
 	{
 		free_env_path(&mshell);
 		return (mshell.last_exit_status);
 	}
-	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
-	{
-		handle_dash_c(&mshell, argc, argv);
-		return (mshell.last_exit_status);
-	}
-	else
+	else if (argc == 1)
 		prompt_minishell(&mshell);
-	return (0);
+	return (mshell.last_exit_status);
 }

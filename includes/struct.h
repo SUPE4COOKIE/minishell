@@ -67,6 +67,7 @@ struct s_cmd
 	t_cmd_type		op_type[2];
 	char			**infile;
 	char			**outfile;
+	char			***hdoc;
 	t_cmd_type		*type_chain;
 	t_cmd			*prev;
 	t_cmd			*next;
